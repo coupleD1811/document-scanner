@@ -1,0 +1,158 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../features/auth/repository/auth_repository.dart';
+import '../features/auth/session/bloc/auth_session_bloc.dart';
+import '../features/auth/view/auth_gate.dart';
+import '../l10n/l10n.dart';
+import 'theme/scanly_theme.dart';
+
+class ScanlyApp extends StatelessWidget {
+  const ScanlyApp({required this.authRepository, this.locale, super.key});
+
+  final AuthRepository authRepository;
+  final Locale? locale;
+
+  @override
+  Widget build(BuildContext context) {
+    return RepositoryProvider.value(
+      value: authRepository,
+      child: BlocProvider(
+        create: (_) =>
+            AuthSessionBloc(authRepository: authRepository)
+              ..add(const AuthSessionSubscriptionRequested()),
+        child: MaterialApp(
+          onGenerateTitle: (context) => context.l10n.appTitle,
+          debugShowCheckedModeBanner: false,
+          locale: locale,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          localeResolutionCallback: _resolveLocale,
+          theme: ScanlyTheme.light(),
+          home: const AuthGate(),
+        ),
+      ),
+    );
+  }
+}
+
+class FirebaseSetupApp extends StatelessWidget {
+  const FirebaseSetupApp({required this.error, this.locale, super.key});
+
+  final Object error;
+  final Locale? locale;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      onGenerateTitle: (context) => context.l10n.appTitle,
+      debugShowCheckedModeBanner: false,
+      locale: locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localeResolutionCallback: _resolveLocale,
+      theme: ScanlyTheme.light(),
+      home: Builder(
+        builder: (context) {
+          final l10n = context.l10n;
+
+          return Scaffold(
+            body: SafeArea(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 560),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.document_scanner_outlined, size: 48),
+                        const SizedBox(height: 20),
+                        Text(
+                          l10n.firebaseNotConfiguredTitle,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          l10n.firebaseNotConfiguredBody,
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                        const SizedBox(height: 20),
+                        const _SetupStep(
+                          command: 'dart pub global activate flutterfire_cli',
+                        ),
+                        const _SetupStep(command: 'flutterfire configure'),
+                        const _SetupStep(command: 'flutter run'),
+                        const SizedBox(height: 20),
+                        Text(
+                          l10n.startupErrorTitle,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        const SizedBox(height: 8),
+                        SelectableText(
+                          error.toString(),
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+Locale _resolveLocale(Locale? locale, Iterable<Locale> supportedLocales) {
+  if (locale == null) {
+    return const Locale('vi');
+  }
+
+  for (final supportedLocale in supportedLocales) {
+    if (supportedLocale.languageCode == locale.languageCode) {
+      return supportedLocale;
+    }
+  }
+
+  return const Locale('vi');
+}
+
+class _SetupStep extends StatelessWidget {
+  const _SetupStep({required this.command});
+
+  final String command;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            children: [
+              Icon(Icons.terminal, size: 18, color: colorScheme.primary),
+              const SizedBox(width: 10),
+              Expanded(
+                child: SelectableText(
+                  command,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

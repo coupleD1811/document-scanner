@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "788993318302",
+    "project_id": "document-fa6b2",
+    "storage_bucket": "document-fa6b2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788993318302:android:6ff4205bd08bafc7bc0a8f",
+        "android_client_info": {
+          "package_name": "com.scanly.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqgGq7GdzgQC7ZKyZDtEwUbwZ8S7VQ-EU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
