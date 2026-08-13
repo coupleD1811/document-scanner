@@ -25,6 +25,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get secureWorkspaceTagline => 'Không gian tài liệu bảo mật của bạn';
 
   @override
+  String get loginWelcomeTitle => 'Chào mừng trở lại';
+
+  @override
   String get loginTitle => 'Đăng nhập';
 
   @override
@@ -55,6 +58,25 @@ class AppLocalizationsVi extends AppLocalizations {
   String get createNewAccountAction => 'Tạo tài khoản mới';
 
   @override
+  String get orDivider => 'hoặc';
+
+  @override
+  String get continueWithGoogle => 'Tiếp tục với Google';
+
+  @override
+  String get continueWithFacebook => 'Tiếp tục với Facebook';
+
+  @override
+  String get socialLoginComingSoon =>
+      'Đăng nhập mạng xã hội sẽ được bổ sung sau.';
+
+  @override
+  String get dontHaveAccountPrompt => 'Chưa có tài khoản?';
+
+  @override
+  String get alreadyHaveAccountPrompt => 'Đã có tài khoản?';
+
+  @override
   String get authBackendNote =>
       'Xác thực dùng Firebase. API Node.js có thể kiểm tra Firebase ID token trong từng request.';
 
@@ -66,7 +88,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get registerSubtitle =>
-      'Tạo tài khoản Scanly để bắt đầu lưu và quản lý tài liệu.';
+      'Tham gia Scanly và đơn giản hóa quy trình tài liệu của bạn.';
 
   @override
   String get confirmPasswordLabel => 'Nhập lại mật khẩu';

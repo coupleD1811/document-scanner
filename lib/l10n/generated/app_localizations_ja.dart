@@ -25,6 +25,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get secureWorkspaceTagline => '安全なドキュメントワークスペース';
 
   @override
+  String get loginWelcomeTitle => 'おかえりなさい';
+
+  @override
   String get loginTitle => 'ログイン';
 
   @override
@@ -55,6 +58,24 @@ class AppLocalizationsJa extends AppLocalizations {
   String get createNewAccountAction => '新しいアカウントを作成';
 
   @override
+  String get orDivider => 'または';
+
+  @override
+  String get continueWithGoogle => 'Googleで続行';
+
+  @override
+  String get continueWithFacebook => 'Facebookで続行';
+
+  @override
+  String get socialLoginComingSoon => 'ソーシャルログインは後ほど追加されます。';
+
+  @override
+  String get dontHaveAccountPrompt => 'アカウントをお持ちでないですか？';
+
+  @override
+  String get alreadyHaveAccountPrompt => 'すでにアカウントをお持ちですか？';
+
+  @override
   String get authBackendNote =>
       '認証には Firebase を使用します。Node.js API は各リクエストの Firebase ID トークンを検証できます。';
 
@@ -65,7 +86,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get createAccountTitle => 'アカウント作成';
 
   @override
-  String get registerSubtitle => 'Scanly アカウントを作成して、ドキュメントの保存と管理を始めましょう。';
+  String get registerSubtitle => 'Scanly に参加して、ドキュメント作業をシンプルにしましょう。';
 
   @override
   String get confirmPasswordLabel => 'パスワードを再入力';
