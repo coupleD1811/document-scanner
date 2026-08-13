@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../l10n/l10n.dart';
+import '../presentation/widgets/auth_failure_message.dart';
+import '../presentation/widgets/auth_snack_bar.dart';
 import '../register/register_page.dart';
 import '../repository/auth_repository.dart';
-import '../view/auth_failure_message.dart';
-import '../view/auth_snack_bar.dart';
 import 'bloc/login_bloc.dart';
 
 class LoginPage extends StatelessWidget {
@@ -51,7 +51,7 @@ class _LoginViewState extends State<_LoginView> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = context.l10n;
+    final t = context.l10n;
 
     return BlocListener<LoginBloc, LoginState>(
       listenWhen: (previous, current) =>
@@ -88,14 +88,14 @@ class _LoginViewState extends State<_LoginView> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Text(
-                              l10n.loginTitle,
+                              t.loginTitle,
                               style: textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              l10n.loginSubtitle,
+                              t.loginSubtitle,
                               style: textTheme.bodyMedium?.copyWith(
                                 color: colorScheme.onSurfaceVariant,
                               ),
@@ -111,8 +111,8 @@ class _LoginViewState extends State<_LoginView> {
                                     textInputAction: TextInputAction.next,
                                     autofillHints: const [AutofillHints.email],
                                     decoration: InputDecoration(
-                                      labelText: l10n.emailLabel,
-                                      hintText: l10n.emailHint,
+                                      labelText: t.emailLabel,
+                                      hintText: t.emailHint,
                                       prefixIcon: const Icon(
                                         Icons.mail_outline,
                                       ),
@@ -136,15 +136,15 @@ class _LoginViewState extends State<_LoginView> {
                                       AutofillHints.password,
                                     ],
                                     decoration: InputDecoration(
-                                      labelText: l10n.passwordLabel,
+                                      labelText: t.passwordLabel,
                                       prefixIcon: const Icon(
                                         Icons.lock_outline,
                                       ),
                                       errorText: _passwordError,
                                       suffixIcon: IconButton(
                                         tooltip: _obscurePassword
-                                            ? l10n.showPasswordTooltip
-                                            : l10n.hidePasswordTooltip,
+                                            ? t.showPasswordTooltip
+                                            : t.hidePasswordTooltip,
                                         onPressed: () {
                                           setState(() {
                                             _obscurePassword =
@@ -182,7 +182,7 @@ class _LoginViewState extends State<_LoginView> {
                                     onPressed: isBusy
                                         ? null
                                         : _sendPasswordReset,
-                                    child: Text(l10n.forgotPasswordAction),
+                                    child: Text(t.forgotPasswordAction),
                                   );
                                 },
                               ),
@@ -207,7 +207,7 @@ class _LoginViewState extends State<_LoginView> {
                                           ),
                                         )
                                       : const Icon(Icons.login),
-                                  label: Text(l10n.loginAction),
+                                  label: Text(t.loginAction),
                                 );
                               },
                             ),
@@ -224,7 +224,7 @@ class _LoginViewState extends State<_LoginView> {
                                 );
                               },
                               icon: const Icon(Icons.person_add_alt_1),
-                              label: Text(l10n.createNewAccountAction),
+                              label: Text(t.createNewAccountAction),
                             ),
                           ],
                         ),
@@ -243,9 +243,9 @@ class _LoginViewState extends State<_LoginView> {
   void _submit() {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
-    final l10n = context.l10n;
-    final emailError = _validateEmail(l10n, email);
-    final passwordError = _validatePassword(l10n, password);
+    final t = context.l10n;
+    final emailError = _validateEmail(t, email);
+    final passwordError = _validatePassword(t, password);
 
     if (emailError != null || passwordError != null) {
       setState(() {
@@ -281,7 +281,7 @@ class _LoginHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = context.l10n;
+    final t = context.l10n;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -307,7 +307,7 @@ class _LoginHeader extends StatelessWidget {
             children: [
               Text('Scanly', style: textTheme.headlineMedium),
               Text(
-                l10n.secureWorkspaceTagline,
+                t.secureWorkspaceTagline,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: textTheme.bodyMedium?.copyWith(
@@ -322,41 +322,41 @@ class _LoginHeader extends StatelessWidget {
   }
 }
 
-String? _validateEmail(AppLocalizations l10n, String email) {
+String? _validateEmail(AppLocalizations t, String email) {
   if (email.isEmpty) {
-    return l10n.emailRequired;
+    return t.emailRequired;
   }
 
   final isValid = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email);
   if (!isValid) {
-    return l10n.emailInvalid;
+    return t.emailInvalid;
   }
 
   return null;
 }
 
-String? _validatePassword(AppLocalizations l10n, String password) {
+String? _validatePassword(AppLocalizations t, String password) {
   if (password.isEmpty) {
-    return l10n.passwordRequired;
+    return t.passwordRequired;
   }
 
   if (password.length < 6) {
-    return l10n.passwordMinLength;
+    return t.passwordMinLength;
   }
 
   return null;
 }
 
 String? _snackBarMessage(BuildContext context, LoginState state) {
-  final l10n = context.l10n;
+  final t = context.l10n;
 
   if (state.failureCode != null) {
-    return state.failureCode!.localizedMessage(l10n);
+    return state.failureCode!.localizedMessage(t);
   }
 
   return switch (state.successMessage) {
-    LoginSuccessMessage.signedIn => l10n.signInSuccess,
-    LoginSuccessMessage.passwordResetEmailSent => l10n.passwordResetEmailSent,
+    LoginSuccessMessage.signedIn => t.signInSuccess,
+    LoginSuccessMessage.passwordResetEmailSent => t.passwordResetEmailSent,
     null => null,
   };
 }

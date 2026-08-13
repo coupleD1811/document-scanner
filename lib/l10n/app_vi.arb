@@ -72,7 +72,11 @@
   "profileAccountTitle": "Tài khoản",
   "profileSettingsTitle": "Cài đặt",
   "languageSettingTitle": "Ngôn ngữ",
-  "languageSettingSubtitle": "Theo ngôn ngữ thiết bị, hỗ trợ Việt, Anh và Nhật.",
+  "languageSettingSubtitle": "Chọn ngôn ngữ hiển thị cho Scanly.",
+  "languagePickerTitle": "Chọn ngôn ngữ",
+  "languageVietnamese": "Tiếng Việt",
+  "languageEnglish": "Tiếng Anh",
+  "languageJapanese": "Tiếng Nhật",
   "cloudSyncTitle": "Đồng bộ cloud",
   "cloudSyncSubtitle": "Sẽ được bổ sung khi backend sẵn sàng.",
   "signOutAction": "Đăng xuất"

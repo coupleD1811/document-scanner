@@ -239,8 +239,19 @@ class AppLocalizationsVi extends AppLocalizations {
   String get languageSettingTitle => 'Ngôn ngữ';
 
   @override
-  String get languageSettingSubtitle =>
-      'Theo ngôn ngữ thiết bị, hỗ trợ Việt, Anh và Nhật.';
+  String get languageSettingSubtitle => 'Chọn ngôn ngữ hiển thị cho Scanly.';
+
+  @override
+  String get languagePickerTitle => 'Chọn ngôn ngữ';
+
+  @override
+  String get languageVietnamese => 'Tiếng Việt';
+
+  @override
+  String get languageEnglish => 'Tiếng Anh';
+
+  @override
+  String get languageJapanese => 'Tiếng Nhật';
 
   @override
   String get cloudSyncTitle => 'Đồng bộ cloud';

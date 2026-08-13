@@ -242,7 +242,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageSettingSubtitle =>
-      'Uses device language, with Vietnamese, English, and Japanese support.';
+      'Choose the display language for Scanly.';
+
+  @override
+  String get languagePickerTitle => 'Choose language';
+
+  @override
+  String get languageVietnamese => 'Vietnamese';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageJapanese => 'Japanese';
 
   @override
   String get cloudSyncTitle => 'Cloud sync';

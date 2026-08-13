@@ -227,7 +227,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get languageSettingTitle => '言語';
 
   @override
-  String get languageSettingSubtitle => '端末の言語を使用し、ベトナム語、英語、日本語に対応します。';
+  String get languageSettingSubtitle => 'Scanly の表示言語を選択します。';
+
+  @override
+  String get languagePickerTitle => '言語を選択';
+
+  @override
+  String get languageVietnamese => 'ベトナム語';
+
+  @override
+  String get languageEnglish => '英語';
+
+  @override
+  String get languageJapanese => '日本語';
 
   @override
   String get cloudSyncTitle => 'クラウド同期';

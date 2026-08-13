@@ -72,7 +72,11 @@
   "profileAccountTitle": "アカウント",
   "profileSettingsTitle": "設定",
   "languageSettingTitle": "言語",
-  "languageSettingSubtitle": "端末の言語を使用し、ベトナム語、英語、日本語に対応します。",
+  "languageSettingSubtitle": "Scanly の表示言語を選択します。",
+  "languagePickerTitle": "言語を選択",
+  "languageVietnamese": "ベトナム語",
+  "languageEnglish": "英語",
+  "languageJapanese": "日本語",
   "cloudSyncTitle": "クラウド同期",
   "cloudSyncSubtitle": "バックエンド準備後に追加予定です。",
   "signOutAction": "ログアウト"

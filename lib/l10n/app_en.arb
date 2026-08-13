@@ -72,7 +72,11 @@
   "profileAccountTitle": "Account",
   "profileSettingsTitle": "Settings",
   "languageSettingTitle": "Language",
-  "languageSettingSubtitle": "Uses device language, with Vietnamese, English, and Japanese support.",
+  "languageSettingSubtitle": "Choose the display language for Scanly.",
+  "languagePickerTitle": "Choose language",
+  "languageVietnamese": "Vietnamese",
+  "languageEnglish": "English",
+  "languageJapanese": "Japanese",
   "cloudSyncTitle": "Cloud sync",
   "cloudSyncSubtitle": "Coming after the backend is ready.",
   "signOutAction": "Sign out"

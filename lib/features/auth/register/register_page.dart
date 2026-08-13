@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../l10n/l10n.dart';
+import '../presentation/widgets/auth_failure_message.dart';
+import '../presentation/widgets/auth_snack_bar.dart';
 import '../repository/auth_repository.dart';
 import '../session/bloc/auth_session_bloc.dart';
-import '../view/auth_failure_message.dart';
-import '../view/auth_snack_bar.dart';
 import 'bloc/register_bloc.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -57,7 +57,7 @@ class _RegisterViewState extends State<_RegisterView> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = context.l10n;
+    final t = context.l10n;
 
     return MultiBlocListener(
       listeners: [
@@ -88,7 +88,7 @@ class _RegisterViewState extends State<_RegisterView> {
         ),
       ],
       child: Scaffold(
-        appBar: AppBar(title: Text(l10n.registerTitle)),
+        appBar: AppBar(title: Text(t.registerTitle)),
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -121,7 +121,7 @@ class _RegisterViewState extends State<_RegisterView> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                l10n.createAccountTitle,
+                                t.createAccountTitle,
                                 style: textTheme.headlineSmall?.copyWith(
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -131,7 +131,7 @@ class _RegisterViewState extends State<_RegisterView> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          l10n.registerSubtitle,
+                          t.registerSubtitle,
                           style: textTheme.bodyMedium?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                           ),
@@ -147,8 +147,8 @@ class _RegisterViewState extends State<_RegisterView> {
                                 textInputAction: TextInputAction.next,
                                 autofillHints: const [AutofillHints.email],
                                 decoration: InputDecoration(
-                                  labelText: l10n.emailLabel,
-                                  hintText: l10n.emailHint,
+                                  labelText: t.emailLabel,
+                                  hintText: t.emailHint,
                                   prefixIcon: const Icon(Icons.mail_outline),
                                   errorText: _emailError,
                                 ),
@@ -170,13 +170,13 @@ class _RegisterViewState extends State<_RegisterView> {
                                   AutofillHints.newPassword,
                                 ],
                                 decoration: InputDecoration(
-                                  labelText: l10n.passwordLabel,
+                                  labelText: t.passwordLabel,
                                   prefixIcon: const Icon(Icons.lock_outline),
                                   errorText: _passwordError,
                                   suffixIcon: IconButton(
                                     tooltip: _obscurePassword
-                                        ? l10n.showPasswordTooltip
-                                        : l10n.hidePasswordTooltip,
+                                        ? t.showPasswordTooltip
+                                        : t.hidePasswordTooltip,
                                     onPressed: () {
                                       setState(() {
                                         _obscurePassword = !_obscurePassword;
@@ -207,15 +207,15 @@ class _RegisterViewState extends State<_RegisterView> {
                                   AutofillHints.newPassword,
                                 ],
                                 decoration: InputDecoration(
-                                  labelText: l10n.confirmPasswordLabel,
+                                  labelText: t.confirmPasswordLabel,
                                   prefixIcon: const Icon(
                                     Icons.verified_user_outlined,
                                   ),
                                   errorText: _confirmPasswordError,
                                   suffixIcon: IconButton(
                                     tooltip: _obscureConfirmPassword
-                                        ? l10n.showPasswordTooltip
-                                        : l10n.hidePasswordTooltip,
+                                        ? t.showPasswordTooltip
+                                        : t.hidePasswordTooltip,
                                     onPressed: () {
                                       setState(() {
                                         _obscureConfirmPassword =
@@ -261,7 +261,7 @@ class _RegisterViewState extends State<_RegisterView> {
                                       ),
                                     )
                                   : const Icon(Icons.person_add_alt_1),
-                              label: Text(l10n.createAccountAction),
+                              label: Text(t.createAccountAction),
                             );
                           },
                         ),
@@ -281,11 +281,11 @@ class _RegisterViewState extends State<_RegisterView> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
-    final l10n = context.l10n;
-    final emailError = _validateEmail(l10n, email);
-    final passwordError = _validatePassword(l10n, password);
+    final t = context.l10n;
+    final emailError = _validateEmail(t, email);
+    final passwordError = _validatePassword(t, password);
     final confirmPasswordError = _validateConfirmPassword(
-      l10n,
+      t,
       password,
       confirmPassword,
     );
@@ -307,55 +307,55 @@ class _RegisterViewState extends State<_RegisterView> {
   }
 }
 
-String? _validateEmail(AppLocalizations l10n, String email) {
+String? _validateEmail(AppLocalizations t, String email) {
   if (email.isEmpty) {
-    return l10n.emailRequired;
+    return t.emailRequired;
   }
 
   final isValid = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email);
   if (!isValid) {
-    return l10n.emailInvalid;
+    return t.emailInvalid;
   }
 
   return null;
 }
 
 String? _snackBarMessage(BuildContext context, RegisterState state) {
-  final l10n = context.l10n;
+  final t = context.l10n;
 
   if (state.failureCode != null) {
-    return state.failureCode!.localizedMessage(l10n);
+    return state.failureCode!.localizedMessage(t);
   }
 
   return switch (state.successMessage) {
-    RegisterSuccessMessage.accountCreated => l10n.accountCreatedSuccess,
+    RegisterSuccessMessage.accountCreated => t.accountCreatedSuccess,
     null => null,
   };
 }
 
-String? _validatePassword(AppLocalizations l10n, String password) {
+String? _validatePassword(AppLocalizations t, String password) {
   if (password.isEmpty) {
-    return l10n.passwordRequired;
+    return t.passwordRequired;
   }
 
   if (password.length < 6) {
-    return l10n.passwordMinLength;
+    return t.passwordMinLength;
   }
 
   return null;
 }
 
 String? _validateConfirmPassword(
-  AppLocalizations l10n,
+  AppLocalizations t,
   String password,
   String confirmPassword,
 ) {
   if (confirmPassword.isEmpty) {
-    return l10n.confirmPasswordRequired;
+    return t.confirmPasswordRequired;
   }
 
   if (password != confirmPassword) {
-    return l10n.confirmPasswordMismatch;
+    return t.confirmPasswordMismatch;
   }
 
   return null;

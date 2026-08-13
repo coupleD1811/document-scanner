@@ -535,8 +535,32 @@ abstract class AppLocalizations {
   /// No description provided for @languageSettingSubtitle.
   ///
   /// In vi, this message translates to:
-  /// **'Theo ngôn ngữ thiết bị, hỗ trợ Việt, Anh và Nhật.'**
+  /// **'Chọn ngôn ngữ hiển thị cho Scanly.'**
   String get languageSettingSubtitle;
+
+  /// No description provided for @languagePickerTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn ngôn ngữ'**
+  String get languagePickerTitle;
+
+  /// No description provided for @languageVietnamese.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếng Việt'**
+  String get languageVietnamese;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếng Anh'**
+  String get languageEnglish;
+
+  /// No description provided for @languageJapanese.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếng Nhật'**
+  String get languageJapanese;
 
   /// No description provided for @cloudSyncTitle.
   ///

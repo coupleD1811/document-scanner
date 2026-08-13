@@ -14,6 +14,7 @@ Project hiện đang ở giai đoạn nền tảng ban đầu. Phần đã có:
 - Có sẵn `currentIdToken()` để gửi Firebase ID token lên backend.
 - Hỗ trợ đa ngôn ngữ: tiếng Việt, tiếng Anh và tiếng Nhật.
 - Giao diện chính sau đăng nhập với bottom bar 5 tab.
+- Cho phép đổi và lưu ngôn ngữ trong tab Cá nhân.
 
 Các phần scanner, OCR, PDF toolkit, cloud upload, IAP và backend riêng chưa
 được triển khai trong phiên bản hiện tại.
@@ -39,12 +40,30 @@ lib/features/auth/
   session/
     bloc/        # AuthSessionBloc: session chung, đăng xuất
   repository/    # contract auth, model user, lỗi auth, Firebase implementation
-  view/          # auth gate và home shell sau khi đăng nhập
+  presentation/  # AuthGate và widget UI dùng chung trong auth
 ```
 
 Quy ước hiện tại: mỗi feature lớn sẽ có BLoC riêng cho flow của nó. BLoC cấp
 cao hơn chỉ giữ trạng thái dùng chung, ví dụ `AuthSessionBloc` chỉ quản lý
 session, không xử lý form đăng nhập hoặc đăng ký.
+
+## Cấu Trúc Feature
+
+Các tab chính đã được tách thành feature riêng để dễ mở rộng:
+
+```text
+lib/features/
+  main_navigation/  # shell sau đăng nhập, app bar và bottom bar
+  home/             # tab Trang chủ
+  documents/        # tab Tài liệu
+  scan/             # tab Quét
+  tools/            # tab Công cụ
+  profile/          # tab Cá nhân và chọn ngôn ngữ
+  shared/widgets/   # widget nhỏ dùng chung giữa các feature
+```
+
+`auth` chỉ chịu trách nhiệm xác thực và session. Nội dung sau khi đăng nhập
+nằm ở `main_navigation` và từng feature tab riêng.
 
 ## Navigation Chính
 
@@ -79,8 +98,8 @@ Sau khi thêm hoặc sửa key trong các file `.arb`, chạy:
 flutter gen-l10n
 ```
 
-App sẽ chọn ngôn ngữ theo locale của thiết bị. Nếu thiết bị dùng ngôn ngữ chưa
-hỗ trợ, app fallback về tiếng Việt.
+App mặc định dùng tiếng Việt. Người dùng có thể đổi ngôn ngữ trong tab
+`Cá nhân > Ngôn ngữ`; lựa chọn này được lưu lại trên thiết bị.
 
 ## Cấu Hình Firebase
 
