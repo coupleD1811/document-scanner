@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../features/auth/repository/auth_repository.dart';
 import '../features/auth/session/bloc/auth_session_bloc.dart';
-import '../features/auth/view/auth_gate.dart';
+import '../features/auth/presentation/auth_gate.dart';
+import '../features/profile/language/app_language.dart';
+import '../features/profile/language/state.dart';
 import '../l10n/l10n.dart';
 import 'theme/scanly_theme.dart';
 
@@ -17,19 +19,32 @@ class ScanlyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
       value: authRepository,
-      child: BlocProvider(
-        create: (_) =>
-            AuthSessionBloc(authRepository: authRepository)
-              ..add(const AuthSessionSubscriptionRequested()),
-        child: MaterialApp(
-          onGenerateTitle: (context) => context.l10n.appTitle,
-          debugShowCheckedModeBanner: false,
-          locale: locale,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          localeResolutionCallback: _resolveLocale,
-          theme: ScanlyTheme.light(),
-          home: const AuthGate(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) =>
+                ProfileLanguageCubit(initialLocale: locale)
+                  ..restoreSavedLanguage(),
+          ),
+          BlocProvider(
+            create: (_) =>
+                AuthSessionBloc(authRepository: authRepository)
+                  ..add(const AuthSessionSubscriptionRequested()),
+          ),
+        ],
+        child: BlocBuilder<ProfileLanguageCubit, AppLanguage>(
+          builder: (context, language) {
+            return MaterialApp(
+              onGenerateTitle: (context) => context.l10n.appTitle,
+              debugShowCheckedModeBanner: false,
+              locale: language.locale,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              localeResolutionCallback: _resolveLocale,
+              theme: ScanlyTheme.light(),
+              home: const AuthGate(),
+            );
+          },
         ),
       ),
     );
@@ -54,7 +69,7 @@ class FirebaseSetupApp extends StatelessWidget {
       theme: ScanlyTheme.light(),
       home: Builder(
         builder: (context) {
-          final l10n = context.l10n;
+          final t = context.l10n;
 
           return Scaffold(
             body: SafeArea(
@@ -70,12 +85,12 @@ class FirebaseSetupApp extends StatelessWidget {
                         const Icon(Icons.document_scanner_outlined, size: 48),
                         const SizedBox(height: 20),
                         Text(
-                          l10n.firebaseNotConfiguredTitle,
+                          t.firebaseNotConfiguredTitle,
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          l10n.firebaseNotConfiguredBody,
+                          t.firebaseNotConfiguredBody,
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         const SizedBox(height: 20),
@@ -86,7 +101,7 @@ class FirebaseSetupApp extends StatelessWidget {
                         const _SetupStep(command: 'flutter run'),
                         const SizedBox(height: 20),
                         Text(
-                          l10n.startupErrorTitle,
+                          t.startupErrorTitle,
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         const SizedBox(height: 8),

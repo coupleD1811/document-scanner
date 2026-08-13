@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../main_navigation/main_navigation_page.dart';
 import '../login/login_page.dart';
 import '../session/bloc/auth_session_bloc.dart';
-import 'home_shell_page.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
@@ -17,7 +17,7 @@ class AuthGate extends StatelessWidget {
         return switch (state.status) {
           AuthSessionStatus.unknown => const _StartupView(),
           AuthSessionStatus.unauthenticated => const LoginPage(),
-          AuthSessionStatus.authenticated => const HomeShellPage(),
+          AuthSessionStatus.authenticated => const MainNavigationPage(),
         };
       },
     );

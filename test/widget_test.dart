@@ -6,8 +6,13 @@ import 'package:scanly/features/auth/repository/auth_repository.dart';
 import 'package:scanly/features/auth/repository/auth_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
   testWidgets('hiển thị form auth khi chưa đăng nhập', (tester) async {
     final authRepository = FakeAuthRepository();
     addTearDown(authRepository.dispose);
@@ -204,6 +209,87 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Cài đặt'), findsOneWidget);
     expect(find.text('user@example.com'), findsOneWidget);
+  });
+
+  testWidgets('đổi ngôn ngữ trong tab cá nhân', (tester) async {
+    final authRepository = FakeAuthRepository();
+    addTearDown(authRepository.dispose);
+
+    await tester.pumpWidget(
+      ScanlyApp(authRepository: authRepository, locale: const Locale('vi')),
+    );
+    await tester.pump();
+    authRepository.emitUser(
+      const AuthUser(id: 'user-1', email: 'user@example.com'),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('bottom-tab-profile')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ngôn ngữ'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('current-language-icon-vi')),
+      findsNothing,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('language-setting-tile')));
+    await tester.pumpAndSettle();
+    expect(find.text('Chọn ngôn ngữ'), findsOneWidget);
+    expect(find.text('Tiếng Việt'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('language-option-icon-vi')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('language-option-icon-en')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('language-option-icon-ja')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('language-option-en')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Settings'), findsOneWidget);
+    expect(find.text('Language'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('current-language-icon-en')),
+      findsNothing,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('language-setting-tile')));
+    await tester.pumpAndSettle();
+    expect(find.text('English'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('language-option-ja')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('設定'), findsOneWidget);
+    expect(find.text('言語'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('current-language-icon-ja')),
+      findsNothing,
+    );
+
+    await tester.pumpWidget(const SizedBox.shrink());
+
+    final restoredAuthRepository = FakeAuthRepository();
+    addTearDown(restoredAuthRepository.dispose);
+
+    await tester.pumpWidget(
+      ScanlyApp(
+        authRepository: restoredAuthRepository,
+        locale: const Locale('vi'),
+      ),
+    );
+    await tester.pump();
+    restoredAuthRepository.emitUser(null);
+    await tester.pumpAndSettle();
+
+    expect(find.text('安全なドキュメントワークスペース'), findsOneWidget);
+    expect(find.text('ログイン'), findsWidgets);
   });
 
   testWidgets('hiển thị tiếng Anh theo locale en', (tester) async {
