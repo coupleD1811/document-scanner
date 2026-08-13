@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../l10n/l10n.dart';
 import '../presentation/widgets/auth_failure_message.dart';
+import '../presentation/widgets/auth_form_widgets.dart';
 import '../presentation/widgets/auth_snack_bar.dart';
 import '../repository/auth_repository.dart';
 import '../session/bloc/auth_session_bloc.dart';
@@ -29,6 +30,9 @@ class _RegisterView extends StatefulWidget {
 }
 
 class _RegisterViewState extends State<_RegisterView> {
+  static const _googleIconPath = 'images/logo/google_icon.png';
+  static const _facebookIconPath = 'images/logo/facebook_icon.png';
+
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -55,8 +59,8 @@ class _RegisterViewState extends State<_RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     final t = context.l10n;
 
     return MultiBlocListener(
@@ -88,189 +92,220 @@ class _RegisterViewState extends State<_RegisterView> {
         ),
       ],
       child: Scaffold(
-        appBar: AppBar(title: Text(t.registerTitle)),
         body: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 440),
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          children: [
-                            DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: colorScheme.primary.withValues(
-                                  alpha: 0.1,
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Icon(
-                                  Icons.person_add_alt_1,
-                                  color: colorScheme.primary,
-                                ),
-                              ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 36, 20, 28),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 440),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const Center(child: AuthBrandLogo()),
+                          const SizedBox(height: 40),
+                          Text(
+                            t.createAccountTitle,
+                            textAlign: TextAlign.center,
+                            style: textTheme.headlineMedium?.copyWith(
+                              color: colorScheme.onSurface,
+                              fontWeight: FontWeight.w800,
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                t.createAccountTitle,
-                                style: textTheme.headlineSmall?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          t.registerSubtitle,
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
                           ),
-                        ),
-                        const SizedBox(height: 22),
-                        AutofillGroup(
-                          child: Column(
+                          const SizedBox(height: 10),
+                          Text(
+                            t.registerSubtitle,
+                            textAlign: TextAlign.center,
+                            style: textTheme.bodyLarge?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(height: 34),
+                          AutofillGroup(
+                            child: Column(
+                              children: [
+                                TextField(
+                                  controller: _emailController,
+                                  focusNode: _emailFocusNode,
+                                  keyboardType: TextInputType.emailAddress,
+                                  textInputAction: TextInputAction.next,
+                                  autofillHints: const [AutofillHints.email],
+                                  decoration: _inputDecoration(
+                                    context,
+                                    hintText: t.emailLabel,
+                                    prefixIcon: Icons.mail_outline,
+                                    errorText: _emailError,
+                                  ),
+                                  onSubmitted: (_) =>
+                                      _passwordFocusNode.requestFocus(),
+                                  onChanged: (_) {
+                                    if (_emailError != null) {
+                                      setState(() => _emailError = null);
+                                    }
+                                  },
+                                ),
+                                const SizedBox(height: 14),
+                                TextField(
+                                  controller: _passwordController,
+                                  focusNode: _passwordFocusNode,
+                                  obscureText: _obscurePassword,
+                                  textInputAction: TextInputAction.next,
+                                  autofillHints: const [
+                                    AutofillHints.newPassword,
+                                  ],
+                                  decoration: _inputDecoration(
+                                    context,
+                                    hintText: t.passwordLabel,
+                                    prefixIcon: Icons.lock_outline,
+                                    errorText: _passwordError,
+                                    suffixIcon: IconButton(
+                                      tooltip: _obscurePassword
+                                          ? t.showPasswordTooltip
+                                          : t.hidePasswordTooltip,
+                                      onPressed: () {
+                                        setState(() {
+                                          _obscurePassword = !_obscurePassword;
+                                        });
+                                      },
+                                      icon: Icon(
+                                        _obscurePassword
+                                            ? Icons.visibility_outlined
+                                            : Icons.visibility_off_outlined,
+                                      ),
+                                    ),
+                                  ),
+                                  onSubmitted: (_) =>
+                                      _confirmPasswordFocusNode.requestFocus(),
+                                  onChanged: (_) {
+                                    if (_passwordError != null) {
+                                      setState(() => _passwordError = null);
+                                    }
+                                  },
+                                ),
+                                const SizedBox(height: 14),
+                                TextField(
+                                  controller: _confirmPasswordController,
+                                  focusNode: _confirmPasswordFocusNode,
+                                  obscureText: _obscureConfirmPassword,
+                                  textInputAction: TextInputAction.done,
+                                  autofillHints: const [
+                                    AutofillHints.newPassword,
+                                  ],
+                                  decoration: _inputDecoration(
+                                    context,
+                                    hintText: t.confirmPasswordLabel,
+                                    prefixIcon: Icons.lock_outline,
+                                    errorText: _confirmPasswordError,
+                                    suffixIcon: IconButton(
+                                      tooltip: _obscureConfirmPassword
+                                          ? t.showPasswordTooltip
+                                          : t.hidePasswordTooltip,
+                                      onPressed: () {
+                                        setState(() {
+                                          _obscureConfirmPassword =
+                                              !_obscureConfirmPassword;
+                                        });
+                                      },
+                                      icon: Icon(
+                                        _obscureConfirmPassword
+                                            ? Icons.visibility_outlined
+                                            : Icons.visibility_off_outlined,
+                                      ),
+                                    ),
+                                  ),
+                                  onSubmitted: (_) => _submit(),
+                                  onChanged: (_) {
+                                    if (_confirmPasswordError != null) {
+                                      setState(
+                                        () => _confirmPasswordError = null,
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          BlocBuilder<RegisterBloc, RegisterState>(
+                            buildWhen: (previous, current) =>
+                                previous.status != current.status,
+                            builder: (context, state) {
+                              final isBusy =
+                                  state.status == RegisterStatus.inProgress;
+
+                              return FilledButton(
+                                key: const ValueKey('register-primary-button'),
+                                onPressed: isBusy ? null : _submit,
+                                style: FilledButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(56),
+                                  textStyle: textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                child: isBusy
+                                    ? SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          color: colorScheme.onPrimary,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : Text(t.createAccountAction),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 26),
+                          AuthDivider(text: t.orDivider),
+                          const SizedBox(height: 26),
+                          AuthSocialButton(
+                            assetPath: _googleIconPath,
+                            label: t.continueWithGoogle,
+                            onPressed: _showSocialComingSoon,
+                          ),
+                          const SizedBox(height: 12),
+                          AuthSocialButton(
+                            assetPath: _facebookIconPath,
+                            label: t.continueWithFacebook,
+                            onPressed: _showSocialComingSoon,
+                          ),
+                          const SizedBox(height: 30),
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 4,
                             children: [
-                              TextField(
-                                controller: _emailController,
-                                focusNode: _emailFocusNode,
-                                keyboardType: TextInputType.emailAddress,
-                                textInputAction: TextInputAction.next,
-                                autofillHints: const [AutofillHints.email],
-                                decoration: InputDecoration(
-                                  labelText: t.emailLabel,
-                                  hintText: t.emailHint,
-                                  prefixIcon: const Icon(Icons.mail_outline),
-                                  errorText: _emailError,
+                              Text(
+                                t.alreadyHaveAccountPrompt,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
                                 ),
-                                onSubmitted: (_) =>
-                                    _passwordFocusNode.requestFocus(),
-                                onChanged: (_) {
-                                  if (_emailError != null) {
-                                    setState(() => _emailError = null);
-                                  }
-                                },
                               ),
-                              const SizedBox(height: 14),
-                              TextField(
-                                controller: _passwordController,
-                                focusNode: _passwordFocusNode,
-                                obscureText: _obscurePassword,
-                                textInputAction: TextInputAction.next,
-                                autofillHints: const [
-                                  AutofillHints.newPassword,
-                                ],
-                                decoration: InputDecoration(
-                                  labelText: t.passwordLabel,
-                                  prefixIcon: const Icon(Icons.lock_outline),
-                                  errorText: _passwordError,
-                                  suffixIcon: IconButton(
-                                    tooltip: _obscurePassword
-                                        ? t.showPasswordTooltip
-                                        : t.hidePasswordTooltip,
-                                    onPressed: () {
-                                      setState(() {
-                                        _obscurePassword = !_obscurePassword;
-                                      });
-                                    },
-                                    icon: Icon(
-                                      _obscurePassword
-                                          ? Icons.visibility_outlined
-                                          : Icons.visibility_off_outlined,
-                                    ),
+                              TextButton(
+                                onPressed: _goBackToLogin,
+                                style: TextButton.styleFrom(
+                                  minimumSize: const Size(0, 40),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
                                   ),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
-                                onSubmitted: (_) =>
-                                    _confirmPasswordFocusNode.requestFocus(),
-                                onChanged: (_) {
-                                  if (_passwordError != null) {
-                                    setState(() => _passwordError = null);
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: 14),
-                              TextField(
-                                controller: _confirmPasswordController,
-                                focusNode: _confirmPasswordFocusNode,
-                                obscureText: _obscureConfirmPassword,
-                                textInputAction: TextInputAction.done,
-                                autofillHints: const [
-                                  AutofillHints.newPassword,
-                                ],
-                                decoration: InputDecoration(
-                                  labelText: t.confirmPasswordLabel,
-                                  prefixIcon: const Icon(
-                                    Icons.verified_user_outlined,
-                                  ),
-                                  errorText: _confirmPasswordError,
-                                  suffixIcon: IconButton(
-                                    tooltip: _obscureConfirmPassword
-                                        ? t.showPasswordTooltip
-                                        : t.hidePasswordTooltip,
-                                    onPressed: () {
-                                      setState(() {
-                                        _obscureConfirmPassword =
-                                            !_obscureConfirmPassword;
-                                      });
-                                    },
-                                    icon: Icon(
-                                      _obscureConfirmPassword
-                                          ? Icons.visibility_outlined
-                                          : Icons.visibility_off_outlined,
-                                    ),
-                                  ),
-                                ),
-                                onSubmitted: (_) => _submit(),
-                                onChanged: (_) {
-                                  if (_confirmPasswordError != null) {
-                                    setState(
-                                      () => _confirmPasswordError = null,
-                                    );
-                                  }
-                                },
+                                child: Text(t.loginAction),
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(height: 22),
-                        BlocBuilder<RegisterBloc, RegisterState>(
-                          buildWhen: (previous, current) =>
-                              previous.status != current.status,
-                          builder: (context, state) {
-                            final isBusy =
-                                state.status == RegisterStatus.inProgress;
-
-                            return FilledButton.icon(
-                              key: const ValueKey('register-primary-button'),
-                              onPressed: isBusy ? null : _submit,
-                              icon: isBusy
-                                  ? const SizedBox(
-                                      width: 18,
-                                      height: 18,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Icon(Icons.person_add_alt_1),
-                              label: Text(t.createAccountAction),
-                            );
-                          },
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ),
       ),
@@ -303,6 +338,35 @@ class _RegisterViewState extends State<_RegisterView> {
 
     context.read<RegisterBloc>().add(
       RegisterSubmitted(email: email, password: password),
+    );
+  }
+
+  void _goBackToLogin() {
+    Navigator.of(context).maybePop();
+  }
+
+  void _showSocialComingSoon() {
+    showAuthSnackBar(
+      context,
+      message: context.l10n.socialLoginComingSoon,
+      isError: false,
+    );
+  }
+
+  InputDecoration _inputDecoration(
+    BuildContext context, {
+    required String hintText,
+    required IconData prefixIcon,
+    required String? errorText,
+    Widget? suffixIcon,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return InputDecoration(
+      hintText: hintText,
+      prefixIcon: Icon(prefixIcon, color: colorScheme.outline),
+      suffixIcon: suffixIcon,
+      errorText: errorText,
     );
   }
 }

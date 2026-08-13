@@ -25,6 +25,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get secureWorkspaceTagline => 'Your secure document workspace';
 
   @override
+  String get loginWelcomeTitle => 'Welcome back';
+
+  @override
   String get loginTitle => 'Sign in';
 
   @override
@@ -55,6 +58,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createNewAccountAction => 'Create new account';
 
   @override
+  String get orDivider => 'or';
+
+  @override
+  String get continueWithGoogle => 'Continue with Google';
+
+  @override
+  String get continueWithFacebook => 'Continue with Facebook';
+
+  @override
+  String get socialLoginComingSoon => 'Social sign-in will be added later.';
+
+  @override
+  String get dontHaveAccountPrompt => 'Don\'t have an account?';
+
+  @override
+  String get alreadyHaveAccountPrompt => 'Already have an account?';
+
+  @override
   String get authBackendNote =>
       'Authentication uses Firebase. The Node.js API can verify the Firebase ID token on each request.';
 
@@ -66,7 +87,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get registerSubtitle =>
-      'Create a Scanly account to start saving and managing documents.';
+      'Join Scanly and simplify your document workflow.';
 
   @override
   String get confirmPasswordLabel => 'Confirm password';

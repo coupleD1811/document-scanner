@@ -130,6 +130,12 @@ abstract class AppLocalizations {
   /// **'Không gian tài liệu bảo mật của bạn'**
   String get secureWorkspaceTagline;
 
+  /// No description provided for @loginWelcomeTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chào mừng trở lại'**
+  String get loginWelcomeTitle;
+
   /// No description provided for @loginTitle.
   ///
   /// In vi, this message translates to:
@@ -190,6 +196,42 @@ abstract class AppLocalizations {
   /// **'Tạo tài khoản mới'**
   String get createNewAccountAction;
 
+  /// No description provided for @orDivider.
+  ///
+  /// In vi, this message translates to:
+  /// **'hoặc'**
+  String get orDivider;
+
+  /// No description provided for @continueWithGoogle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếp tục với Google'**
+  String get continueWithGoogle;
+
+  /// No description provided for @continueWithFacebook.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếp tục với Facebook'**
+  String get continueWithFacebook;
+
+  /// No description provided for @socialLoginComingSoon.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đăng nhập mạng xã hội sẽ được bổ sung sau.'**
+  String get socialLoginComingSoon;
+
+  /// No description provided for @dontHaveAccountPrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có tài khoản?'**
+  String get dontHaveAccountPrompt;
+
+  /// No description provided for @alreadyHaveAccountPrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã có tài khoản?'**
+  String get alreadyHaveAccountPrompt;
+
   /// No description provided for @authBackendNote.
   ///
   /// In vi, this message translates to:
@@ -211,7 +253,7 @@ abstract class AppLocalizations {
   /// No description provided for @registerSubtitle.
   ///
   /// In vi, this message translates to:
-  /// **'Tạo tài khoản Scanly để bắt đầu lưu và quản lý tài liệu.'**
+  /// **'Tham gia Scanly và đơn giản hóa quy trình tài liệu của bạn.'**
   String get registerSubtitle;
 
   /// No description provided for @confirmPasswordLabel.

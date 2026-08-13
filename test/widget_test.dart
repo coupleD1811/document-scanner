@@ -25,10 +25,12 @@ void main() {
     authRepository.emitUser(null);
     await tester.pumpAndSettle();
 
-    expect(find.text('Scanly'), findsOneWidget);
+    expect(find.byKey(const ValueKey('auth-brand-logo')), findsOneWidget);
     expect(find.text('Không gian tài liệu bảo mật của bạn'), findsOneWidget);
     expect(find.byIcon(Icons.mail_outline), findsOneWidget);
     expect(find.byIcon(Icons.lock_outline), findsOneWidget);
+    expect(find.text('Tiếp tục với Google'), findsOneWidget);
+    expect(find.text('Tiếp tục với Facebook'), findsOneWidget);
   });
 
   testWidgets('đăng nhập bằng email và mật khẩu', (tester) async {
@@ -105,7 +107,7 @@ void main() {
     await tester.tap(openRegisterButton);
     await tester.pumpAndSettle();
 
-    expect(find.text('Đăng ký'), findsOneWidget);
+    expect(find.text('Tạo tài khoản'), findsWidgets);
     expect(find.widgetWithText(TextField, 'Nhập lại mật khẩu'), findsOneWidget);
 
     await tester.enterText(
