@@ -188,6 +188,74 @@ class AppLocalizationsVi extends AppLocalizations {
   String get signOutTooltip => 'Đăng xuất';
 
   @override
+  String get homeWelcomeGeneric => 'Chào mừng trở lại';
+
+  @override
+  String get homeWorkspaceSubtitle => 'Không gian tài liệu của bạn';
+
+  @override
+  String get homeScanDocumentAction => 'Quét tài liệu';
+
+  @override
+  String get homeScanDocumentSubtitle => 'Chụp, cắt mép, làm rõ và xuất PDF';
+
+  @override
+  String get homeQuickActionsTitle => 'Thao tác nhanh';
+
+  @override
+  String get quickImageToPdf => 'Ảnh sang PDF';
+
+  @override
+  String get quickImportPdf => 'Nhập PDF';
+
+  @override
+  String get quickOcr => 'OCR';
+
+  @override
+  String get quickCompressPdf => 'Nén PDF';
+
+  @override
+  String get quickSignDocument => 'Ký tài liệu';
+
+  @override
+  String get quickPasswordProtect => 'Đặt mật khẩu';
+
+  @override
+  String get homeRecentDocumentsTitle => 'Tài liệu gần đây';
+
+  @override
+  String get viewAllAction => 'Xem tất cả';
+
+  @override
+  String get homeNoRecentDocumentsTitle => 'Chưa có tài liệu gần đây';
+
+  @override
+  String get homeNoRecentDocumentsSubtitle =>
+      'Quét tài liệu đầu tiên để bắt đầu.';
+
+  @override
+  String get allToolsAction => 'Tất cả';
+
+  @override
+  String get mergePdfAction => 'Gộp PDF';
+
+  @override
+  String get splitPdfAction => 'Tách PDF';
+
+  @override
+  String get reorderPagesAction => 'Sắp xếp trang';
+
+  @override
+  String get compressPdfAction => 'Nén PDF';
+
+  @override
+  String get homeScanlyProSubtitle =>
+      'OCR, cloud sync và công cụ PDF không giới hạn.';
+
+  @override
+  String get upgradeAction => 'Nâng cấp';
+
+  @override
   String get readyToScanTitle => 'Sẵn sàng quét tài liệu';
 
   @override
