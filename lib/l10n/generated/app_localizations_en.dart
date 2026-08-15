@@ -189,6 +189,75 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signOutTooltip => 'Sign out';
 
   @override
+  String get homeWelcomeGeneric => 'Welcome back';
+
+  @override
+  String get homeWorkspaceSubtitle => 'Your document workspace';
+
+  @override
+  String get homeScanDocumentAction => 'Scan document';
+
+  @override
+  String get homeScanDocumentSubtitle =>
+      'Capture, crop, enhance, and export to PDF';
+
+  @override
+  String get homeQuickActionsTitle => 'Quick actions';
+
+  @override
+  String get quickImageToPdf => 'Image to PDF';
+
+  @override
+  String get quickImportPdf => 'Import PDF';
+
+  @override
+  String get quickOcr => 'OCR';
+
+  @override
+  String get quickCompressPdf => 'Compress PDF';
+
+  @override
+  String get quickSignDocument => 'Sign document';
+
+  @override
+  String get quickPasswordProtect => 'Password protect';
+
+  @override
+  String get homeRecentDocumentsTitle => 'Recent documents';
+
+  @override
+  String get viewAllAction => 'View all';
+
+  @override
+  String get homeNoRecentDocumentsTitle => 'No recent documents yet';
+
+  @override
+  String get homeNoRecentDocumentsSubtitle =>
+      'Scan your first document to get started.';
+
+  @override
+  String get allToolsAction => 'All tools';
+
+  @override
+  String get mergePdfAction => 'Merge PDF';
+
+  @override
+  String get splitPdfAction => 'Split PDF';
+
+  @override
+  String get reorderPagesAction => 'Reorder pages';
+
+  @override
+  String get compressPdfAction => 'Compress PDF';
+
+  @override
+  String get homeScanlyProSubtitle =>
+      'OCR, cloud sync, and unlimited PDF tools.';
+
+  @override
+  String get upgradeAction => 'Upgrade';
+
+  @override
   String get readyToScanTitle => 'Ready to scan';
 
   @override

@@ -442,6 +442,138 @@ abstract class AppLocalizations {
   /// **'Đăng xuất'**
   String get signOutTooltip;
 
+  /// No description provided for @homeWelcomeGeneric.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chào mừng trở lại'**
+  String get homeWelcomeGeneric;
+
+  /// No description provided for @homeWorkspaceSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không gian tài liệu của bạn'**
+  String get homeWorkspaceSubtitle;
+
+  /// No description provided for @homeScanDocumentAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quét tài liệu'**
+  String get homeScanDocumentAction;
+
+  /// No description provided for @homeScanDocumentSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chụp, cắt mép, làm rõ và xuất PDF'**
+  String get homeScanDocumentSubtitle;
+
+  /// No description provided for @homeQuickActionsTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thao tác nhanh'**
+  String get homeQuickActionsTitle;
+
+  /// No description provided for @quickImageToPdf.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ảnh sang PDF'**
+  String get quickImageToPdf;
+
+  /// No description provided for @quickImportPdf.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập PDF'**
+  String get quickImportPdf;
+
+  /// No description provided for @quickOcr.
+  ///
+  /// In vi, this message translates to:
+  /// **'OCR'**
+  String get quickOcr;
+
+  /// No description provided for @quickCompressPdf.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nén PDF'**
+  String get quickCompressPdf;
+
+  /// No description provided for @quickSignDocument.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ký tài liệu'**
+  String get quickSignDocument;
+
+  /// No description provided for @quickPasswordProtect.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đặt mật khẩu'**
+  String get quickPasswordProtect;
+
+  /// No description provided for @homeRecentDocumentsTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài liệu gần đây'**
+  String get homeRecentDocumentsTitle;
+
+  /// No description provided for @viewAllAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem tất cả'**
+  String get viewAllAction;
+
+  /// No description provided for @homeNoRecentDocumentsTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có tài liệu gần đây'**
+  String get homeNoRecentDocumentsTitle;
+
+  /// No description provided for @homeNoRecentDocumentsSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quét tài liệu đầu tiên để bắt đầu.'**
+  String get homeNoRecentDocumentsSubtitle;
+
+  /// No description provided for @allToolsAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả'**
+  String get allToolsAction;
+
+  /// No description provided for @mergePdfAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Gộp PDF'**
+  String get mergePdfAction;
+
+  /// No description provided for @splitPdfAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tách PDF'**
+  String get splitPdfAction;
+
+  /// No description provided for @reorderPagesAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sắp xếp trang'**
+  String get reorderPagesAction;
+
+  /// No description provided for @compressPdfAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nén PDF'**
+  String get compressPdfAction;
+
+  /// No description provided for @homeScanlyProSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'OCR, cloud sync và công cụ PDF không giới hạn.'**
+  String get homeScanlyProSubtitle;
+
+  /// No description provided for @upgradeAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nâng cấp'**
+  String get upgradeAction;
+
   /// No description provided for @readyToScanTitle.
   ///
   /// In vi, this message translates to:

@@ -58,8 +58,8 @@ void main() {
     expect(authRepository.lastEmail, 'user@example.com');
     expect(authRepository.lastPassword, 'secret1');
     expect(find.text('Đăng nhập thành công.'), findsOneWidget);
-    expect(find.text('Sẵn sàng quét tài liệu'), findsOneWidget);
-    expect(find.text('user@example.com'), findsOneWidget);
+    expect(find.text('Chào mừng trở lại, user'), findsOneWidget);
+    expect(find.text('Quét tài liệu'), findsOneWidget);
   });
 
   testWidgets('hiển thị lỗi khi đăng nhập thất bại', (tester) async {
@@ -86,7 +86,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Email hoặc mật khẩu không đúng.'), findsOneWidget);
-    expect(find.text('Sẵn sàng quét tài liệu'), findsNothing);
+    expect(find.text('Quét tài liệu'), findsNothing);
   });
 
   testWidgets('mở trang đăng ký và tạo tài khoản', (tester) async {
@@ -128,8 +128,8 @@ void main() {
     expect(authRepository.lastEmail, 'new@example.com');
     expect(authRepository.lastPassword, 'secret1');
     expect(find.text('Tạo tài khoản thành công.'), findsOneWidget);
-    expect(find.text('Sẵn sàng quét tài liệu'), findsOneWidget);
-    expect(find.text('new@example.com'), findsOneWidget);
+    expect(find.text('Chào mừng trở lại, new'), findsOneWidget);
+    expect(find.text('Quét tài liệu'), findsOneWidget);
   });
 
   testWidgets('hiển thị lỗi khi đăng ký thất bại', (tester) async {
@@ -170,7 +170,7 @@ void main() {
       find.text('Email này đã được dùng để tạo tài khoản.'),
       findsOneWidget,
     );
-    expect(find.text('Sẵn sàng quét tài liệu'), findsNothing);
+    expect(find.text('Quét tài liệu'), findsNothing);
   });
 
   testWidgets('chuyển tab bằng bottom bar sau khi đăng nhập', (tester) async {

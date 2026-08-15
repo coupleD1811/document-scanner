@@ -182,6 +182,72 @@ class AppLocalizationsJa extends AppLocalizations {
   String get signOutTooltip => 'ログアウト';
 
   @override
+  String get homeWelcomeGeneric => 'おかえりなさい';
+
+  @override
+  String get homeWorkspaceSubtitle => 'あなたのドキュメントワークスペース';
+
+  @override
+  String get homeScanDocumentAction => '書類をスキャン';
+
+  @override
+  String get homeScanDocumentSubtitle => '撮影、切り抜き、補正してPDFに出力';
+
+  @override
+  String get homeQuickActionsTitle => 'クイック操作';
+
+  @override
+  String get quickImageToPdf => '画像をPDFへ';
+
+  @override
+  String get quickImportPdf => 'PDFを読み込む';
+
+  @override
+  String get quickOcr => 'OCR';
+
+  @override
+  String get quickCompressPdf => 'PDFを圧縮';
+
+  @override
+  String get quickSignDocument => '書類に署名';
+
+  @override
+  String get quickPasswordProtect => 'パスワード保護';
+
+  @override
+  String get homeRecentDocumentsTitle => '最近の書類';
+
+  @override
+  String get viewAllAction => 'すべて表示';
+
+  @override
+  String get homeNoRecentDocumentsTitle => '最近の書類はまだありません';
+
+  @override
+  String get homeNoRecentDocumentsSubtitle => '最初の書類をスキャンして始めましょう。';
+
+  @override
+  String get allToolsAction => 'すべて';
+
+  @override
+  String get mergePdfAction => 'PDFを結合';
+
+  @override
+  String get splitPdfAction => 'PDFを分割';
+
+  @override
+  String get reorderPagesAction => 'ページ並べ替え';
+
+  @override
+  String get compressPdfAction => 'PDFを圧縮';
+
+  @override
+  String get homeScanlyProSubtitle => 'OCR、クラウド同期、無制限のPDFツール。';
+
+  @override
+  String get upgradeAction => 'アップグレード';
+
+  @override
   String get readyToScanTitle => 'スキャンの準備ができました';
 
   @override

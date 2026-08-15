@@ -41,12 +41,19 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         );
       },
       child: Scaffold(
-        appBar: AppBar(title: Text(_titleForIndex(t, _selectedIndex))),
+        appBar: _selectedIndex == 0
+            ? null
+            : AppBar(title: Text(_titleForIndex(t, _selectedIndex))),
         body: SafeArea(
           child: IndexedStack(
             index: _selectedIndex,
             children: [
-              HomePage(userEmail: user?.email),
+              HomePage(
+                userEmail: user?.email,
+                onScanPressed: () => _selectTab(_scanTabIndex),
+                onDocumentsPressed: () => _selectTab(1),
+                onToolsPressed: () => _selectTab(3),
+              ),
               const DocumentsPage(),
               const ScanPage(),
               const ToolsPage(),
@@ -57,12 +64,14 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         bottomNavigationBar: _ScanlyBottomBar(
           selectedIndex: _selectedIndex,
           scanTabIndex: _scanTabIndex,
-          onChanged: (index) {
-            setState(() => _selectedIndex = index);
-          },
+          onChanged: _selectTab,
         ),
       ),
     );
+  }
+
+  void _selectTab(int index) {
+    setState(() => _selectedIndex = index);
   }
 }
 
