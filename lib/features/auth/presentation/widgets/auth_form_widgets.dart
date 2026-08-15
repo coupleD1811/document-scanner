@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../l10n/l10n.dart';
 
@@ -31,7 +32,7 @@ class AuthBrandLogo extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.document_scanner_outlined,
+                  LucideIcons.scanLine,
                   color: colorScheme.primary,
                   size: 34,
                 ),
@@ -115,19 +116,26 @@ class AuthSocialButton extends StatelessWidget {
         side: const BorderSide(color: Color(0xFFD7E0E8)),
         textStyle: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          Image.asset(
-            assetPath,
-            width: 22,
-            height: 22,
-            fit: BoxFit.contain,
-            filterQuality: FilterQuality.high,
+          Align(
+            alignment: Alignment.centerLeft,
+            child: SizedBox(
+              width: 28,
+              height: 24,
+              child: Center(
+                child: Image.asset(
+                  assetPath,
+                  height: 22,
+                  fit: BoxFit.contain,
+                  filterQuality: FilterQuality.high,
+                ),
+              ),
+            ),
           ),
-          const SizedBox(width: 18),
-          Flexible(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Text(
               label,
               maxLines: 1,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../main_navigation/main_navigation_page.dart';
 import '../login/login_page.dart';
@@ -44,7 +45,7 @@ class _StartupView extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Icon(
-                  Icons.document_scanner_outlined,
+                  LucideIcons.scanLine,
                   color: colorScheme.primary,
                   size: 36,
                 ),

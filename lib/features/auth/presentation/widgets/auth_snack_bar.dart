@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 void showAuthSnackBar(
   BuildContext context, {
@@ -20,7 +21,7 @@ void showAuthSnackBar(
         content: Row(
           children: [
             Icon(
-              isError ? Icons.error_outline : Icons.check_circle_outline,
+              isError ? LucideIcons.circleAlert : LucideIcons.circleCheck,
               color: foregroundColor,
               size: 20,
             ),

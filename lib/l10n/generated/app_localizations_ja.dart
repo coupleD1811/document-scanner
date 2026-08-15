@@ -293,6 +293,87 @@ class AppLocalizationsJa extends AppLocalizations {
   String get documentsEmptySubtitle => '保存したスキャンと PDF ファイルがここに表示されます。';
 
   @override
+  String get searchDocumentsHint => '書類を検索';
+
+  @override
+  String get documentsFilterTitle => '書類を絞り込む';
+
+  @override
+  String get documentFilterAll => 'すべて';
+
+  @override
+  String get documentFilterScans => 'スキャン';
+
+  @override
+  String get documentFilterPdfs => 'PDF';
+
+  @override
+  String get clearSearchAction => '検索をクリア';
+
+  @override
+  String get documentsComingNextTitle => '今後の機能';
+
+  @override
+  String get documentStorageTitle => '書類ストレージ';
+
+  @override
+  String get documentStorageSubtitle => 'ファイルを安全に保存・整理';
+
+  @override
+  String get searchDocumentsTitle => '書類検索';
+
+  @override
+  String get searchDocumentsSubtitle => '必要なファイルをすぐに検索';
+
+  @override
+  String get ocrContentSearchTitle => 'OCR 内容検索';
+
+  @override
+  String get ocrContentSearchSubtitle => '書類内の文字を検索';
+
+  @override
+  String get documentsCountLabel => '件';
+
+  @override
+  String get sortRecent => '新しい順';
+
+  @override
+  String get sortOldest => '古い順';
+
+  @override
+  String get ocrReadyLabel => 'OCR 済み';
+
+  @override
+  String get openAction => '開く';
+
+  @override
+  String get renameAction => '名前を変更';
+
+  @override
+  String get shareAction => '共有';
+
+  @override
+  String get moveAction => '移動';
+
+  @override
+  String get deleteAction => '削除';
+
+  @override
+  String get documentsFeatureComingSoon => '書類機能は今後追加されます。';
+
+  @override
+  String get noMatchingDocumentsTitle => '該当する書類がありません';
+
+  @override
+  String get noMatchingDocumentsSubtitle => '別のキーワードやフィルターをお試しください。';
+
+  @override
+  String get pageLabel => 'ページ';
+
+  @override
+  String get pagesLabel => 'ページ';
+
+  @override
   String get scanPageTitle => '新しい書類をスキャン';
 
   @override

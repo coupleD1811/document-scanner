@@ -306,6 +306,88 @@ class AppLocalizationsVi extends AppLocalizations {
       'Các file scan và PDF đã lưu sẽ xuất hiện ở đây.';
 
   @override
+  String get searchDocumentsHint => 'Tìm kiếm tài liệu';
+
+  @override
+  String get documentsFilterTitle => 'Lọc tài liệu';
+
+  @override
+  String get documentFilterAll => 'Tất cả';
+
+  @override
+  String get documentFilterScans => 'Bản quét';
+
+  @override
+  String get documentFilterPdfs => 'PDF';
+
+  @override
+  String get clearSearchAction => 'Xóa tìm kiếm';
+
+  @override
+  String get documentsComingNextTitle => 'Sắp ra mắt';
+
+  @override
+  String get documentStorageTitle => 'Lưu trữ tài liệu';
+
+  @override
+  String get documentStorageSubtitle => 'Lưu trữ và sắp xếp tệp an toàn';
+
+  @override
+  String get searchDocumentsTitle => 'Tìm kiếm tài liệu';
+
+  @override
+  String get searchDocumentsSubtitle => 'Tìm mọi tệp trong vài giây';
+
+  @override
+  String get ocrContentSearchTitle => 'Tìm kiếm nội dung OCR';
+
+  @override
+  String get ocrContentSearchSubtitle => 'Tìm chữ bên trong tài liệu của bạn';
+
+  @override
+  String get documentsCountLabel => 'tài liệu';
+
+  @override
+  String get sortRecent => 'Gần đây';
+
+  @override
+  String get sortOldest => 'Cũ nhất';
+
+  @override
+  String get ocrReadyLabel => 'OCR sẵn sàng';
+
+  @override
+  String get openAction => 'Mở';
+
+  @override
+  String get renameAction => 'Đổi tên';
+
+  @override
+  String get shareAction => 'Chia sẻ';
+
+  @override
+  String get moveAction => 'Di chuyển';
+
+  @override
+  String get deleteAction => 'Xóa';
+
+  @override
+  String get documentsFeatureComingSoon =>
+      'Tính năng tài liệu sẽ được bổ sung sau.';
+
+  @override
+  String get noMatchingDocumentsTitle => 'Không tìm thấy tài liệu';
+
+  @override
+  String get noMatchingDocumentsSubtitle => 'Thử từ khóa hoặc bộ lọc khác.';
+
+  @override
+  String get pageLabel => 'trang';
+
+  @override
+  String get pagesLabel => 'trang';
+
+  @override
   String get scanPageTitle => 'Quét tài liệu mới';
 
   @override

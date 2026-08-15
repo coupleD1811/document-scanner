@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../l10n/l10n.dart';
 import '../auth/session/bloc/auth_session_bloc.dart';
@@ -34,7 +34,7 @@ class ProfilePage extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(12),
                     child: Icon(
-                      CupertinoIcons.person_crop_circle,
+                      LucideIcons.circleUserRound,
                       color: colorScheme.primary,
                       size: 30,
                     ),
@@ -65,24 +65,25 @@ class ProfilePage extends StatelessWidget {
         const SizedBox(height: 12),
         _SettingsTile(
           key: const ValueKey('language-setting-tile'),
-          icon: CupertinoIcons.globe,
+          icon: LucideIcons.globe,
           title: t.languageSettingTitle,
           onTap: () => _showLanguagePicker(context),
         ),
         const SizedBox(height: 10),
         _SettingsTile(
-          icon: CupertinoIcons.cloud,
+          icon: LucideIcons.cloud,
           title: t.cloudSyncTitle,
           subtitle: t.cloudSyncSubtitle,
         ),
         const SizedBox(height: 20),
         OutlinedButton.icon(
+          style: OutlinedButton.styleFrom(foregroundColor: colorScheme.error),
           onPressed: () {
             context.read<AuthSessionBloc>().add(
               const AuthSessionSignOutRequested(),
             );
           },
-          icon: const Icon(CupertinoIcons.square_arrow_right),
+          icon: const Icon(LucideIcons.logOut),
           label: Text(t.signOutAction),
         ),
       ],
@@ -136,8 +137,7 @@ class _SettingsTile extends StatelessWidget {
                   ],
                 ),
               ),
-              if (onTap != null)
-                const Icon(CupertinoIcons.chevron_forward, size: 18),
+              if (onTap != null) const Icon(LucideIcons.chevronRight, size: 18),
             ],
           ),
         ),
@@ -245,7 +245,7 @@ class _LanguageOptionTile extends StatelessWidget {
                 ),
                 if (isSelected)
                   Icon(
-                    CupertinoIcons.check_mark_circled_solid,
+                    LucideIcons.circleCheckBig,
                     color: colorScheme.primary,
                     size: 22,
                   ),

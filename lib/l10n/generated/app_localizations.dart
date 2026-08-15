@@ -664,6 +664,168 @@ abstract class AppLocalizations {
   /// **'Các file scan và PDF đã lưu sẽ xuất hiện ở đây.'**
   String get documentsEmptySubtitle;
 
+  /// No description provided for @searchDocumentsHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm kiếm tài liệu'**
+  String get searchDocumentsHint;
+
+  /// No description provided for @documentsFilterTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lọc tài liệu'**
+  String get documentsFilterTitle;
+
+  /// No description provided for @documentFilterAll.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả'**
+  String get documentFilterAll;
+
+  /// No description provided for @documentFilterScans.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bản quét'**
+  String get documentFilterScans;
+
+  /// No description provided for @documentFilterPdfs.
+  ///
+  /// In vi, this message translates to:
+  /// **'PDF'**
+  String get documentFilterPdfs;
+
+  /// No description provided for @clearSearchAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa tìm kiếm'**
+  String get clearSearchAction;
+
+  /// No description provided for @documentsComingNextTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sắp ra mắt'**
+  String get documentsComingNextTitle;
+
+  /// No description provided for @documentStorageTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lưu trữ tài liệu'**
+  String get documentStorageTitle;
+
+  /// No description provided for @documentStorageSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lưu trữ và sắp xếp tệp an toàn'**
+  String get documentStorageSubtitle;
+
+  /// No description provided for @searchDocumentsTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm kiếm tài liệu'**
+  String get searchDocumentsTitle;
+
+  /// No description provided for @searchDocumentsSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm mọi tệp trong vài giây'**
+  String get searchDocumentsSubtitle;
+
+  /// No description provided for @ocrContentSearchTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm kiếm nội dung OCR'**
+  String get ocrContentSearchTitle;
+
+  /// No description provided for @ocrContentSearchSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm chữ bên trong tài liệu của bạn'**
+  String get ocrContentSearchSubtitle;
+
+  /// No description provided for @documentsCountLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'tài liệu'**
+  String get documentsCountLabel;
+
+  /// No description provided for @sortRecent.
+  ///
+  /// In vi, this message translates to:
+  /// **'Gần đây'**
+  String get sortRecent;
+
+  /// No description provided for @sortOldest.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cũ nhất'**
+  String get sortOldest;
+
+  /// No description provided for @ocrReadyLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'OCR sẵn sàng'**
+  String get ocrReadyLabel;
+
+  /// No description provided for @openAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở'**
+  String get openAction;
+
+  /// No description provided for @renameAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đổi tên'**
+  String get renameAction;
+
+  /// No description provided for @shareAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chia sẻ'**
+  String get shareAction;
+
+  /// No description provided for @moveAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Di chuyển'**
+  String get moveAction;
+
+  /// No description provided for @deleteAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa'**
+  String get deleteAction;
+
+  /// No description provided for @documentsFeatureComingSoon.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tính năng tài liệu sẽ được bổ sung sau.'**
+  String get documentsFeatureComingSoon;
+
+  /// No description provided for @noMatchingDocumentsTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tìm thấy tài liệu'**
+  String get noMatchingDocumentsTitle;
+
+  /// No description provided for @noMatchingDocumentsSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thử từ khóa hoặc bộ lọc khác.'**
+  String get noMatchingDocumentsSubtitle;
+
+  /// No description provided for @pageLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'trang'**
+  String get pageLabel;
+
+  /// No description provided for @pagesLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'trang'**
+  String get pagesLabel;
+
   /// No description provided for @scanPageTitle.
   ///
   /// In vi, this message translates to:

@@ -1,12 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../l10n/l10n.dart';
 import '../auth/presentation/widgets/auth_failure_message.dart';
 import '../auth/presentation/widgets/auth_snack_bar.dart';
 import '../auth/session/bloc/auth_session_bloc.dart';
-import '../documents/documents_page.dart';
+import '../documents/view/page.dart';
 import '../home/home_page.dart';
 import '../profile/profile_page.dart';
 import '../scan/scan_page.dart';
@@ -41,7 +41,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         );
       },
       child: Scaffold(
-        appBar: _selectedIndex == 0
+        appBar: _selectedIndex <= 1
             ? null
             : AppBar(title: Text(_titleForIndex(t, _selectedIndex))),
         body: SafeArea(
@@ -54,7 +54,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                 onDocumentsPressed: () => _selectTab(1),
                 onToolsPressed: () => _selectTab(3),
               ),
-              const DocumentsPage(),
+              DocumentsPage(onScanPressed: () => _selectTab(_scanTabIndex)),
               const ScanPage(),
               const ToolsPage(),
               ProfilePage(userEmail: user?.email),
@@ -123,16 +123,16 @@ class _ScanlyBottomBar extends StatelessWidget {
               _BottomTabItem(
                 key: const ValueKey('bottom-tab-home'),
                 label: t.tabHome,
-                icon: CupertinoIcons.house,
-                selectedIcon: CupertinoIcons.house_fill,
+                icon: LucideIcons.house,
+                selectedIcon: LucideIcons.house600,
                 isSelected: selectedIndex == 0,
                 onTap: () => onChanged(0),
               ),
               _BottomTabItem(
                 key: const ValueKey('bottom-tab-documents'),
                 label: t.tabDocuments,
-                icon: CupertinoIcons.folder,
-                selectedIcon: CupertinoIcons.folder_fill,
+                icon: LucideIcons.folder,
+                selectedIcon: LucideIcons.folder600,
                 isSelected: selectedIndex == 1,
                 onTap: () => onChanged(1),
               ),
@@ -145,16 +145,16 @@ class _ScanlyBottomBar extends StatelessWidget {
               _BottomTabItem(
                 key: const ValueKey('bottom-tab-tools'),
                 label: t.tabTools,
-                icon: CupertinoIcons.slider_horizontal_3,
-                selectedIcon: CupertinoIcons.slider_horizontal_3,
+                icon: LucideIcons.slidersHorizontal,
+                selectedIcon: LucideIcons.slidersHorizontal600,
                 isSelected: selectedIndex == 3,
                 onTap: () => onChanged(3),
               ),
               _BottomTabItem(
                 key: const ValueKey('bottom-tab-profile'),
                 label: t.tabProfile,
-                icon: CupertinoIcons.person_crop_circle,
-                selectedIcon: CupertinoIcons.person_crop_circle_fill,
+                icon: LucideIcons.circleUserRound,
+                selectedIcon: LucideIcons.circleUserRound600,
                 isSelected: selectedIndex == 4,
                 onTap: () => onChanged(4),
               ),
@@ -271,7 +271,7 @@ class _ScanTabButton extends StatelessWidget {
                       ],
                     ),
                     child: Icon(
-                      CupertinoIcons.doc_text_viewfinder,
+                      LucideIcons.scanLine,
                       color: colorScheme.onPrimary,
                       size: 30,
                     ),

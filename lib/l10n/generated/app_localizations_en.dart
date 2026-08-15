@@ -308,6 +308,89 @@ class AppLocalizationsEn extends AppLocalizations {
       'Saved scans and PDF files will appear here.';
 
   @override
+  String get searchDocumentsHint => 'Search documents';
+
+  @override
+  String get documentsFilterTitle => 'Filter documents';
+
+  @override
+  String get documentFilterAll => 'All';
+
+  @override
+  String get documentFilterScans => 'Scans';
+
+  @override
+  String get documentFilterPdfs => 'PDFs';
+
+  @override
+  String get clearSearchAction => 'Clear search';
+
+  @override
+  String get documentsComingNextTitle => 'Coming next';
+
+  @override
+  String get documentStorageTitle => 'Document storage';
+
+  @override
+  String get documentStorageSubtitle =>
+      'Securely store and organize your files';
+
+  @override
+  String get searchDocumentsTitle => 'Search documents';
+
+  @override
+  String get searchDocumentsSubtitle => 'Find any file in seconds';
+
+  @override
+  String get ocrContentSearchTitle => 'OCR content search';
+
+  @override
+  String get ocrContentSearchSubtitle => 'Search text inside your documents';
+
+  @override
+  String get documentsCountLabel => 'documents';
+
+  @override
+  String get sortRecent => 'Recent';
+
+  @override
+  String get sortOldest => 'Oldest';
+
+  @override
+  String get ocrReadyLabel => 'OCR ready';
+
+  @override
+  String get openAction => 'Open';
+
+  @override
+  String get renameAction => 'Rename';
+
+  @override
+  String get shareAction => 'Share';
+
+  @override
+  String get moveAction => 'Move';
+
+  @override
+  String get deleteAction => 'Delete';
+
+  @override
+  String get documentsFeatureComingSoon =>
+      'Document features will be added later.';
+
+  @override
+  String get noMatchingDocumentsTitle => 'No matching documents';
+
+  @override
+  String get noMatchingDocumentsSubtitle => 'Try another keyword or filter.';
+
+  @override
+  String get pageLabel => 'page';
+
+  @override
+  String get pagesLabel => 'pages';
+
+  @override
   String get scanPageTitle => 'Scan a new document';
 
   @override
