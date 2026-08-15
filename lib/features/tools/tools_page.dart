@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../l10n/l10n.dart';
 import '../shared/widgets/empty_feature_view.dart';
@@ -15,21 +16,21 @@ class ToolsPage extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
       children: [
         EmptyFeatureView(
-          icon: CupertinoIcons.slider_horizontal_3,
+          icon: LucideIcons.slidersHorizontal,
           title: t.pdfToolkitTitle,
           subtitle: t.toolsPageSubtitle,
           isInScrollView: true,
         ),
         const SizedBox(height: 16),
         ModuleTile(
-          icon: CupertinoIcons.doc_on_doc,
+          icon: LucideIcons.combine,
           title: t.pdfToolkitTitle,
           subtitle: t.pdfToolkitSubtitle,
           status: t.plannedStatus,
         ),
         const SizedBox(height: 10),
         ModuleTile(
-          icon: CupertinoIcons.doc_text_search,
+          icon: LucideIcons.fileSearch,
           title: t.ocrSearchTitle,
           subtitle: t.ocrSearchSubtitle,
           status: t.plannedStatus,

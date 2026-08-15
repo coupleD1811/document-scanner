@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../l10n/l10n.dart';
 
@@ -40,32 +41,32 @@ class HomePage extends StatelessWidget {
         _QuickActionsGrid(
           actions: [
             _HomeAction(
-              icon: CupertinoIcons.photo,
+              icon: LucideIcons.image,
               title: t.quickImageToPdf,
               onPressed: onToolsPressed,
             ),
             _HomeAction(
-              icon: CupertinoIcons.arrow_down_doc,
+              icon: LucideIcons.fileDown,
               title: t.quickImportPdf,
               onPressed: onDocumentsPressed,
             ),
             _HomeAction(
-              icon: CupertinoIcons.textformat,
+              icon: LucideIcons.scanText,
               title: t.quickOcr,
               onPressed: onToolsPressed,
             ),
             _HomeAction(
-              icon: CupertinoIcons.rectangle_compress_vertical,
+              icon: LucideIcons.fileArchive,
               title: t.quickCompressPdf,
               onPressed: onToolsPressed,
             ),
             _HomeAction(
-              icon: CupertinoIcons.signature,
+              icon: LucideIcons.signature,
               title: t.quickSignDocument,
               onPressed: onToolsPressed,
             ),
             _HomeAction(
-              icon: CupertinoIcons.lock_shield,
+              icon: LucideIcons.fileLock,
               title: t.quickPasswordProtect,
               onPressed: onToolsPressed,
             ),
@@ -93,22 +94,22 @@ class HomePage extends StatelessWidget {
         _ToolkitGrid(
           tools: [
             _HomeAction(
-              icon: CupertinoIcons.doc_on_doc,
+              icon: LucideIcons.combine,
               title: t.mergePdfAction,
               onPressed: onToolsPressed,
             ),
             _HomeAction(
-              icon: CupertinoIcons.scissors,
+              icon: LucideIcons.scissors,
               title: t.splitPdfAction,
               onPressed: onToolsPressed,
             ),
             _HomeAction(
-              icon: CupertinoIcons.rectangle_split_3x1,
+              icon: LucideIcons.listOrdered,
               title: t.reorderPagesAction,
               onPressed: onToolsPressed,
             ),
             _HomeAction(
-              icon: CupertinoIcons.rectangle_compress_vertical,
+              icon: LucideIcons.fileArchive,
               title: t.compressPdfAction,
               onPressed: onToolsPressed,
             ),
@@ -144,13 +145,13 @@ class _HomeHeader extends StatelessWidget {
             const _HomeBrandLogo(),
             const Spacer(),
             _HeaderIconButton(
-              icon: CupertinoIcons.search,
+              icon: LucideIcons.search,
               color: colorScheme.onSurface,
               onPressed: () {},
             ),
             const SizedBox(width: 8),
             _HeaderIconButton(
-              icon: CupertinoIcons.bell,
+              icon: LucideIcons.bell,
               color: colorScheme.onSurface,
               onPressed: () {},
             ),
@@ -255,7 +256,7 @@ class _ScanCallToAction extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(14),
                   child: Icon(
-                    CupertinoIcons.doc_text_viewfinder,
+                    LucideIcons.scanLine,
                     color: colorScheme.onPrimary,
                     size: 36,
                   ),
@@ -285,7 +286,7 @@ class _ScanCallToAction extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Icon(
-                CupertinoIcons.chevron_right,
+                LucideIcons.chevronRight,
                 color: colorScheme.onPrimary,
                 size: 24,
               ),
@@ -411,7 +412,7 @@ class _SectionHeader extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Icon(
-                CupertinoIcons.chevron_right,
+                LucideIcons.chevronRight,
                 color: colorScheme.primary,
                 size: 16,
               ),
@@ -464,7 +465,7 @@ class _RecentDocumentsEmptyState extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(14),
                     child: Icon(
-                      CupertinoIcons.tray,
+                      LucideIcons.inbox,
                       color: colorScheme.onSurfaceVariant,
                       size: 32,
                     ),
@@ -608,7 +609,7 @@ class _ScanlyProBanner extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Icon(
-                  CupertinoIcons.sparkles,
+                  LucideIcons.sparkles,
                   color: colorScheme.onPrimary,
                   size: 26,
                 ),

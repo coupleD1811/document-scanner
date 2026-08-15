@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../l10n/l10n.dart';
 
@@ -30,7 +30,7 @@ class ScanPage extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(28),
                     child: Icon(
-                      CupertinoIcons.doc_text_viewfinder,
+                      LucideIcons.scanLine,
                       color: colorScheme.primary,
                       size: 72,
                     ),
@@ -56,7 +56,7 @@ class ScanPage extends StatelessWidget {
               const SizedBox(height: 24),
               FilledButton.icon(
                 onPressed: () {},
-                icon: const Icon(CupertinoIcons.doc_text_viewfinder),
+                icon: const Icon(LucideIcons.scanLine),
                 label: Text(t.startScanAction),
               ),
             ],

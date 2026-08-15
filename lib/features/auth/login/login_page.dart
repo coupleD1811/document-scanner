@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../l10n/l10n.dart';
 import '../presentation/widgets/auth_failure_message.dart';
@@ -119,7 +120,7 @@ class _LoginViewState extends State<_LoginView> {
                                   decoration: _inputDecoration(
                                     context,
                                     hintText: t.emailLabel,
-                                    prefixIcon: Icons.mail_outline,
+                                    prefixIcon: LucideIcons.mail,
                                     errorText: _emailError,
                                   ),
                                   onSubmitted: (_) =>
@@ -140,7 +141,7 @@ class _LoginViewState extends State<_LoginView> {
                                   decoration: _inputDecoration(
                                     context,
                                     hintText: t.passwordLabel,
-                                    prefixIcon: Icons.lock_outline,
+                                    prefixIcon: LucideIcons.lockKeyhole,
                                     errorText: _passwordError,
                                     suffixIcon: IconButton(
                                       tooltip: _obscurePassword
@@ -153,8 +154,8 @@ class _LoginViewState extends State<_LoginView> {
                                       },
                                       icon: Icon(
                                         _obscurePassword
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off_outlined,
+                                            ? LucideIcons.eye
+                                            : LucideIcons.eyeOff,
                                       ),
                                     ),
                                   ),

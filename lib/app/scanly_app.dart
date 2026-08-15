@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../features/auth/repository/auth_repository.dart';
 import '../features/auth/session/bloc/auth_session_bloc.dart';
@@ -82,7 +83,7 @@ class FirebaseSetupApp extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.document_scanner_outlined, size: 48),
+                        const Icon(LucideIcons.scanLine, size: 48),
                         const SizedBox(height: 20),
                         Text(
                           t.firebaseNotConfiguredTitle,
@@ -156,7 +157,7 @@ class _SetupStep extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Row(
             children: [
-              Icon(Icons.terminal, size: 18, color: colorScheme.primary),
+              Icon(LucideIcons.terminal, size: 18, color: colorScheme.primary),
               const SizedBox(width: 10),
               Expanded(
                 child: SelectableText(

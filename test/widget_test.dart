@@ -4,8 +4,12 @@ import 'package:scanly/app/scanly_app.dart';
 import 'package:scanly/features/auth/repository/auth_failure.dart';
 import 'package:scanly/features/auth/repository/auth_repository.dart';
 import 'package:scanly/features/auth/repository/auth_user.dart';
+import 'package:scanly/features/documents/model/model.dart';
+import 'package:scanly/features/documents/view/page.dart';
+import 'package:scanly/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -27,10 +31,25 @@ void main() {
 
     expect(find.byKey(const ValueKey('auth-brand-logo')), findsOneWidget);
     expect(find.text('Không gian tài liệu bảo mật của bạn'), findsOneWidget);
-    expect(find.byIcon(Icons.mail_outline), findsOneWidget);
-    expect(find.byIcon(Icons.lock_outline), findsOneWidget);
+    expect(find.byIcon(LucideIcons.mail), findsOneWidget);
+    expect(find.byIcon(LucideIcons.lockKeyhole), findsOneWidget);
     expect(find.text('Tiếp tục với Google'), findsOneWidget);
     expect(find.text('Tiếp tục với Facebook'), findsOneWidget);
+
+    final googleIcon = find.image(
+      const AssetImage('images/logo/google_icon.png'),
+    );
+    final facebookIcon = find.image(
+      const AssetImage('images/logo/facebook_icon.png'),
+    );
+    expect(
+      tester.getCenter(googleIcon).dx,
+      closeTo(tester.getCenter(facebookIcon).dx, 0.1),
+    );
+    expect(
+      tester.getSize(googleIcon).height,
+      tester.getSize(facebookIcon).height,
+    );
   });
 
   testWidgets('đăng nhập bằng email và mật khẩu', (tester) async {
@@ -195,6 +214,16 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('bottom-tab-documents')));
     await tester.pumpAndSettle();
     expect(find.text('Chưa có tài liệu'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('documents-search-field')),
+      findsOneWidget,
+    );
+    await tester.scrollUntilVisible(
+      find.text('Sắp ra mắt'),
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Sắp ra mắt'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('bottom-tab-scan')));
     await tester.pumpAndSettle();
@@ -211,6 +240,57 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Cài đặt'), findsOneWidget);
     expect(find.text('user@example.com'), findsOneWidget);
+  });
+
+  testWidgets('hiển thị và lọc danh sách tài liệu', (tester) async {
+    final documents = [
+      DocumentItem(
+        id: 'pdf-1',
+        name: 'Employment Contract.pdf',
+        type: DocumentType.pdf,
+        updatedAt: DateTime(2026, 8, 20),
+        pageCount: 4,
+        sizeInBytes: 1258291,
+        hasOcrText: true,
+      ),
+      DocumentItem(
+        id: 'scan-1',
+        name: 'Receipt 15-08-2026.pdf',
+        type: DocumentType.scan,
+        updatedAt: DateTime(2026, 8, 15),
+        pageCount: 1,
+        sizeInBytes: 215040,
+      ),
+    ];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('vi'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(body: DocumentsPage(documents: documents)),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('2 tài liệu'), findsOneWidget);
+    expect(find.text('Employment Contract.pdf'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('documents-filter-scans')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('1 tài liệu'), findsOneWidget);
+    expect(find.text('Employment Contract.pdf'), findsNothing);
+    expect(find.text('Receipt 15-08-2026.pdf'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('document-more-scan-1')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Mở'), findsOneWidget);
+    expect(find.text('Đổi tên'), findsOneWidget);
+    expect(find.text('Chia sẻ'), findsOneWidget);
+    expect(find.text('Di chuyển'), findsOneWidget);
+    expect(find.text('Xóa'), findsOneWidget);
   });
 
   testWidgets('đổi ngôn ngữ trong tab cá nhân', (tester) async {
