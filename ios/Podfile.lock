@@ -1,4 +1,8 @@
 PODS:
+  - camera_avfoundation (0.0.1):
+    - Flutter
+  - file_selector_ios (0.0.1):
+    - Flutter
   - Firebase/Auth (12.17.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 12.17.0)
@@ -55,16 +59,21 @@ PODS:
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
   - GTMSessionFetcher/Core (5.3.1)
+  - permission_handler_apple (9.4.8):
+    - Flutter
   - RecaptchaInterop (101.0.0)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
 
 DEPENDENCIES:
+  - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
+  - file_selector_ios (from `.symlinks/plugins/file_selector_ios/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
 SPEC REPOS:
@@ -81,6 +90,10 @@ SPEC REPOS:
     - RecaptchaInterop
 
 EXTERNAL SOURCES:
+  camera_avfoundation:
+    :path: ".symlinks/plugins/camera_avfoundation/ios"
+  file_selector_ios:
+    :path: ".symlinks/plugins/file_selector_ios/ios"
   firebase_auth:
     :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
@@ -89,10 +102,14 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_native_splash:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
+  camera_avfoundation: 968a9a5323c79a99c166ad9d7866bfd2047b5a9b
+  file_selector_ios: ec57ec07954363dd730b642e765e58f199bb621a
   Firebase: e8400c058702940d53f31fc0653e4e7a06332326
   firebase_auth: 3e82fa3e632856cd5a8e2bedf458d682740c8168
   firebase_core: c94f9efeed0ded590b7eecaf6110a374eb865d7a
@@ -106,9 +123,10 @@ SPEC CHECKSUMS:
   flutter_native_splash: c32d145d68aeda5502d5f543ee38c192065986cf
   GoogleUtilities: 766ace00c6b10d8148408f329d10c4f051931850
   GTMSessionFetcher: a6d2b2aa203485893d4511ff64642dc811f7c09f
+  permission_handler_apple: 92d754bbaa7361d436db2d6c3c1c2a0fdcec462e
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
 
-PODFILE CHECKSUM: 53a6aebc29ccee84c41f92f409fc20cd4ca011f1
+PODFILE CHECKSUM: c69154dc6df2f6571b7457f28bc93a9b5d47f52d
 
 COCOAPODS: 1.16.2

@@ -75,9 +75,7 @@ Trang chủ | Tài liệu | Quét | Công cụ | Cá nhân
 
 Quy ước hiện tại:
 
-- Dùng `CupertinoIcons` cho các tab chính.
 - Nút `Quét` nằm giữa và nổi bật hơn các tab còn lại.
-- Icon quét chính: `CupertinoIcons.doc_text_viewfinder`.
 
 ## Đa Ngôn Ngữ
 

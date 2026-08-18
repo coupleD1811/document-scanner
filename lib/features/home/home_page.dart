@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../app/theme/scanly_icons.dart';
 import '../../l10n/l10n.dart';
 
 class HomePage extends StatelessWidget {
@@ -41,32 +42,32 @@ class HomePage extends StatelessWidget {
         _QuickActionsGrid(
           actions: [
             _HomeAction(
-              icon: LucideIcons.image,
+              icon: ScanlyIcons.imageToPdf,
               title: t.quickImageToPdf,
               onPressed: onToolsPressed,
             ),
             _HomeAction(
-              icon: LucideIcons.fileDown,
+              icon: ScanlyIcons.importPdf,
               title: t.quickImportPdf,
               onPressed: onDocumentsPressed,
             ),
             _HomeAction(
-              icon: LucideIcons.scanText,
+              icon: ScanlyIcons.ocrText,
               title: t.quickOcr,
               onPressed: onToolsPressed,
             ),
             _HomeAction(
-              icon: LucideIcons.fileArchive,
+              icon: ScanlyIcons.compressPdf,
               title: t.quickCompressPdf,
               onPressed: onToolsPressed,
             ),
             _HomeAction(
-              icon: LucideIcons.signature,
+              icon: ScanlyIcons.signDocument,
               title: t.quickSignDocument,
               onPressed: onToolsPressed,
             ),
             _HomeAction(
-              icon: LucideIcons.fileLock,
+              icon: ScanlyIcons.passwordProtect,
               title: t.quickPasswordProtect,
               onPressed: onToolsPressed,
             ),
@@ -94,22 +95,22 @@ class HomePage extends StatelessWidget {
         _ToolkitGrid(
           tools: [
             _HomeAction(
-              icon: LucideIcons.combine,
+              icon: ScanlyIcons.mergePdf,
               title: t.mergePdfAction,
               onPressed: onToolsPressed,
             ),
             _HomeAction(
-              icon: LucideIcons.scissors,
+              icon: ScanlyIcons.splitPdf,
               title: t.splitPdfAction,
               onPressed: onToolsPressed,
             ),
             _HomeAction(
-              icon: LucideIcons.listOrdered,
+              icon: ScanlyIcons.reorderPages,
               title: t.reorderPagesAction,
               onPressed: onToolsPressed,
             ),
             _HomeAction(
-              icon: LucideIcons.fileArchive,
+              icon: ScanlyIcons.compressPdf,
               title: t.compressPdfAction,
               onPressed: onToolsPressed,
             ),
@@ -256,7 +257,7 @@ class _ScanCallToAction extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(14),
                   child: Icon(
-                    LucideIcons.scanLine,
+                    ScanlyIcons.scanDocument,
                     color: colorScheme.onPrimary,
                     size: 36,
                   ),

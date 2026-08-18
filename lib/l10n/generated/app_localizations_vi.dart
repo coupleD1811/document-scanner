@@ -398,8 +398,95 @@ class AppLocalizationsVi extends AppLocalizations {
   String get startScanAction => 'Bắt đầu quét';
 
   @override
-  String get toolsPageSubtitle =>
-      'Các công cụ xử lý PDF sẽ được gom ở đây để thao tác nhanh.';
+  String get cameraPermissionRequesting =>
+      'Đang kiểm tra quyền sử dụng camera...';
+
+  @override
+  String get cameraInitializing => 'Đang khởi tạo camera...';
+
+  @override
+  String get cameraPermissionDeniedTitle => 'Scanly cần quyền camera';
+
+  @override
+  String get cameraPermissionDeniedMessage =>
+      'Cho phép Scanly sử dụng camera để chụp và quét tài liệu.';
+
+  @override
+  String get cameraPermissionPermanentlyDeniedTitle =>
+      'Quyền camera đang bị tắt';
+
+  @override
+  String get cameraPermissionPermanentlyDeniedMessage =>
+      'Mở Cài đặt và cấp quyền camera cho Scanly để tiếp tục quét.';
+
+  @override
+  String get cameraRestrictedTitle => 'Không thể sử dụng camera';
+
+  @override
+  String get cameraRestrictedMessage =>
+      'Thiết bị đang giới hạn quyền camera. Hãy kiểm tra giới hạn hệ thống hoặc liên hệ quản trị viên thiết bị.';
+
+  @override
+  String get cameraUnavailableTitle => 'Không tìm thấy camera';
+
+  @override
+  String get cameraUnavailableMessage =>
+      'Thiết bị này không có camera khả dụng để quét tài liệu.';
+
+  @override
+  String get cameraFailureTitle => 'Không thể mở camera';
+
+  @override
+  String get cameraFailureMessage =>
+      'Đã xảy ra lỗi khi mở camera. Hãy thử lại.';
+
+  @override
+  String get retryAction => 'Thử lại';
+
+  @override
+  String get openSettingsAction => 'Mở Cài đặt';
+
+  @override
+  String get captureDocumentTooltip => 'Chụp tài liệu';
+
+  @override
+  String get scanCapturedMessage => 'Đã chụp ảnh tài liệu.';
+
+  @override
+  String pdfSelectedMessage(String name) {
+    return 'Đã chọn $name.';
+  }
+
+  @override
+  String get pdfImportFailed => 'Không thể mở tệp PDF. Hãy thử lại.';
+
+  @override
+  String get toolsPageTitle => 'Công cụ PDF';
+
+  @override
+  String get toolsPageSubtitle => 'Chỉnh sửa, chuyển đổi và bảo vệ tài liệu';
+
+  @override
+  String get toolsEditOrganizeTitle => 'Chỉnh sửa và sắp xếp';
+
+  @override
+  String get toolsConvertExtractTitle => 'Chuyển đổi và trích xuất';
+
+  @override
+  String get toolsOptimizeTitle => 'Tối ưu hóa';
+
+  @override
+  String get toolsSecurityTitle => 'Bảo mật';
+
+  @override
+  String get deletePagesAction => 'Xóa trang';
+
+  @override
+  String get ocrTextAction => 'Văn bản OCR';
+
+  @override
+  String get toolsFeatureComingSoon =>
+      'Công cụ này sẽ được bổ sung trong phiên bản tiếp theo.';
 
   @override
   String get profileAccountTitle => 'Tài khoản';
