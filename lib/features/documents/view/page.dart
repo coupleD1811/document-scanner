@@ -3,20 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../app/theme/scanly_icons.dart';
 import '../../../l10n/l10n.dart';
 import '../model/model.dart';
+import '../service/document_file_picker.dart';
 
 class DocumentsPage extends StatefulWidget {
   const DocumentsPage({
     this.documents = const [],
     this.onScanPressed,
     this.onImportPressed,
+    this.filePicker = const SystemDocumentFilePicker(),
     super.key,
   });
 
   final List<DocumentItem> documents;
   final VoidCallback? onScanPressed;
   final VoidCallback? onImportPressed;
+  final DocumentFilePicker filePicker;
 
   @override
   State<DocumentsPage> createState() => _DocumentsPageState();
@@ -28,6 +32,7 @@ class _DocumentsPageState extends State<DocumentsPage> {
 
   _DocumentFilter _selectedFilter = _DocumentFilter.all;
   bool _newestFirst = true;
+  bool _isImporting = false;
 
   @override
   void dispose() {
@@ -156,14 +161,45 @@ class _DocumentsPageState extends State<DocumentsPage> {
     _showFeatureUnavailable();
   }
 
-  void _handleImportPressed() {
+  Future<void> _handleImportPressed() async {
     final callback = widget.onImportPressed;
     if (callback != null) {
       callback();
       return;
     }
 
-    _showFeatureUnavailable();
+    if (_isImporting) {
+      return;
+    }
+
+    _isImporting = true;
+    try {
+      final file = await widget.filePicker.pickPdf();
+      if (!mounted || file == null) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text(context.l10n.pdfSelectedMessage(file.name))),
+        );
+    } on Object {
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(context.l10n.pdfImportFailed),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+    } finally {
+      _isImporting = false;
+    }
   }
 
   void _clearSearchAndFilters() {
@@ -597,7 +633,7 @@ class _ComingNextSection extends StatelessWidget {
             ),
             const Divider(height: 1),
             _ComingNextItem(
-              icon: LucideIcons.scanText,
+              icon: ScanlyIcons.ocrText,
               title: t.ocrContentSearchTitle,
               subtitle: t.ocrContentSearchSubtitle,
             ),
@@ -728,7 +764,7 @@ class _DocumentListControls extends StatelessWidget {
         OutlinedButton.icon(
           key: const ValueKey('documents-list-import-button'),
           onPressed: onImportPressed,
-          icon: const Icon(LucideIcons.upload, size: 20),
+          icon: const Icon(ScanlyIcons.importPdf, size: 20),
           label: Text(t.quickImportPdf),
         ),
       ],
@@ -998,7 +1034,7 @@ String _filterLabel(AppLocalizations t, _DocumentFilter filter) {
 IconData _filterIcon(_DocumentFilter filter) {
   return switch (filter) {
     _DocumentFilter.all => LucideIcons.folder,
-    _DocumentFilter.scans => LucideIcons.scanLine,
+    _DocumentFilter.scans => ScanlyIcons.scanDocument,
     _DocumentFilter.pdfs => LucideIcons.fileText,
   };
 }

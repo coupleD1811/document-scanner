@@ -401,8 +401,95 @@ class AppLocalizationsEn extends AppLocalizations {
   String get startScanAction => 'Start scanning';
 
   @override
-  String get toolsPageSubtitle =>
-      'PDF tools will be grouped here for quick actions.';
+  String get cameraPermissionRequesting => 'Checking camera access...';
+
+  @override
+  String get cameraInitializing => 'Starting the camera...';
+
+  @override
+  String get cameraPermissionDeniedTitle => 'Scanly needs camera access';
+
+  @override
+  String get cameraPermissionDeniedMessage =>
+      'Allow Scanly to use the camera to capture and scan documents.';
+
+  @override
+  String get cameraPermissionPermanentlyDeniedTitle =>
+      'Camera access is turned off';
+
+  @override
+  String get cameraPermissionPermanentlyDeniedMessage =>
+      'Open Settings and allow camera access for Scanly to continue scanning.';
+
+  @override
+  String get cameraRestrictedTitle => 'Camera access is restricted';
+
+  @override
+  String get cameraRestrictedMessage =>
+      'Camera access is restricted on this device. Check system restrictions or contact the device administrator.';
+
+  @override
+  String get cameraUnavailableTitle => 'No camera found';
+
+  @override
+  String get cameraUnavailableMessage =>
+      'This device has no available camera for document scanning.';
+
+  @override
+  String get cameraFailureTitle => 'Unable to open the camera';
+
+  @override
+  String get cameraFailureMessage =>
+      'An error occurred while opening the camera. Please try again.';
+
+  @override
+  String get retryAction => 'Try again';
+
+  @override
+  String get openSettingsAction => 'Open Settings';
+
+  @override
+  String get captureDocumentTooltip => 'Capture document';
+
+  @override
+  String get scanCapturedMessage => 'Document image captured.';
+
+  @override
+  String pdfSelectedMessage(String name) {
+    return 'Selected $name.';
+  }
+
+  @override
+  String get pdfImportFailed =>
+      'Unable to open the PDF file. Please try again.';
+
+  @override
+  String get toolsPageTitle => 'PDF Tools';
+
+  @override
+  String get toolsPageSubtitle => 'Edit, convert and protect your documents';
+
+  @override
+  String get toolsEditOrganizeTitle => 'Edit & organize';
+
+  @override
+  String get toolsConvertExtractTitle => 'Convert & extract';
+
+  @override
+  String get toolsOptimizeTitle => 'Optimize';
+
+  @override
+  String get toolsSecurityTitle => 'Security';
+
+  @override
+  String get deletePagesAction => 'Delete pages';
+
+  @override
+  String get ocrTextAction => 'OCR text';
+
+  @override
+  String get toolsFeatureComingSoon =>
+      'This tool will be available in a future version.';
 
   @override
   String get profileAccountTitle => 'Account';

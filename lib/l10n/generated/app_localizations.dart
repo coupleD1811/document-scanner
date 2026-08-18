@@ -844,11 +844,167 @@ abstract class AppLocalizations {
   /// **'Bắt đầu quét'**
   String get startScanAction;
 
+  /// No description provided for @cameraPermissionRequesting.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang kiểm tra quyền sử dụng camera...'**
+  String get cameraPermissionRequesting;
+
+  /// No description provided for @cameraInitializing.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang khởi tạo camera...'**
+  String get cameraInitializing;
+
+  /// No description provided for @cameraPermissionDeniedTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Scanly cần quyền camera'**
+  String get cameraPermissionDeniedTitle;
+
+  /// No description provided for @cameraPermissionDeniedMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cho phép Scanly sử dụng camera để chụp và quét tài liệu.'**
+  String get cameraPermissionDeniedMessage;
+
+  /// No description provided for @cameraPermissionPermanentlyDeniedTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quyền camera đang bị tắt'**
+  String get cameraPermissionPermanentlyDeniedTitle;
+
+  /// No description provided for @cameraPermissionPermanentlyDeniedMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở Cài đặt và cấp quyền camera cho Scanly để tiếp tục quét.'**
+  String get cameraPermissionPermanentlyDeniedMessage;
+
+  /// No description provided for @cameraRestrictedTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể sử dụng camera'**
+  String get cameraRestrictedTitle;
+
+  /// No description provided for @cameraRestrictedMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thiết bị đang giới hạn quyền camera. Hãy kiểm tra giới hạn hệ thống hoặc liên hệ quản trị viên thiết bị.'**
+  String get cameraRestrictedMessage;
+
+  /// No description provided for @cameraUnavailableTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tìm thấy camera'**
+  String get cameraUnavailableTitle;
+
+  /// No description provided for @cameraUnavailableMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thiết bị này không có camera khả dụng để quét tài liệu.'**
+  String get cameraUnavailableMessage;
+
+  /// No description provided for @cameraFailureTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể mở camera'**
+  String get cameraFailureTitle;
+
+  /// No description provided for @cameraFailureMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã xảy ra lỗi khi mở camera. Hãy thử lại.'**
+  String get cameraFailureMessage;
+
+  /// No description provided for @retryAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thử lại'**
+  String get retryAction;
+
+  /// No description provided for @openSettingsAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở Cài đặt'**
+  String get openSettingsAction;
+
+  /// No description provided for @captureDocumentTooltip.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chụp tài liệu'**
+  String get captureDocumentTooltip;
+
+  /// No description provided for @scanCapturedMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã chụp ảnh tài liệu.'**
+  String get scanCapturedMessage;
+
+  /// No description provided for @pdfSelectedMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã chọn {name}.'**
+  String pdfSelectedMessage(String name);
+
+  /// No description provided for @pdfImportFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể mở tệp PDF. Hãy thử lại.'**
+  String get pdfImportFailed;
+
+  /// No description provided for @toolsPageTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Công cụ PDF'**
+  String get toolsPageTitle;
+
   /// No description provided for @toolsPageSubtitle.
   ///
   /// In vi, this message translates to:
-  /// **'Các công cụ xử lý PDF sẽ được gom ở đây để thao tác nhanh.'**
+  /// **'Chỉnh sửa, chuyển đổi và bảo vệ tài liệu'**
   String get toolsPageSubtitle;
+
+  /// No description provided for @toolsEditOrganizeTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉnh sửa và sắp xếp'**
+  String get toolsEditOrganizeTitle;
+
+  /// No description provided for @toolsConvertExtractTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển đổi và trích xuất'**
+  String get toolsConvertExtractTitle;
+
+  /// No description provided for @toolsOptimizeTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tối ưu hóa'**
+  String get toolsOptimizeTitle;
+
+  /// No description provided for @toolsSecurityTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bảo mật'**
+  String get toolsSecurityTitle;
+
+  /// No description provided for @deletePagesAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa trang'**
+  String get deletePagesAction;
+
+  /// No description provided for @ocrTextAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Văn bản OCR'**
+  String get ocrTextAction;
+
+  /// No description provided for @toolsFeatureComingSoon.
+  ///
+  /// In vi, this message translates to:
+  /// **'Công cụ này sẽ được bổ sung trong phiên bản tiếp theo.'**
+  String get toolsFeatureComingSoon;
 
   /// No description provided for @profileAccountTitle.
   ///

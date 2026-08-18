@@ -1,11 +1,16 @@
 import 'dart:async';
 
+import 'package:camera/camera.dart';
 import 'package:scanly/app/scanly_app.dart';
+import 'package:scanly/app/theme/scanly_icons.dart';
 import 'package:scanly/features/auth/repository/auth_failure.dart';
 import 'package:scanly/features/auth/repository/auth_repository.dart';
 import 'package:scanly/features/auth/repository/auth_user.dart';
 import 'package:scanly/features/documents/model/model.dart';
+import 'package:scanly/features/documents/service/document_file_picker.dart';
 import 'package:scanly/features/documents/view/page.dart';
+import 'package:scanly/features/scan/scan_page.dart';
+import 'package:scanly/features/scan/service/camera_access_service.dart';
 import 'package:scanly/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -210,6 +215,7 @@ void main() {
     expect(find.byKey(const ValueKey('bottom-tab-scan')), findsOneWidget);
     expect(find.byKey(const ValueKey('bottom-tab-tools')), findsOneWidget);
     expect(find.byKey(const ValueKey('bottom-tab-profile')), findsOneWidget);
+    expect(find.byIcon(ScanlyIcons.imageToPdf), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('bottom-tab-documents')));
     await tester.pumpAndSettle();
@@ -225,14 +231,19 @@ void main() {
     );
     expect(find.text('Sắp ra mắt'), findsOneWidget);
 
-    await tester.tap(find.byKey(const ValueKey('bottom-tab-scan')));
-    await tester.pumpAndSettle();
-    expect(find.text('Bắt đầu quét'), findsOneWidget);
-
     await tester.tap(find.byKey(const ValueKey('bottom-tab-tools')));
     await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('tools-brand-logo')), findsOneWidget);
+    expect(find.text('Công cụ PDF'), findsOneWidget);
+    expect(find.text('Chỉnh sửa và sắp xếp'), findsOneWidget);
+    expect(find.byKey(const ValueKey('tool-merge-pdf')), findsOneWidget);
+    expect(find.byIcon(ScanlyIcons.imageToPdf), findsOneWidget);
+    expect(find.byIcon(ScanlyIcons.ocrText), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('tool-merge-pdf')));
+    await tester.pump();
     expect(
-      find.text('Các công cụ xử lý PDF sẽ được gom ở đây để thao tác nhanh.'),
+      find.text('Công cụ này sẽ được bổ sung trong phiên bản tiếp theo.'),
       findsOneWidget,
     );
 
@@ -275,6 +286,7 @@ void main() {
 
     expect(find.text('2 tài liệu'), findsOneWidget);
     expect(find.text('Employment Contract.pdf'), findsOneWidget);
+    expect(find.byIcon(ScanlyIcons.importPdf), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('documents-filter-scans')));
     await tester.pumpAndSettle();
@@ -291,6 +303,76 @@ void main() {
     expect(find.text('Chia sẻ'), findsOneWidget);
     expect(find.text('Di chuyển'), findsOneWidget);
     expect(find.text('Xóa'), findsOneWidget);
+  });
+
+  testWidgets('chỉ mở trình chọn PDF khi người dùng nhấn nhập tệp', (
+    tester,
+  ) async {
+    final filePicker = FakeDocumentFilePicker(
+      selectedFile: XFile('/tmp/contract.pdf'),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('vi'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(body: DocumentsPage(filePicker: filePicker)),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(filePicker.pickCount, 0);
+
+    await tester.tap(find.byKey(const ValueKey('documents-import-button')));
+    await tester.pumpAndSettle();
+
+    expect(filePicker.pickCount, 1);
+    expect(find.text('Đã chọn contract.pdf.'), findsOneWidget);
+  });
+
+  testWidgets('xin quyền camera khi màn quét được mở', (tester) async {
+    final cameraAccessService = FakeCameraAccessService();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('vi'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: ScanPage(cameraAccessService: cameraAccessService),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(cameraAccessService.permissionRequestCount, 1);
+    expect(cameraAccessService.initializeCount, 1);
+    expect(find.byKey(const ValueKey('camera-capture-button')), findsOneWidget);
+  });
+
+  testWidgets('hiển thị cách xử lý khi quyền camera bị từ chối', (
+    tester,
+  ) async {
+    final cameraAccessService = FakeCameraAccessService(
+      permissionOutcome: CameraPermissionOutcome.permanentlyDenied,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('vi'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: ScanPage(cameraAccessService: cameraAccessService),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Quyền camera đang bị tắt'), findsOneWidget);
+    expect(find.text('Mở Cài đặt'), findsOneWidget);
+
+    await tester.tap(find.text('Mở Cài đặt'));
+    await tester.pump();
+
+    expect(cameraAccessService.openSettingsCount, 1);
   });
 
   testWidgets('đổi ngôn ngữ trong tab cá nhân', (tester) async {
@@ -469,5 +551,55 @@ class FakeAuthRepository implements AuthRepository {
 
   Future<void> dispose() {
     return _controller.close();
+  }
+}
+
+class FakeDocumentFilePicker implements DocumentFilePicker {
+  FakeDocumentFilePicker({this.selectedFile});
+
+  final XFile? selectedFile;
+  int pickCount = 0;
+
+  @override
+  Future<XFile?> pickPdf() async {
+    pickCount += 1;
+    return selectedFile;
+  }
+}
+
+class FakeCameraAccessService implements CameraAccessService {
+  FakeCameraAccessService({
+    this.permissionOutcome = CameraPermissionOutcome.granted,
+  });
+
+  CameraPermissionOutcome permissionOutcome;
+  int permissionRequestCount = 0;
+  int initializeCount = 0;
+  int openSettingsCount = 0;
+
+  @override
+  CameraController? get controller => null;
+
+  @override
+  Future<String> capture() async => '/tmp/scan.jpg';
+
+  @override
+  Future<void> disposeCamera() async {}
+
+  @override
+  Future<void> initializeCamera() async {
+    initializeCount += 1;
+  }
+
+  @override
+  Future<bool> openSettings() async {
+    openSettingsCount += 1;
+    return true;
+  }
+
+  @override
+  Future<CameraPermissionOutcome> requestPermission() async {
+    permissionRequestCount += 1;
+    return permissionOutcome;
   }
 }

@@ -383,7 +383,90 @@ class AppLocalizationsJa extends AppLocalizations {
   String get startScanAction => 'スキャンを開始';
 
   @override
-  String get toolsPageSubtitle => 'PDF ツールをここにまとめて、すばやく操作できるようにします。';
+  String get cameraPermissionRequesting => 'カメラへのアクセスを確認しています...';
+
+  @override
+  String get cameraInitializing => 'カメラを起動しています...';
+
+  @override
+  String get cameraPermissionDeniedTitle => 'カメラへのアクセスが必要です';
+
+  @override
+  String get cameraPermissionDeniedMessage =>
+      '書類を撮影・スキャンするため、Scanly にカメラの使用を許可してください。';
+
+  @override
+  String get cameraPermissionPermanentlyDeniedTitle => 'カメラへのアクセスがオフです';
+
+  @override
+  String get cameraPermissionPermanentlyDeniedMessage =>
+      'スキャンを続けるには、設定を開いて Scanly のカメラアクセスを許可してください。';
+
+  @override
+  String get cameraRestrictedTitle => 'カメラを使用できません';
+
+  @override
+  String get cameraRestrictedMessage =>
+      'この端末ではカメラの使用が制限されています。システムの制限を確認するか、端末の管理者にお問い合わせください。';
+
+  @override
+  String get cameraUnavailableTitle => 'カメラが見つかりません';
+
+  @override
+  String get cameraUnavailableMessage => 'この端末には書類のスキャンに使用できるカメラがありません。';
+
+  @override
+  String get cameraFailureTitle => 'カメラを開けません';
+
+  @override
+  String get cameraFailureMessage => 'カメラを開く際にエラーが発生しました。もう一度お試しください。';
+
+  @override
+  String get retryAction => '再試行';
+
+  @override
+  String get openSettingsAction => '設定を開く';
+
+  @override
+  String get captureDocumentTooltip => '書類を撮影';
+
+  @override
+  String get scanCapturedMessage => '書類を撮影しました。';
+
+  @override
+  String pdfSelectedMessage(String name) {
+    return '$name を選択しました。';
+  }
+
+  @override
+  String get pdfImportFailed => 'PDF ファイルを開けませんでした。もう一度お試しください。';
+
+  @override
+  String get toolsPageTitle => 'PDF ツール';
+
+  @override
+  String get toolsPageSubtitle => '書類の編集、変換、保護を行います';
+
+  @override
+  String get toolsEditOrganizeTitle => '編集と整理';
+
+  @override
+  String get toolsConvertExtractTitle => '変換と抽出';
+
+  @override
+  String get toolsOptimizeTitle => '最適化';
+
+  @override
+  String get toolsSecurityTitle => 'セキュリティ';
+
+  @override
+  String get deletePagesAction => 'ページを削除';
+
+  @override
+  String get ocrTextAction => 'OCR テキスト';
+
+  @override
+  String get toolsFeatureComingSoon => 'このツールは今後のバージョンで追加されます。';
 
   @override
   String get profileAccountTitle => 'アカウント';

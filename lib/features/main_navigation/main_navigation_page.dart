@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../app/theme/scanly_icons.dart';
 import '../../l10n/l10n.dart';
 import '../auth/presentation/widgets/auth_failure_message.dart';
 import '../auth/presentation/widgets/auth_snack_bar.dart';
@@ -41,7 +44,8 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         );
       },
       child: Scaffold(
-        appBar: _selectedIndex <= 1
+        appBar:
+            _selectedIndex == 0 || _selectedIndex == 1 || _selectedIndex == 3
             ? null
             : AppBar(title: Text(_titleForIndex(t, _selectedIndex))),
         body: SafeArea(
@@ -55,7 +59,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                 onToolsPressed: () => _selectTab(3),
               ),
               DocumentsPage(onScanPressed: () => _selectTab(_scanTabIndex)),
-              const ScanPage(),
+              const SizedBox.shrink(),
               const ToolsPage(),
               ProfilePage(userEmail: user?.email),
             ],
@@ -71,7 +75,25 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   }
 
   void _selectTab(int index) {
+    if (index == _scanTabIndex) {
+      unawaited(_openScanner());
+      return;
+    }
+
     setState(() => _selectedIndex = index);
+  }
+
+  Future<void> _openScanner() async {
+    final imagePath = await Navigator.of(
+      context,
+    ).push<String>(MaterialPageRoute(builder: (_) => const ScanPage()));
+    if (!mounted || imagePath == null) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(context.l10n.scanCapturedMessage)));
   }
 }
 
@@ -271,7 +293,7 @@ class _ScanTabButton extends StatelessWidget {
                       ],
                     ),
                     child: Icon(
-                      LucideIcons.scanLine,
+                      ScanlyIcons.scanDocument,
                       color: colorScheme.onPrimary,
                       size: 30,
                     ),
