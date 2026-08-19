@@ -56,13 +56,12 @@ class DefaultFirebaseOptions {
     projectId: 'document-fa6b2',
     storageBucket: 'document-fa6b2.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDZzDsKsDdPjHWa8QFSxmiFyvVx9MijH28',
-    appId: '1:788993318302:ios:10efe3b5fe0bc128bc0a8f',
+    appId: '1:788993318302:ios:cb79962522ef3a15bc0a8f',
     messagingSenderId: '788993318302',
     projectId: 'document-fa6b2',
     storageBucket: 'document-fa6b2.firebasestorage.app',
-    iosBundleId: 'com.scanly.app',
+    iosBundleId: 'com.coupled1811.scanly.app',
   );
 }
