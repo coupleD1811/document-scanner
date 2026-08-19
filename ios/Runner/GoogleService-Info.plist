@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.scanly.app</string>
+	<string>com.coupled1811.scanly.app</string>
 	<key>PROJECT_ID</key>
 	<string>document-fa6b2</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:788993318302:ios:10efe3b5fe0bc128bc0a8f</string>
+	<string>1:788993318302:ios:cb79962522ef3a15bc0a8f</string>
 </dict>
 </plist>
