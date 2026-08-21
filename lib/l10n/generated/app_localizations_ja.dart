@@ -475,6 +475,57 @@ class AppLocalizationsJa extends AppLocalizations {
   String get profileSettingsTitle => '設定';
 
   @override
+  String get profileFreePlan => '無料プラン';
+
+  @override
+  String get profileUpgradeToPro => 'Scanly Proにアップグレード';
+
+  @override
+  String get profileAppearanceTitle => '外観';
+
+  @override
+  String get profileThemeSettingTitle => '表示モード';
+
+  @override
+  String get themeModeLight => 'ライト';
+
+  @override
+  String get themeModeDark => 'ダーク';
+
+  @override
+  String get profileLanguageSectionTitle => '言語';
+
+  @override
+  String get profileAccountSecurityTitle => 'アカウントとセキュリティ';
+
+  @override
+  String get profileAccountInformation => 'アカウント情報';
+
+  @override
+  String get profileChangePassword => 'パスワードを変更';
+
+  @override
+  String get profilePrivacySecurity => 'プライバシーとセキュリティ';
+
+  @override
+  String get profileInformationSupportTitle => '情報とサポート';
+
+  @override
+  String get profileTermsOfService => '利用規約';
+
+  @override
+  String get profilePrivacyPolicy => 'プライバシーポリシー';
+
+  @override
+  String get profileAboutScanly => 'Scanlyについて';
+
+  @override
+  String get profileVersionValue => 'バージョン 1.0.0';
+
+  @override
+  String get profileFeatureComingSoon => 'この機能は今後のバージョンで追加されます。';
+
+  @override
   String get languageSettingTitle => '言語';
 
   @override

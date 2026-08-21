@@ -1018,6 +1018,108 @@ abstract class AppLocalizations {
   /// **'Cài đặt'**
   String get profileSettingsTitle;
 
+  /// No description provided for @profileFreePlan.
+  ///
+  /// In vi, this message translates to:
+  /// **'Gói miễn phí'**
+  String get profileFreePlan;
+
+  /// No description provided for @profileUpgradeToPro.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nâng cấp lên Scanly Pro'**
+  String get profileUpgradeToPro;
+
+  /// No description provided for @profileAppearanceTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giao diện'**
+  String get profileAppearanceTitle;
+
+  /// No description provided for @profileThemeSettingTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chế độ hiển thị'**
+  String get profileThemeSettingTitle;
+
+  /// No description provided for @themeModeLight.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sáng'**
+  String get themeModeLight;
+
+  /// No description provided for @themeModeDark.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tối'**
+  String get themeModeDark;
+
+  /// No description provided for @profileLanguageSectionTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngôn ngữ'**
+  String get profileLanguageSectionTitle;
+
+  /// No description provided for @profileAccountSecurityTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài khoản và bảo mật'**
+  String get profileAccountSecurityTitle;
+
+  /// No description provided for @profileAccountInformation.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thông tin tài khoản'**
+  String get profileAccountInformation;
+
+  /// No description provided for @profileChangePassword.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đổi mật khẩu'**
+  String get profileChangePassword;
+
+  /// No description provided for @profilePrivacySecurity.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quyền riêng tư và bảo mật'**
+  String get profilePrivacySecurity;
+
+  /// No description provided for @profileInformationSupportTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thông tin và hỗ trợ'**
+  String get profileInformationSupportTitle;
+
+  /// No description provided for @profileTermsOfService.
+  ///
+  /// In vi, this message translates to:
+  /// **'Điều khoản dịch vụ'**
+  String get profileTermsOfService;
+
+  /// No description provided for @profilePrivacyPolicy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chính sách quyền riêng tư'**
+  String get profilePrivacyPolicy;
+
+  /// No description provided for @profileAboutScanly.
+  ///
+  /// In vi, this message translates to:
+  /// **'Về Scanly'**
+  String get profileAboutScanly;
+
+  /// No description provided for @profileVersionValue.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phiên bản 1.0.0'**
+  String get profileVersionValue;
+
+  /// No description provided for @profileFeatureComingSoon.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tính năng này sẽ được bổ sung trong phiên bản tiếp theo.'**
+  String get profileFeatureComingSoon;
+
   /// No description provided for @languageSettingTitle.
   ///
   /// In vi, this message translates to:

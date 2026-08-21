@@ -495,6 +495,58 @@ class AppLocalizationsVi extends AppLocalizations {
   String get profileSettingsTitle => 'Cài đặt';
 
   @override
+  String get profileFreePlan => 'Gói miễn phí';
+
+  @override
+  String get profileUpgradeToPro => 'Nâng cấp lên Scanly Pro';
+
+  @override
+  String get profileAppearanceTitle => 'Giao diện';
+
+  @override
+  String get profileThemeSettingTitle => 'Chế độ hiển thị';
+
+  @override
+  String get themeModeLight => 'Sáng';
+
+  @override
+  String get themeModeDark => 'Tối';
+
+  @override
+  String get profileLanguageSectionTitle => 'Ngôn ngữ';
+
+  @override
+  String get profileAccountSecurityTitle => 'Tài khoản và bảo mật';
+
+  @override
+  String get profileAccountInformation => 'Thông tin tài khoản';
+
+  @override
+  String get profileChangePassword => 'Đổi mật khẩu';
+
+  @override
+  String get profilePrivacySecurity => 'Quyền riêng tư và bảo mật';
+
+  @override
+  String get profileInformationSupportTitle => 'Thông tin và hỗ trợ';
+
+  @override
+  String get profileTermsOfService => 'Điều khoản dịch vụ';
+
+  @override
+  String get profilePrivacyPolicy => 'Chính sách quyền riêng tư';
+
+  @override
+  String get profileAboutScanly => 'Về Scanly';
+
+  @override
+  String get profileVersionValue => 'Phiên bản 1.0.0';
+
+  @override
+  String get profileFeatureComingSoon =>
+      'Tính năng này sẽ được bổ sung trong phiên bản tiếp theo.';
+
+  @override
   String get languageSettingTitle => 'Ngôn ngữ';
 
   @override

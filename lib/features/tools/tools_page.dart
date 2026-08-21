@@ -201,7 +201,7 @@ class _ToolAction extends StatelessWidget {
       color: colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: const BorderSide(color: Color(0xFFDDE5EC)),
+        side: BorderSide(color: colorScheme.outlineVariant),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -254,7 +254,7 @@ class _WideToolAction extends StatelessWidget {
         color: colorScheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
-          side: const BorderSide(color: Color(0xFFDDE5EC)),
+          side: BorderSide(color: colorScheme.outlineVariant),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(

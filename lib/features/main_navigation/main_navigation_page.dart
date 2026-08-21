@@ -127,10 +127,10 @@ class _ScanlyBottomBar extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        border: const Border(top: BorderSide(color: Color(0xFFE3E8EC))),
+        border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: colorScheme.shadow.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, -8),
           ),
@@ -208,7 +208,9 @@ class _BottomTabItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final color = isSelected ? colorScheme.primary : const Color(0xFF94A3B8);
+    final color = isSelected
+        ? colorScheme.primary
+        : colorScheme.onSurfaceVariant;
 
     return Expanded(
       child: InkWell(

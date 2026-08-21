@@ -113,7 +113,7 @@ class AuthSocialButton extends StatelessWidget {
         foregroundColor: colorScheme.onSurface,
         minimumSize: const Size.fromHeight(54),
         padding: const EdgeInsets.symmetric(horizontal: 18),
-        side: const BorderSide(color: Color(0xFFD7E0E8)),
+        side: BorderSide(color: colorScheme.outlineVariant),
         textStyle: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
       ),
       child: Stack(

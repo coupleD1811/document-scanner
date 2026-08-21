@@ -349,7 +349,7 @@ class _QuickActionTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xFFDDE5EC)),
+            border: Border.all(color: colorScheme.outlineVariant),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Padding(
@@ -449,7 +449,7 @@ class _RecentDocumentsEmptyState extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xFFDDE5EC)),
+            border: Border.all(color: colorScheme.outlineVariant),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Padding(
@@ -545,7 +545,7 @@ class _ToolkitTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xFFDDE5EC)),
+            border: Border.all(color: colorScheme.outlineVariant),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Padding(

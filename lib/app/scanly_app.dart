@@ -9,6 +9,7 @@ import '../features/profile/language/app_language.dart';
 import '../features/profile/language/state.dart';
 import '../l10n/l10n.dart';
 import 'theme/scanly_theme.dart';
+import 'theme/scanly_theme_cubit.dart';
 
 class ScanlyApp extends StatelessWidget {
   const ScanlyApp({required this.authRepository, this.locale, super.key});
@@ -27,6 +28,7 @@ class ScanlyApp extends StatelessWidget {
                 ProfileLanguageCubit(initialLocale: locale)
                   ..restoreSavedLanguage(),
           ),
+          BlocProvider(create: (_) => ScanlyThemeCubit()..restoreSavedTheme()),
           BlocProvider(
             create: (_) =>
                 AuthSessionBloc(authRepository: authRepository)
@@ -35,15 +37,22 @@ class ScanlyApp extends StatelessWidget {
         ],
         child: BlocBuilder<ProfileLanguageCubit, AppLanguage>(
           builder: (context, language) {
-            return MaterialApp(
-              onGenerateTitle: (context) => context.l10n.appTitle,
-              debugShowCheckedModeBanner: false,
-              locale: language.locale,
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              supportedLocales: AppLocalizations.supportedLocales,
-              localeResolutionCallback: _resolveLocale,
-              theme: ScanlyTheme.light(),
-              home: const AuthGate(),
+            return BlocBuilder<ScanlyThemeCubit, ThemeMode>(
+              builder: (context, themeMode) {
+                return MaterialApp(
+                  onGenerateTitle: (context) => context.l10n.appTitle,
+                  debugShowCheckedModeBanner: false,
+                  locale: language.locale,
+                  localizationsDelegates:
+                      AppLocalizations.localizationsDelegates,
+                  supportedLocales: AppLocalizations.supportedLocales,
+                  localeResolutionCallback: _resolveLocale,
+                  theme: ScanlyTheme.light(),
+                  darkTheme: ScanlyTheme.dark(),
+                  themeMode: themeMode,
+                  home: const AuthGate(),
+                );
+              },
             );
           },
         ),

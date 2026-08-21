@@ -498,6 +498,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileSettingsTitle => 'Settings';
 
   @override
+  String get profileFreePlan => 'Free plan';
+
+  @override
+  String get profileUpgradeToPro => 'Upgrade to Scanly Pro';
+
+  @override
+  String get profileAppearanceTitle => 'Appearance';
+
+  @override
+  String get profileThemeSettingTitle => 'Display mode';
+
+  @override
+  String get themeModeLight => 'Light';
+
+  @override
+  String get themeModeDark => 'Dark';
+
+  @override
+  String get profileLanguageSectionTitle => 'Language';
+
+  @override
+  String get profileAccountSecurityTitle => 'Account and security';
+
+  @override
+  String get profileAccountInformation => 'Account information';
+
+  @override
+  String get profileChangePassword => 'Change password';
+
+  @override
+  String get profilePrivacySecurity => 'Privacy and security';
+
+  @override
+  String get profileInformationSupportTitle => 'Information and support';
+
+  @override
+  String get profileTermsOfService => 'Terms of Service';
+
+  @override
+  String get profilePrivacyPolicy => 'Privacy Policy';
+
+  @override
+  String get profileAboutScanly => 'About Scanly';
+
+  @override
+  String get profileVersionValue => 'Version 1.0.0';
+
+  @override
+  String get profileFeatureComingSoon =>
+      'This feature will be available in a future version.';
+
+  @override
   String get languageSettingTitle => 'Language';
 
   @override
