@@ -249,7 +249,7 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('bottom-tab-profile')));
     await tester.pumpAndSettle();
-    expect(find.text('Cài đặt'), findsOneWidget);
+    expect(find.text('Giao diện'), findsOneWidget);
     expect(find.text('user@example.com'), findsOneWidget);
   });
 
@@ -391,16 +391,16 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('bottom-tab-profile')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Ngôn ngữ'), findsOneWidget);
+    expect(find.text('Ngôn ngữ'), findsWidgets);
     expect(
       find.byKey(const ValueKey('current-language-icon-vi')),
-      findsNothing,
+      findsOneWidget,
     );
 
     await tester.tap(find.byKey(const ValueKey('language-setting-tile')));
     await tester.pumpAndSettle();
     expect(find.text('Chọn ngôn ngữ'), findsOneWidget);
-    expect(find.text('Tiếng Việt'), findsOneWidget);
+    expect(find.text('Tiếng Việt'), findsWidgets);
     expect(
       find.byKey(const ValueKey('language-option-icon-vi')),
       findsOneWidget,
@@ -417,24 +417,24 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('language-option-en')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Settings'), findsOneWidget);
-    expect(find.text('Language'), findsOneWidget);
+    expect(find.text('Appearance'), findsOneWidget);
+    expect(find.text('Language'), findsWidgets);
     expect(
       find.byKey(const ValueKey('current-language-icon-en')),
-      findsNothing,
+      findsOneWidget,
     );
 
     await tester.tap(find.byKey(const ValueKey('language-setting-tile')));
     await tester.pumpAndSettle();
-    expect(find.text('English'), findsOneWidget);
+    expect(find.text('English'), findsWidgets);
     await tester.tap(find.byKey(const ValueKey('language-option-ja')));
     await tester.pumpAndSettle();
 
-    expect(find.text('設定'), findsOneWidget);
-    expect(find.text('言語'), findsOneWidget);
+    expect(find.text('外観'), findsOneWidget);
+    expect(find.text('言語'), findsWidgets);
     expect(
       find.byKey(const ValueKey('current-language-icon-ja')),
-      findsNothing,
+      findsOneWidget,
     );
 
     await tester.pumpWidget(const SizedBox.shrink());
@@ -450,10 +450,69 @@ void main() {
     );
     await tester.pump();
     restoredAuthRepository.emitUser(null);
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.text('安全なドキュメントワークスペース'), findsOneWidget);
     expect(find.text('ログイン'), findsWidgets);
+  });
+
+  testWidgets('đổi và ghi nhớ chế độ sáng tối', (tester) async {
+    final authRepository = FakeAuthRepository();
+    addTearDown(authRepository.dispose);
+
+    await tester.pumpWidget(
+      ScanlyApp(authRepository: authRepository, locale: const Locale('vi')),
+    );
+    await tester.pump();
+    authRepository.emitUser(
+      const AuthUser(id: 'user-1', email: 'asd@gmail.com'),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('bottom-tab-profile')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('asd'), findsOneWidget);
+    expect(find.text('Sáng'), findsOneWidget);
+    expect(
+      tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
+      ThemeMode.light,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('theme-mode-switch')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tối'), findsOneWidget);
+    expect(
+      tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
+      ThemeMode.dark,
+    );
+
+    await tester.pumpWidget(const SizedBox.shrink());
+
+    final restoredAuthRepository = FakeAuthRepository();
+    addTearDown(restoredAuthRepository.dispose);
+    await tester.pumpWidget(
+      ScanlyApp(
+        authRepository: restoredAuthRepository,
+        locale: const Locale('vi'),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    restoredAuthRepository.emitUser(
+      const AuthUser(id: 'user-2', email: 'asd@gmail.com'),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('bottom-tab-profile')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tối'), findsOneWidget);
+    expect(
+      tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
+      ThemeMode.dark,
+    );
   });
 
   testWidgets('hiển thị tiếng Anh theo locale en', (tester) async {

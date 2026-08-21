@@ -484,7 +484,9 @@ class _DocumentFilterChip extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: isSelected ? colorScheme.primary : const Color(0xFFDDE5EC),
+              color: isSelected
+                  ? colorScheme.primary
+                  : colorScheme.outlineVariant,
               width: isSelected ? 1.5 : 1,
             ),
           ),
@@ -525,7 +527,7 @@ class _DocumentsEmptyState extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFDDE5EC)),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 44, 24, 36),
@@ -606,7 +608,7 @@ class _ComingNextSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFDDE5EC)),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -800,7 +802,7 @@ class _DocumentCard extends StatelessWidget {
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: const Color(0xFFDDE5EC)),
+            border: Border.all(color: colorScheme.outlineVariant),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -889,9 +891,9 @@ class _DocumentThumbnail extends StatelessWidget {
       height: 96,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: const Color(0xFFFBFCFE),
+        color: colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFD8E1E8)),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: Stack(
         children: [
@@ -909,7 +911,7 @@ class _DocumentThumbnail extends StatelessWidget {
                   width: width,
                   height: 3,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFDDE5EC),
+                    color: colorScheme.outlineVariant,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -958,7 +960,7 @@ class _NoSearchResults extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFDDE5EC)),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: Padding(
         padding: const EdgeInsets.all(28),
