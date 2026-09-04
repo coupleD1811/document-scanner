@@ -856,6 +856,30 @@ abstract class AppLocalizations {
   /// **'Đang khởi tạo camera...'**
   String get cameraInitializing;
 
+  /// No description provided for @imageNormalizing.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chuẩn hóa ảnh vừa chụp...'**
+  String get imageNormalizing;
+
+  /// No description provided for @documentEdgesDetecting.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang nhận diện mép tài liệu...'**
+  String get documentEdgesDetecting;
+
+  /// No description provided for @imageNormalizationFailureTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể chuẩn hóa ảnh'**
+  String get imageNormalizationFailureTitle;
+
+  /// No description provided for @imageNormalizationFailureMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Scanly không thể đọc hoặc chuẩn hóa ảnh vừa chụp. Hãy chụp lại.'**
+  String get imageNormalizationFailureMessage;
+
   /// No description provided for @cameraPermissionDeniedTitle.
   ///
   /// In vi, this message translates to:
@@ -1029,6 +1053,90 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Hủy phiên'**
   String get scanEditorDiscard;
+
+  /// No description provided for @documentEdgesDetected.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã nhận diện mép tài liệu'**
+  String get documentEdgesDetected;
+
+  /// No description provided for @documentEdgesNotFound.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tìm thấy mép tài liệu. Hãy chỉnh các góc thủ công.'**
+  String get documentEdgesNotFound;
+
+  /// No description provided for @documentEdgeDetectionFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể nhận diện mép. Hãy chỉnh các góc thủ công.'**
+  String get documentEdgeDetectionFailed;
+
+  /// No description provided for @documentCornersAdjusted.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã chỉnh các góc tài liệu'**
+  String get documentCornersAdjusted;
+
+  /// No description provided for @scanAdjustCorners.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉnh góc'**
+  String get scanAdjustCorners;
+
+  /// No description provided for @scanCornerEditorTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉnh các góc'**
+  String get scanCornerEditorTitle;
+
+  /// No description provided for @scanCornerEditorHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kéo từng góc khớp với mép tài liệu.'**
+  String get scanCornerEditorHint;
+
+  /// No description provided for @scanCornerInvalidMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giữ bốn góc theo đúng thứ tự quanh tài liệu.'**
+  String get scanCornerInvalidMessage;
+
+  /// No description provided for @scanCornerReset.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đặt lại'**
+  String get scanCornerReset;
+
+  /// No description provided for @scanCornerSave.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lưu các góc'**
+  String get scanCornerSave;
+
+  /// No description provided for @scanCornerTopLeft.
+  ///
+  /// In vi, this message translates to:
+  /// **'Góc trên bên trái'**
+  String get scanCornerTopLeft;
+
+  /// No description provided for @scanCornerTopRight.
+  ///
+  /// In vi, this message translates to:
+  /// **'Góc trên bên phải'**
+  String get scanCornerTopRight;
+
+  /// No description provided for @scanCornerBottomRight.
+  ///
+  /// In vi, this message translates to:
+  /// **'Góc dưới bên phải'**
+  String get scanCornerBottomRight;
+
+  /// No description provided for @scanCornerBottomLeft.
+  ///
+  /// In vi, this message translates to:
+  /// **'Góc dưới bên trái'**
+  String get scanCornerBottomLeft;
 
   /// No description provided for @scanPdfComingSoon.
   ///

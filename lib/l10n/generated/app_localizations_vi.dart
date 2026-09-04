@@ -405,6 +405,19 @@ class AppLocalizationsVi extends AppLocalizations {
   String get cameraInitializing => 'Đang khởi tạo camera...';
 
   @override
+  String get imageNormalizing => 'Đang chuẩn hóa ảnh vừa chụp...';
+
+  @override
+  String get documentEdgesDetecting => 'Đang nhận diện mép tài liệu...';
+
+  @override
+  String get imageNormalizationFailureTitle => 'Không thể chuẩn hóa ảnh';
+
+  @override
+  String get imageNormalizationFailureMessage =>
+      'Scanly không thể đọc hoặc chuẩn hóa ảnh vừa chụp. Hãy chụp lại.';
+
+  @override
   String get cameraPermissionDeniedTitle => 'Scanly cần quyền camera';
 
   @override
@@ -502,6 +515,51 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get scanEditorDiscard => 'Hủy phiên';
+
+  @override
+  String get documentEdgesDetected => 'Đã nhận diện mép tài liệu';
+
+  @override
+  String get documentEdgesNotFound =>
+      'Không tìm thấy mép tài liệu. Hãy chỉnh các góc thủ công.';
+
+  @override
+  String get documentEdgeDetectionFailed =>
+      'Không thể nhận diện mép. Hãy chỉnh các góc thủ công.';
+
+  @override
+  String get documentCornersAdjusted => 'Đã chỉnh các góc tài liệu';
+
+  @override
+  String get scanAdjustCorners => 'Chỉnh góc';
+
+  @override
+  String get scanCornerEditorTitle => 'Chỉnh các góc';
+
+  @override
+  String get scanCornerEditorHint => 'Kéo từng góc khớp với mép tài liệu.';
+
+  @override
+  String get scanCornerInvalidMessage =>
+      'Giữ bốn góc theo đúng thứ tự quanh tài liệu.';
+
+  @override
+  String get scanCornerReset => 'Đặt lại';
+
+  @override
+  String get scanCornerSave => 'Lưu các góc';
+
+  @override
+  String get scanCornerTopLeft => 'Góc trên bên trái';
+
+  @override
+  String get scanCornerTopRight => 'Góc trên bên phải';
+
+  @override
+  String get scanCornerBottomRight => 'Góc dưới bên phải';
+
+  @override
+  String get scanCornerBottomLeft => 'Góc dưới bên trái';
 
   @override
   String get scanPdfComingSoon =>

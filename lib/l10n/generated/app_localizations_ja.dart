@@ -389,6 +389,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get cameraInitializing => 'カメラを起動しています...';
 
   @override
+  String get imageNormalizing => '撮影した画像を準備しています...';
+
+  @override
+  String get documentEdgesDetecting => '書類の端を検出しています...';
+
+  @override
+  String get imageNormalizationFailureTitle => '画像を準備できません';
+
+  @override
+  String get imageNormalizationFailureMessage =>
+      '撮影した画像を読み込み、向きを補正できませんでした。もう一度撮影してください。';
+
+  @override
   String get cameraPermissionDeniedTitle => 'カメラへのアクセスが必要です';
 
   @override
@@ -481,6 +494,48 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get scanEditorDiscard => '破棄';
+
+  @override
+  String get documentEdgesDetected => '書類の端を検出しました';
+
+  @override
+  String get documentEdgesNotFound => '書類の端が見つかりませんでした。四隅を手動で調整してください。';
+
+  @override
+  String get documentEdgeDetectionFailed => '端を検出できませんでした。四隅を手動で調整してください。';
+
+  @override
+  String get documentCornersAdjusted => '書類の四隅を調整しました';
+
+  @override
+  String get scanAdjustCorners => '調整';
+
+  @override
+  String get scanCornerEditorTitle => '四隅を調整';
+
+  @override
+  String get scanCornerEditorHint => '各ポイントを書類の端に合わせてドラッグしてください。';
+
+  @override
+  String get scanCornerInvalidMessage => '書類を囲む正しい順序で四隅を配置してください。';
+
+  @override
+  String get scanCornerReset => 'リセット';
+
+  @override
+  String get scanCornerSave => '四隅を保存';
+
+  @override
+  String get scanCornerTopLeft => '左上の角';
+
+  @override
+  String get scanCornerTopRight => '右上の角';
+
+  @override
+  String get scanCornerBottomRight => '右下の角';
+
+  @override
+  String get scanCornerBottomLeft => '左下の角';
 
   @override
   String get scanPdfComingSoon => 'PDF 作成機能は次のステップで追加されます。';

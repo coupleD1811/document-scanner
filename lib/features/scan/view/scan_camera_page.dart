@@ -7,20 +7,33 @@ import '../../../app/theme/scanly_icons.dart';
 import '../../../l10n/l10n.dart';
 import '../bloc/scan_camera_bloc.dart';
 import '../service/camera_access_service.dart';
+import '../service/document_edge_detector.dart';
+import '../service/document_image_normalizer.dart';
 
 class ScanCameraPage extends StatelessWidget {
-  const ScanCameraPage({this.cameraAccessService, super.key});
+  const ScanCameraPage({
+    this.cameraAccessService,
+    this.imageNormalizer,
+    this.edgeDetector,
+    super.key,
+  });
 
   final CameraAccessService? cameraAccessService;
+  final DocumentImageNormalizer? imageNormalizer;
+  final DocumentEdgeDetector? edgeDetector;
 
   @override
   Widget build(BuildContext context) {
     final service = cameraAccessService ?? SystemCameraAccessService();
+    final normalizer = imageNormalizer ?? LocalDocumentImageNormalizer();
+    final detector = edgeDetector ?? NativeDocumentEdgeDetector();
 
     return BlocProvider(
-      create: (_) =>
-          ScanCameraBloc(cameraAccessService: service)
-            ..add(const ScanCameraStarted()),
+      create: (_) => ScanCameraBloc(
+        cameraAccessService: service,
+        imageNormalizer: normalizer,
+        edgeDetector: detector,
+      )..add(const ScanCameraStarted()),
       child: const _ScanCameraView(),
     );
   }
@@ -80,10 +93,10 @@ class _ScanCameraViewState extends State<_ScanCameraView>
       ),
       body: BlocConsumer<ScanCameraBloc, ScanCameraState>(
         listenWhen: (previous, current) =>
-            previous.capturedImagePath != current.capturedImagePath &&
-            current.capturedImagePath != null,
+            previous.capturedImage != current.capturedImage &&
+            current.capturedImage != null,
         listener: (context, state) {
-          Navigator.of(context).pop(state.capturedImagePath);
+          Navigator.of(context).pop(state.capturedImage);
         },
         builder: (context, state) {
           return switch (state.status) {
@@ -119,12 +132,25 @@ class _ScanCameraViewState extends State<_ScanCameraView>
               onPrimaryPressed: () =>
                   context.read<ScanCameraBloc>().add(const ScanCameraStarted()),
             ),
+            ScanCameraStatus.normalizationFailure => _ScanStatusView(
+              title: t.imageNormalizationFailureTitle,
+              message: t.imageNormalizationFailureMessage,
+              primaryLabel: t.retryAction,
+              onPrimaryPressed: () =>
+                  context.read<ScanCameraBloc>().add(const ScanCameraStarted()),
+            ),
             ScanCameraStatus.initial ||
             ScanCameraStatus.requestingPermission ||
             ScanCameraStatus.initializing => _CameraLoadingView(
               message: state.status == ScanCameraStatus.initializing
                   ? t.cameraInitializing
                   : t.cameraPermissionRequesting,
+            ),
+            ScanCameraStatus.normalizing => _CameraLoadingView(
+              message: t.imageNormalizing,
+            ),
+            ScanCameraStatus.detectingEdges => _CameraLoadingView(
+              message: t.documentEdgesDetecting,
             ),
             ScanCameraStatus.captured => const SizedBox.shrink(),
           };

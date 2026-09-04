@@ -2,93 +2,62 @@ import 'package:equatable/equatable.dart';
 
 import 'document_corners.dart';
 import 'document_edge_detection_status.dart';
-import 'scan_filter.dart';
 
-class DocumentPage extends Equatable {
-  const DocumentPage({
-    required this.id,
+class NormalizedDocumentImage extends Equatable {
+  const NormalizedDocumentImage({
     required this.originalImagePath,
     required this.normalizedImagePath,
     required this.pixelWidth,
     required this.pixelHeight,
-    required this.pageIndex,
-    required this.createdAt,
-    this.processedImagePath,
     this.corners = DocumentCorners.fullImage,
     this.detectedCorners,
     this.edgeDetectionStatus = DocumentEdgeDetectionStatus.notStarted,
-    this.rotation = 0,
-    this.filter = ScanFilter.original,
-  });
+  }) : assert(pixelWidth > 0),
+       assert(pixelHeight > 0),
+       assert(
+         edgeDetectionStatus != DocumentEdgeDetectionStatus.detected ||
+             detectedCorners != null,
+       );
 
-  final String id;
   final String originalImagePath;
   final String normalizedImagePath;
-  final String? processedImagePath;
   final int pixelWidth;
   final int pixelHeight;
-  final int pageIndex;
   final DocumentCorners corners;
   final DocumentCorners? detectedCorners;
   final DocumentEdgeDetectionStatus edgeDetectionStatus;
-  final int rotation;
-  final ScanFilter filter;
-  final DateTime createdAt;
 
-  String get displayImagePath => processedImagePath ?? normalizedImagePath;
-
-  DocumentPage copyWith({
-    String? id,
+  NormalizedDocumentImage copyWith({
     String? originalImagePath,
     String? normalizedImagePath,
-    String? processedImagePath,
-    bool clearProcessedImagePath = false,
     int? pixelWidth,
     int? pixelHeight,
-    int? pageIndex,
     DocumentCorners? corners,
     DocumentCorners? detectedCorners,
     bool clearDetectedCorners = false,
     DocumentEdgeDetectionStatus? edgeDetectionStatus,
-    int? rotation,
-    ScanFilter? filter,
-    DateTime? createdAt,
   }) {
-    return DocumentPage(
-      id: id ?? this.id,
+    return NormalizedDocumentImage(
       originalImagePath: originalImagePath ?? this.originalImagePath,
       normalizedImagePath: normalizedImagePath ?? this.normalizedImagePath,
-      processedImagePath: clearProcessedImagePath
-          ? null
-          : processedImagePath ?? this.processedImagePath,
       pixelWidth: pixelWidth ?? this.pixelWidth,
       pixelHeight: pixelHeight ?? this.pixelHeight,
-      pageIndex: pageIndex ?? this.pageIndex,
       corners: corners ?? this.corners,
       detectedCorners: clearDetectedCorners
           ? null
           : detectedCorners ?? this.detectedCorners,
       edgeDetectionStatus: edgeDetectionStatus ?? this.edgeDetectionStatus,
-      rotation: rotation ?? this.rotation,
-      filter: filter ?? this.filter,
-      createdAt: createdAt ?? this.createdAt,
     );
   }
 
   @override
   List<Object?> get props => [
-    id,
     originalImagePath,
     normalizedImagePath,
-    processedImagePath,
     pixelWidth,
     pixelHeight,
-    pageIndex,
     corners,
     detectedCorners,
     edgeDetectionStatus,
-    rotation,
-    filter,
-    createdAt,
   ];
 }

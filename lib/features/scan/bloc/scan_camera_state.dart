@@ -6,23 +6,26 @@ enum ScanCameraStatus {
   initializing,
   ready,
   capturing,
+  normalizing,
+  detectingEdges,
   captured,
   permissionDenied,
   permissionPermanentlyDenied,
   restricted,
   unavailable,
+  normalizationFailure,
   failure,
 }
 
 class ScanCameraState extends Equatable {
   const ScanCameraState({
     this.status = ScanCameraStatus.initial,
-    this.capturedImagePath,
+    this.capturedImage,
   });
 
   final ScanCameraStatus status;
-  final String? capturedImagePath;
+  final NormalizedDocumentImage? capturedImage;
 
   @override
-  List<Object?> get props => [status, capturedImagePath];
+  List<Object?> get props => [status, capturedImage];
 }

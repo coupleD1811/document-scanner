@@ -8,8 +8,13 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/scanly_icons.dart';
 import '../../../l10n/l10n.dart';
 import '../bloc/scan_session_bloc.dart';
+import '../model/document_corners.dart';
+import '../model/document_edge_detection_status.dart';
 import '../model/document_page.dart';
+import '../model/normalized_document_image.dart';
 import 'scan_camera_page.dart';
+import 'scan_corner_editor_page.dart';
+import 'widgets/document_corners_painter.dart';
 
 class ScanEditorPage extends StatefulWidget {
   const ScanEditorPage({super.key});
@@ -69,6 +74,7 @@ class _ScanEditorPageState extends State<ScanEditorPage> {
                         onAddPage: _addPage,
                         onCancel: _cancelSession,
                         onContinue: _continueToPdf,
+                        onAdjustCorners: _adjustCorners,
                       ),
               ),
             ),
@@ -78,15 +84,28 @@ class _ScanEditorPageState extends State<ScanEditorPage> {
     );
   }
 
-  Future<void> _addPage() async {
-    final imagePath = await Navigator.of(
-      context,
-    ).push<String>(MaterialPageRoute(builder: (_) => const ScanCameraPage()));
-    if (!mounted || imagePath == null) {
+  Future<void> _adjustCorners(DocumentPage page) async {
+    final corners = await Navigator.of(context).push<DocumentCorners>(
+      MaterialPageRoute(builder: (_) => ScanCornerEditorPage(page: page)),
+    );
+    if (!mounted || corners == null) {
       return;
     }
 
-    context.read<ScanSessionBloc>().add(ScanSessionPageAdded(imagePath));
+    context.read<ScanSessionBloc>().add(
+      ScanSessionPageCornersUpdated(pageId: page.id, corners: corners),
+    );
+  }
+
+  Future<void> _addPage() async {
+    final image = await Navigator.of(context).push<NormalizedDocumentImage>(
+      MaterialPageRoute(builder: (_) => const ScanCameraPage()),
+    );
+    if (!mounted || image == null) {
+      return;
+    }
+
+    context.read<ScanSessionBloc>().add(ScanSessionPageAdded(image));
   }
 
   Future<void> _cancelSession() async {
@@ -153,12 +172,14 @@ class _EditorContent extends StatelessWidget {
     required this.onAddPage,
     required this.onCancel,
     required this.onContinue,
+    required this.onAdjustCorners,
   });
 
   final ScanSessionEditing state;
   final VoidCallback onAddPage;
   final VoidCallback onCancel;
   final VoidCallback onContinue;
+  final ValueChanged<DocumentPage> onAdjustCorners;
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +191,12 @@ class _EditorContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(child: _PagePreview(page: selectedPage)),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
+        _EdgeDetectionControl(
+          page: selectedPage,
+          onPressed: () => onAdjustCorners(selectedPage),
+        ),
+        const SizedBox(height: 8),
         Row(
           children: [
             Expanded(
@@ -288,15 +314,89 @@ class _PagePreview extends StatelessWidget {
           minScale: 1,
           maxScale: 4,
           child: Center(
-            child: Image.file(
-              File(page.displayImagePath),
-              key: ValueKey('scan-preview-${page.id}'),
-              fit: BoxFit.contain,
-              errorBuilder: (_, _, _) => const _ImageUnavailable(),
+            child: AspectRatio(
+              aspectRatio: page.pixelWidth / page.pixelHeight,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.file(
+                    File(page.displayImagePath),
+                    key: ValueKey('scan-preview-${page.id}'),
+                    fit: BoxFit.fill,
+                    errorBuilder: (_, _, _) => const _ImageUnavailable(),
+                  ),
+                  IgnorePointer(
+                    child: CustomPaint(
+                      painter: DocumentCornersPainter(
+                        corners: page.corners,
+                        lineColor: colorScheme.secondary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _EdgeDetectionControl extends StatelessWidget {
+  const _EdgeDetectionControl({required this.page, required this.onPressed});
+
+  final DocumentPage page;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final t = context.l10n;
+    final isConfirmed =
+        page.corners.source == DocumentCornersSource.detected ||
+        page.corners.source == DocumentCornersSource.manual;
+    final label = switch (page.corners.source) {
+      DocumentCornersSource.manual => t.documentCornersAdjusted,
+      DocumentCornersSource.detected => t.documentEdgesDetected,
+      DocumentCornersSource.fullImage => switch (page.edgeDetectionStatus) {
+        DocumentEdgeDetectionStatus.failed => t.documentEdgeDetectionFailed,
+        DocumentEdgeDetectionStatus.notFound ||
+        DocumentEdgeDetectionStatus.notStarted => t.documentEdgesNotFound,
+        DocumentEdgeDetectionStatus.detected => t.documentEdgesDetected,
+      },
+    };
+
+    return Row(
+      children: [
+        Icon(
+          isConfirmed ? LucideIcons.scanLine : LucideIcons.info,
+          size: 18,
+          color: isConfirmed
+              ? colorScheme.primary
+              : colorScheme.onSurfaceVariant,
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: isConfirmed
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        TextButton.icon(
+          key: const ValueKey('scan-editor-adjust-corners'),
+          onPressed: onPressed,
+          icon: const Icon(LucideIcons.crop, size: 18),
+          label: Text(t.scanAdjustCorners),
+        ),
+      ],
     );
   }
 }

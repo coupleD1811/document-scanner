@@ -12,12 +12,12 @@ final class ScanSessionCleared extends ScanSessionEvent {
 }
 
 final class ScanSessionPageAdded extends ScanSessionEvent {
-  const ScanSessionPageAdded(this.imagePath);
+  const ScanSessionPageAdded(this.image);
 
-  final String imagePath;
+  final NormalizedDocumentImage image;
 
   @override
-  List<Object?> get props => [imagePath];
+  List<Object?> get props => [image];
 }
 
 final class ScanSessionPageSelected extends ScanSessionEvent {
@@ -36,6 +36,19 @@ final class ScanSessionPageRemoved extends ScanSessionEvent {
 
   @override
   List<Object?> get props => [pageId];
+}
+
+final class ScanSessionPageCornersUpdated extends ScanSessionEvent {
+  const ScanSessionPageCornersUpdated({
+    required this.pageId,
+    required this.corners,
+  });
+
+  final String pageId;
+  final DocumentCorners corners;
+
+  @override
+  List<Object?> get props => [pageId, corners];
 }
 
 final class ScanSessionPagesReordered extends ScanSessionEvent {

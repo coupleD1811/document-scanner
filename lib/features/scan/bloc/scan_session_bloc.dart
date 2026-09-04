@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../model/document_page.dart';
+import '../model/document_corners.dart';
+import '../model/normalized_document_image.dart';
 import '../model/scan_session.dart';
 
 part 'scan_session_event.dart';
@@ -18,6 +20,7 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
     on<ScanSessionPageSelected>(_onPageSelected);
     on<ScanSessionPageRemoved>(_onPageRemoved);
     on<ScanSessionPagesReordered>(_onPagesReordered);
+    on<ScanSessionPageCornersUpdated>(_onPageCornersUpdated);
   }
 
   final ScanSessionClock _clock;
@@ -36,8 +39,14 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
     final pages = [...?currentSession?.pages];
     final page = DocumentPage(
       id: 'page-${now.microsecondsSinceEpoch}-${_nextId++}',
-      originalImagePath: event.imagePath,
+      originalImagePath: event.image.originalImagePath,
+      normalizedImagePath: event.image.normalizedImagePath,
+      pixelWidth: event.image.pixelWidth,
+      pixelHeight: event.image.pixelHeight,
       pageIndex: pages.length,
+      corners: event.image.corners,
+      detectedCorners: event.image.detectedCorners,
+      edgeDetectionStatus: event.image.edgeDetectionStatus,
       createdAt: now,
     );
     pages.add(page);
@@ -50,6 +59,32 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
           createdAt: currentSession?.createdAt ?? now,
         ),
         selectedPageIndex: pages.length - 1,
+      ),
+    );
+  }
+
+  void _onPageCornersUpdated(
+    ScanSessionPageCornersUpdated event,
+    Emitter<ScanSessionState> emit,
+  ) {
+    final session = state.session;
+    if (session == null || !event.corners.isUsable) {
+      return;
+    }
+
+    final pageIndex = session.pages.indexWhere(
+      (page) => page.id == event.pageId,
+    );
+    if (pageIndex == -1) {
+      return;
+    }
+
+    final pages = [...session.pages];
+    pages[pageIndex] = pages[pageIndex].copyWith(corners: event.corners);
+    emit(
+      ScanSessionEditing(
+        session: session.copyWith(pages: List.unmodifiable(pages)),
+        selectedPageIndex: pageIndex,
       ),
     );
   }

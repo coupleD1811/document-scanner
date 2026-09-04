@@ -407,6 +407,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cameraInitializing => 'Starting the camera...';
 
   @override
+  String get imageNormalizing => 'Preparing the captured image...';
+
+  @override
+  String get documentEdgesDetecting => 'Detecting document edges...';
+
+  @override
+  String get imageNormalizationFailureTitle => 'Unable to prepare this image';
+
+  @override
+  String get imageNormalizationFailureMessage =>
+      'The captured image could not be read or normalized. Please capture it again.';
+
+  @override
   String get cameraPermissionDeniedTitle => 'Scanly needs camera access';
 
   @override
@@ -504,6 +517,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scanEditorDiscard => 'Discard';
+
+  @override
+  String get documentEdgesDetected => 'Document edges detected';
+
+  @override
+  String get documentEdgesNotFound =>
+      'Edges were not found. Adjust the corners manually.';
+
+  @override
+  String get documentEdgeDetectionFailed =>
+      'Edge detection was unavailable. Adjust the corners manually.';
+
+  @override
+  String get documentCornersAdjusted => 'Document corners adjusted';
+
+  @override
+  String get scanAdjustCorners => 'Adjust';
+
+  @override
+  String get scanCornerEditorTitle => 'Adjust corners';
+
+  @override
+  String get scanCornerEditorHint =>
+      'Drag each corner to match the document edges.';
+
+  @override
+  String get scanCornerInvalidMessage =>
+      'Keep the four corners in order around the document.';
+
+  @override
+  String get scanCornerReset => 'Reset';
+
+  @override
+  String get scanCornerSave => 'Save corners';
+
+  @override
+  String get scanCornerTopLeft => 'Top-left corner';
+
+  @override
+  String get scanCornerTopRight => 'Top-right corner';
+
+  @override
+  String get scanCornerBottomRight => 'Bottom-right corner';
+
+  @override
+  String get scanCornerBottomLeft => 'Bottom-left corner';
 
   @override
   String get scanPdfComingSoon =>

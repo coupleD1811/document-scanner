@@ -13,6 +13,7 @@ import '../documents/view/page.dart';
 import '../home/home_page.dart';
 import '../profile/profile_page.dart';
 import '../scan/bloc/scan_session_bloc.dart';
+import '../scan/model/normalized_document_image.dart';
 import '../scan/view/scan_camera_page.dart';
 import '../scan/view/scan_editor_page.dart';
 import '../tools/tools_page.dart';
@@ -100,14 +101,14 @@ class _MainNavigationViewState extends State<_MainNavigationView> {
   Future<void> _openScanner() async {
     final sessionBloc = context.read<ScanSessionBloc>();
     sessionBloc.add(const ScanSessionCleared());
-    final imagePath = await Navigator.of(
-      context,
-    ).push<String>(MaterialPageRoute(builder: (_) => const ScanCameraPage()));
-    if (!mounted || imagePath == null) {
+    final image = await Navigator.of(context).push<NormalizedDocumentImage>(
+      MaterialPageRoute(builder: (_) => const ScanCameraPage()),
+    );
+    if (!mounted || image == null) {
       return;
     }
 
-    sessionBloc.add(ScanSessionPageAdded(imagePath));
+    sessionBloc.add(ScanSessionPageAdded(image));
     await Navigator.of(context).push<void>(
       MaterialPageRoute(
         builder: (_) => BlocProvider.value(

@@ -1,15 +1,25 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../model/normalized_document_image.dart';
+import '../model/document_corners.dart';
+import '../model/document_edge_detection_status.dart';
 import '../service/camera_access_service.dart';
+import '../service/document_edge_detector.dart';
+import '../service/document_image_normalizer.dart';
 
 part 'scan_camera_event.dart';
 part 'scan_camera_state.dart';
 
 class ScanCameraBloc extends Bloc<ScanCameraEvent, ScanCameraState> {
-  ScanCameraBloc({required CameraAccessService cameraAccessService})
-    : _cameraAccessService = cameraAccessService,
-      super(const ScanCameraState()) {
+  ScanCameraBloc({
+    required CameraAccessService cameraAccessService,
+    required DocumentImageNormalizer imageNormalizer,
+    required DocumentEdgeDetector edgeDetector,
+  }) : _imageNormalizer = imageNormalizer,
+       _edgeDetector = edgeDetector,
+       _cameraAccessService = cameraAccessService,
+       super(const ScanCameraState()) {
     on<ScanCameraStarted>(_onStarted);
     on<ScanCameraCaptureRequested>(_onCaptureRequested);
     on<ScanCameraOpenSettingsRequested>(_onOpenSettingsRequested);
@@ -17,6 +27,8 @@ class ScanCameraBloc extends Bloc<ScanCameraEvent, ScanCameraState> {
   }
 
   final CameraAccessService _cameraAccessService;
+  final DocumentImageNormalizer _imageNormalizer;
+  final DocumentEdgeDetector _edgeDetector;
 
   CameraAccessService get cameraAccessService => _cameraAccessService;
 
@@ -71,14 +83,51 @@ class ScanCameraBloc extends Bloc<ScanCameraEvent, ScanCameraState> {
     emit(const ScanCameraState(status: ScanCameraStatus.capturing));
     try {
       final imagePath = await _cameraAccessService.capture();
+      emit(const ScanCameraState(status: ScanCameraStatus.normalizing));
+      final normalizedImage = await _imageNormalizer.normalize(imagePath);
+      emit(const ScanCameraState(status: ScanCameraStatus.detectingEdges));
+      final preparedImage = await _detectEdges(normalizedImage);
       emit(
         ScanCameraState(
           status: ScanCameraStatus.captured,
-          capturedImagePath: imagePath,
+          capturedImage: preparedImage,
         ),
+      );
+    } on ImageNormalizationException {
+      emit(
+        const ScanCameraState(status: ScanCameraStatus.normalizationFailure),
       );
     } on Object {
       emit(const ScanCameraState(status: ScanCameraStatus.failure));
+    }
+  }
+
+  Future<NormalizedDocumentImage> _detectEdges(
+    NormalizedDocumentImage image,
+  ) async {
+    try {
+      final detectedCorners = await _edgeDetector.detect(
+        image.normalizedImagePath,
+      );
+      if (detectedCorners == null || !detectedCorners.isUsable) {
+        return image.copyWith(
+          corners: DocumentCorners.fullImage,
+          clearDetectedCorners: true,
+          edgeDetectionStatus: DocumentEdgeDetectionStatus.notFound,
+        );
+      }
+
+      return image.copyWith(
+        corners: detectedCorners,
+        detectedCorners: detectedCorners,
+        edgeDetectionStatus: DocumentEdgeDetectionStatus.detected,
+      );
+    } on Object {
+      return image.copyWith(
+        corners: DocumentCorners.fullImage,
+        clearDetectedCorners: true,
+        edgeDetectionStatus: DocumentEdgeDetectionStatus.failed,
+      );
     }
   }
 

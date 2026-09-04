@@ -11,6 +11,8 @@ import 'package:scanly/features/documents/model/model.dart';
 import 'package:scanly/features/documents/service/document_file_picker.dart';
 import 'package:scanly/features/documents/view/page.dart';
 import 'package:scanly/features/scan/bloc/scan_session_bloc.dart';
+import 'package:scanly/features/scan/model/document_corners.dart';
+import 'package:scanly/features/scan/model/normalized_document_image.dart';
 import 'package:scanly/features/scan/service/camera_access_service.dart';
 import 'package:scanly/features/scan/view/scan_camera_page.dart';
 import 'package:scanly/features/scan/view/scan_editor_page.dart';
@@ -384,12 +386,12 @@ void main() {
     final firstPageState = sessionBloc.stream.firstWhere(
       (state) => state.session?.pages.length == 1,
     );
-    sessionBloc.add(const ScanSessionPageAdded('/tmp/page-1.jpg'));
+    sessionBloc.add(ScanSessionPageAdded(_normalizedImage(1)));
     await firstPageState;
     final secondPageState = sessionBloc.stream.firstWhere(
       (state) => state.session?.pages.length == 2,
     );
-    sessionBloc.add(const ScanSessionPageAdded('/tmp/page-2.jpg'));
+    sessionBloc.add(ScanSessionPageAdded(_normalizedImage(2)));
     await secondPageState;
 
     await tester.pumpWidget(
@@ -415,6 +417,26 @@ void main() {
 
     expect(find.text('Trang 1 / 1'), findsOneWidget);
     expect(sessionBloc.state.session!.pages, hasLength(1));
+
+    await tester.tap(find.byKey(const ValueKey('scan-editor-adjust-corners')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Chỉnh các góc'), findsOneWidget);
+    expect(find.byKey(const ValueKey('scan-corner-topLeft')), findsOneWidget);
+
+    await tester.drag(
+      find.byKey(const ValueKey('scan-corner-topLeft')),
+      const Offset(18, 24),
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('scan-corners-save')));
+    await tester.pumpAndSettle();
+
+    expect(
+      sessionBloc.state.session!.pages.single.corners.source,
+      DocumentCornersSource.manual,
+    );
+    expect(find.text('Đã chỉnh các góc tài liệu'), findsOneWidget);
   });
 
   testWidgets('đổi ngôn ngữ trong tab cá nhân', (tester) async {
@@ -653,6 +675,15 @@ class FakeAuthRepository implements AuthRepository {
   Future<void> dispose() {
     return _controller.close();
   }
+}
+
+NormalizedDocumentImage _normalizedImage(int pageNumber) {
+  return NormalizedDocumentImage(
+    originalImagePath: '/tmp/page-$pageNumber.jpg',
+    normalizedImagePath: '/tmp/page-$pageNumber-normalized.jpg',
+    pixelWidth: 1200,
+    pixelHeight: 1600,
+  );
 }
 
 class FakeDocumentFilePicker implements DocumentFilePicker {
