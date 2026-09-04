@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:camera/camera.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scanly/app/scanly_app.dart';
 import 'package:scanly/app/theme/scanly_icons.dart';
 import 'package:scanly/features/auth/repository/auth_failure.dart';
@@ -9,8 +10,10 @@ import 'package:scanly/features/auth/repository/auth_user.dart';
 import 'package:scanly/features/documents/model/model.dart';
 import 'package:scanly/features/documents/service/document_file_picker.dart';
 import 'package:scanly/features/documents/view/page.dart';
-import 'package:scanly/features/scan/scan_page.dart';
+import 'package:scanly/features/scan/bloc/scan_session_bloc.dart';
 import 'package:scanly/features/scan/service/camera_access_service.dart';
+import 'package:scanly/features/scan/view/scan_camera_page.dart';
+import 'package:scanly/features/scan/view/scan_editor_page.dart';
 import 'package:scanly/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -339,7 +342,7 @@ void main() {
         locale: const Locale('vi'),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: ScanPage(cameraAccessService: cameraAccessService),
+        home: ScanCameraPage(cameraAccessService: cameraAccessService),
       ),
     );
     await tester.pumpAndSettle();
@@ -361,7 +364,7 @@ void main() {
         locale: const Locale('vi'),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: ScanPage(cameraAccessService: cameraAccessService),
+        home: ScanCameraPage(cameraAccessService: cameraAccessService),
       ),
     );
     await tester.pumpAndSettle();
@@ -373,6 +376,45 @@ void main() {
     await tester.pump();
 
     expect(cameraAccessService.openSettingsCount, 1);
+  });
+
+  testWidgets('editor hiển thị và xóa trang trong phiên quét', (tester) async {
+    final sessionBloc = ScanSessionBloc();
+    addTearDown(sessionBloc.close);
+    final firstPageState = sessionBloc.stream.firstWhere(
+      (state) => state.session?.pages.length == 1,
+    );
+    sessionBloc.add(const ScanSessionPageAdded('/tmp/page-1.jpg'));
+    await firstPageState;
+    final secondPageState = sessionBloc.stream.firstWhere(
+      (state) => state.session?.pages.length == 2,
+    );
+    sessionBloc.add(const ScanSessionPageAdded('/tmp/page-2.jpg'));
+    await secondPageState;
+
+    await tester.pumpWidget(
+      BlocProvider.value(
+        value: sessionBloc,
+        child: MaterialApp(
+          locale: const Locale('vi'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const ScanEditorPage(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Kiểm tra bản quét'), findsOneWidget);
+    expect(find.text('Trang 2 / 2'), findsOneWidget);
+    expect(find.byKey(const ValueKey('scan-editor-add-page')), findsOneWidget);
+    expect(find.byKey(const ValueKey('scan-editor-continue')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('scan-editor-delete-page')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Trang 1 / 1'), findsOneWidget);
+    expect(sessionBloc.state.session!.pages, hasLength(1));
   });
 
   testWidgets('đổi ngôn ngữ trong tab cá nhân', (tester) async {

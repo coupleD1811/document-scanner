@@ -140,6 +140,39 @@
   "openSettingsAction": "設定を開く",
   "captureDocumentTooltip": "書類を撮影",
   "scanCapturedMessage": "書類を撮影しました。",
+  "scanEditorTitle": "スキャンを確認",
+  "scanEditorPageProgress": "{total} ページ中 {current} ページ",
+  "@scanEditorPageProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "scanEditorPageNumber": "{number} ページ",
+  "@scanEditorPageNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "scanEditorAdd": "追加",
+  "scanEditorAddPage": "ページを追加",
+  "scanEditorDeletePage": "ページを削除",
+  "scanEditorReorderHint": "長押ししてドラッグで並べ替え",
+  "scanEditorCancel": "キャンセル",
+  "scanEditorContinue": "続ける",
+  "scanEditorEmptyTitle": "スキャンしたページがありません",
+  "scanEditorEmptySubtitle": "ページを撮影して、このスキャンを続けてください。",
+  "scanEditorDiscardTitle": "このスキャンを破棄しますか？",
+  "scanEditorDiscardMessage": "このセッションで撮影したすべてのページが削除されます。",
+  "scanEditorKeepEditing": "編集を続ける",
+  "scanEditorDiscard": "破棄",
+  "scanPdfComingSoon": "PDF 作成機能は次のステップで追加されます。",
   "pdfSelectedMessage": "{name} を選択しました。",
   "@pdfSelectedMessage": {
     "placeholders": {

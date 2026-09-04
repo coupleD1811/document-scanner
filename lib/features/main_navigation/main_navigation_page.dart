@@ -12,17 +12,31 @@ import '../auth/session/bloc/auth_session_bloc.dart';
 import '../documents/view/page.dart';
 import '../home/home_page.dart';
 import '../profile/profile_page.dart';
-import '../scan/scan_page.dart';
+import '../scan/bloc/scan_session_bloc.dart';
+import '../scan/view/scan_camera_page.dart';
+import '../scan/view/scan_editor_page.dart';
 import '../tools/tools_page.dart';
 
-class MainNavigationPage extends StatefulWidget {
+class MainNavigationPage extends StatelessWidget {
   const MainNavigationPage({super.key});
 
   @override
-  State<MainNavigationPage> createState() => _MainNavigationPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => ScanSessionBloc(),
+      child: const _MainNavigationView(),
+    );
+  }
 }
 
-class _MainNavigationPageState extends State<MainNavigationPage> {
+class _MainNavigationView extends StatefulWidget {
+  const _MainNavigationView();
+
+  @override
+  State<_MainNavigationView> createState() => _MainNavigationViewState();
+}
+
+class _MainNavigationViewState extends State<_MainNavigationView> {
   static const _scanTabIndex = 2;
 
   int _selectedIndex = 0;
@@ -84,16 +98,24 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   }
 
   Future<void> _openScanner() async {
+    final sessionBloc = context.read<ScanSessionBloc>();
+    sessionBloc.add(const ScanSessionCleared());
     final imagePath = await Navigator.of(
       context,
-    ).push<String>(MaterialPageRoute(builder: (_) => const ScanPage()));
+    ).push<String>(MaterialPageRoute(builder: (_) => const ScanCameraPage()));
     if (!mounted || imagePath == null) {
       return;
     }
 
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(context.l10n.scanCapturedMessage)));
+    sessionBloc.add(ScanSessionPageAdded(imagePath));
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+          value: sessionBloc,
+          child: const ScanEditorPage(),
+        ),
+      ),
+    );
   }
 }
 

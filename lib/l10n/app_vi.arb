@@ -140,6 +140,39 @@
   "openSettingsAction": "Mở Cài đặt",
   "captureDocumentTooltip": "Chụp tài liệu",
   "scanCapturedMessage": "Đã chụp ảnh tài liệu.",
+  "scanEditorTitle": "Kiểm tra bản quét",
+  "scanEditorPageProgress": "Trang {current} / {total}",
+  "@scanEditorPageProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "scanEditorPageNumber": "Trang {number}",
+  "@scanEditorPageNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "scanEditorAdd": "Thêm",
+  "scanEditorAddPage": "Thêm trang",
+  "scanEditorDeletePage": "Xóa trang",
+  "scanEditorReorderHint": "Nhấn giữ và kéo để sắp xếp",
+  "scanEditorCancel": "Hủy",
+  "scanEditorContinue": "Tiếp tục",
+  "scanEditorEmptyTitle": "Chưa có trang quét",
+  "scanEditorEmptySubtitle": "Chụp một trang để tiếp tục phiên quét này.",
+  "scanEditorDiscardTitle": "Hủy phiên quét?",
+  "scanEditorDiscardMessage": "Tất cả trang đã chụp trong phiên này sẽ bị xóa.",
+  "scanEditorKeepEditing": "Tiếp tục chỉnh sửa",
+  "scanEditorDiscard": "Hủy phiên",
+  "scanPdfComingSoon": "Chức năng tạo PDF sẽ được bổ sung ở bước tiếp theo.",
   "pdfSelectedMessage": "Đã chọn {name}.",
   "@pdfSelectedMessage": {
     "placeholders": {

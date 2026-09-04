@@ -1,0 +1,52 @@
+part of 'scan_session_bloc.dart';
+
+sealed class ScanSessionEvent extends Equatable {
+  const ScanSessionEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
+final class ScanSessionCleared extends ScanSessionEvent {
+  const ScanSessionCleared();
+}
+
+final class ScanSessionPageAdded extends ScanSessionEvent {
+  const ScanSessionPageAdded(this.imagePath);
+
+  final String imagePath;
+
+  @override
+  List<Object?> get props => [imagePath];
+}
+
+final class ScanSessionPageSelected extends ScanSessionEvent {
+  const ScanSessionPageSelected(this.pageIndex);
+
+  final int pageIndex;
+
+  @override
+  List<Object?> get props => [pageIndex];
+}
+
+final class ScanSessionPageRemoved extends ScanSessionEvent {
+  const ScanSessionPageRemoved(this.pageId);
+
+  final String pageId;
+
+  @override
+  List<Object?> get props => [pageId];
+}
+
+final class ScanSessionPagesReordered extends ScanSessionEvent {
+  const ScanSessionPagesReordered({
+    required this.oldIndex,
+    required this.newIndex,
+  });
+
+  final int oldIndex;
+  final int newIndex;
+
+  @override
+  List<Object?> get props => [oldIndex, newIndex];
+}

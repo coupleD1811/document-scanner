@@ -453,6 +453,61 @@ class AppLocalizationsVi extends AppLocalizations {
   String get scanCapturedMessage => 'Đã chụp ảnh tài liệu.';
 
   @override
+  String get scanEditorTitle => 'Kiểm tra bản quét';
+
+  @override
+  String scanEditorPageProgress(int current, int total) {
+    return 'Trang $current / $total';
+  }
+
+  @override
+  String scanEditorPageNumber(int number) {
+    return 'Trang $number';
+  }
+
+  @override
+  String get scanEditorAdd => 'Thêm';
+
+  @override
+  String get scanEditorAddPage => 'Thêm trang';
+
+  @override
+  String get scanEditorDeletePage => 'Xóa trang';
+
+  @override
+  String get scanEditorReorderHint => 'Nhấn giữ và kéo để sắp xếp';
+
+  @override
+  String get scanEditorCancel => 'Hủy';
+
+  @override
+  String get scanEditorContinue => 'Tiếp tục';
+
+  @override
+  String get scanEditorEmptyTitle => 'Chưa có trang quét';
+
+  @override
+  String get scanEditorEmptySubtitle =>
+      'Chụp một trang để tiếp tục phiên quét này.';
+
+  @override
+  String get scanEditorDiscardTitle => 'Hủy phiên quét?';
+
+  @override
+  String get scanEditorDiscardMessage =>
+      'Tất cả trang đã chụp trong phiên này sẽ bị xóa.';
+
+  @override
+  String get scanEditorKeepEditing => 'Tiếp tục chỉnh sửa';
+
+  @override
+  String get scanEditorDiscard => 'Hủy phiên';
+
+  @override
+  String get scanPdfComingSoon =>
+      'Chức năng tạo PDF sẽ được bổ sung ở bước tiếp theo.';
+
+  @override
   String pdfSelectedMessage(String name) {
     return 'Đã chọn $name.';
   }

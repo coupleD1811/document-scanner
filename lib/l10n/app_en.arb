@@ -140,6 +140,39 @@
   "openSettingsAction": "Open Settings",
   "captureDocumentTooltip": "Capture document",
   "scanCapturedMessage": "Document image captured.",
+  "scanEditorTitle": "Review scan",
+  "scanEditorPageProgress": "Page {current} of {total}",
+  "@scanEditorPageProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "scanEditorPageNumber": "Page {number}",
+  "@scanEditorPageNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "scanEditorAdd": "Add",
+  "scanEditorAddPage": "Add page",
+  "scanEditorDeletePage": "Delete page",
+  "scanEditorReorderHint": "Hold and drag to reorder",
+  "scanEditorCancel": "Cancel",
+  "scanEditorContinue": "Continue",
+  "scanEditorEmptyTitle": "No scanned pages",
+  "scanEditorEmptySubtitle": "Capture a page to continue this scan session.",
+  "scanEditorDiscardTitle": "Discard this scan?",
+  "scanEditorDiscardMessage": "All pages captured in this session will be removed.",
+  "scanEditorKeepEditing": "Keep editing",
+  "scanEditorDiscard": "Discard",
+  "scanPdfComingSoon": "PDF creation will be added in the next step.",
   "pdfSelectedMessage": "Selected {name}.",
   "@pdfSelectedMessage": {
     "placeholders": {

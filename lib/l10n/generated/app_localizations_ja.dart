@@ -434,6 +434,58 @@ class AppLocalizationsJa extends AppLocalizations {
   String get scanCapturedMessage => '書類を撮影しました。';
 
   @override
+  String get scanEditorTitle => 'スキャンを確認';
+
+  @override
+  String scanEditorPageProgress(int current, int total) {
+    return '$total ページ中 $current ページ';
+  }
+
+  @override
+  String scanEditorPageNumber(int number) {
+    return '$number ページ';
+  }
+
+  @override
+  String get scanEditorAdd => '追加';
+
+  @override
+  String get scanEditorAddPage => 'ページを追加';
+
+  @override
+  String get scanEditorDeletePage => 'ページを削除';
+
+  @override
+  String get scanEditorReorderHint => '長押ししてドラッグで並べ替え';
+
+  @override
+  String get scanEditorCancel => 'キャンセル';
+
+  @override
+  String get scanEditorContinue => '続ける';
+
+  @override
+  String get scanEditorEmptyTitle => 'スキャンしたページがありません';
+
+  @override
+  String get scanEditorEmptySubtitle => 'ページを撮影して、このスキャンを続けてください。';
+
+  @override
+  String get scanEditorDiscardTitle => 'このスキャンを破棄しますか？';
+
+  @override
+  String get scanEditorDiscardMessage => 'このセッションで撮影したすべてのページが削除されます。';
+
+  @override
+  String get scanEditorKeepEditing => '編集を続ける';
+
+  @override
+  String get scanEditorDiscard => '破棄';
+
+  @override
+  String get scanPdfComingSoon => 'PDF 作成機能は次のステップで追加されます。';
+
+  @override
   String pdfSelectedMessage(String name) {
     return '$name を選択しました。';
   }

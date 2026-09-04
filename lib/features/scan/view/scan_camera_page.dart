@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../app/theme/scanly_icons.dart';
-import '../../l10n/l10n.dart';
-import 'bloc/scan_camera_bloc.dart';
-import 'service/camera_access_service.dart';
+import '../../../app/theme/scanly_icons.dart';
+import '../../../l10n/l10n.dart';
+import '../bloc/scan_camera_bloc.dart';
+import '../service/camera_access_service.dart';
 
-class ScanPage extends StatelessWidget {
-  const ScanPage({this.cameraAccessService, super.key});
+class ScanCameraPage extends StatelessWidget {
+  const ScanCameraPage({this.cameraAccessService, super.key});
 
   final CameraAccessService? cameraAccessService;
 

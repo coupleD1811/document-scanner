@@ -940,6 +940,102 @@ abstract class AppLocalizations {
   /// **'Đã chụp ảnh tài liệu.'**
   String get scanCapturedMessage;
 
+  /// No description provided for @scanEditorTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kiểm tra bản quét'**
+  String get scanEditorTitle;
+
+  /// No description provided for @scanEditorPageProgress.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trang {current} / {total}'**
+  String scanEditorPageProgress(int current, int total);
+
+  /// No description provided for @scanEditorPageNumber.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trang {number}'**
+  String scanEditorPageNumber(int number);
+
+  /// No description provided for @scanEditorAdd.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm'**
+  String get scanEditorAdd;
+
+  /// No description provided for @scanEditorAddPage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm trang'**
+  String get scanEditorAddPage;
+
+  /// No description provided for @scanEditorDeletePage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa trang'**
+  String get scanEditorDeletePage;
+
+  /// No description provided for @scanEditorReorderHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhấn giữ và kéo để sắp xếp'**
+  String get scanEditorReorderHint;
+
+  /// No description provided for @scanEditorCancel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hủy'**
+  String get scanEditorCancel;
+
+  /// No description provided for @scanEditorContinue.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếp tục'**
+  String get scanEditorContinue;
+
+  /// No description provided for @scanEditorEmptyTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có trang quét'**
+  String get scanEditorEmptyTitle;
+
+  /// No description provided for @scanEditorEmptySubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chụp một trang để tiếp tục phiên quét này.'**
+  String get scanEditorEmptySubtitle;
+
+  /// No description provided for @scanEditorDiscardTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hủy phiên quét?'**
+  String get scanEditorDiscardTitle;
+
+  /// No description provided for @scanEditorDiscardMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả trang đã chụp trong phiên này sẽ bị xóa.'**
+  String get scanEditorDiscardMessage;
+
+  /// No description provided for @scanEditorKeepEditing.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếp tục chỉnh sửa'**
+  String get scanEditorKeepEditing;
+
+  /// No description provided for @scanEditorDiscard.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hủy phiên'**
+  String get scanEditorDiscard;
+
+  /// No description provided for @scanPdfComingSoon.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chức năng tạo PDF sẽ được bổ sung ở bước tiếp theo.'**
+  String get scanPdfComingSoon;
+
   /// No description provided for @pdfSelectedMessage.
   ///
   /// In vi, this message translates to:

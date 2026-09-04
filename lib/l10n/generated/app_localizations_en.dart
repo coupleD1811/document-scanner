@@ -455,6 +455,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanCapturedMessage => 'Document image captured.';
 
   @override
+  String get scanEditorTitle => 'Review scan';
+
+  @override
+  String scanEditorPageProgress(int current, int total) {
+    return 'Page $current of $total';
+  }
+
+  @override
+  String scanEditorPageNumber(int number) {
+    return 'Page $number';
+  }
+
+  @override
+  String get scanEditorAdd => 'Add';
+
+  @override
+  String get scanEditorAddPage => 'Add page';
+
+  @override
+  String get scanEditorDeletePage => 'Delete page';
+
+  @override
+  String get scanEditorReorderHint => 'Hold and drag to reorder';
+
+  @override
+  String get scanEditorCancel => 'Cancel';
+
+  @override
+  String get scanEditorContinue => 'Continue';
+
+  @override
+  String get scanEditorEmptyTitle => 'No scanned pages';
+
+  @override
+  String get scanEditorEmptySubtitle =>
+      'Capture a page to continue this scan session.';
+
+  @override
+  String get scanEditorDiscardTitle => 'Discard this scan?';
+
+  @override
+  String get scanEditorDiscardMessage =>
+      'All pages captured in this session will be removed.';
+
+  @override
+  String get scanEditorKeepEditing => 'Keep editing';
+
+  @override
+  String get scanEditorDiscard => 'Discard';
+
+  @override
+  String get scanPdfComingSoon =>
+      'PDF creation will be added in the next step.';
+
+  @override
   String pdfSelectedMessage(String name) {
     return 'Selected $name.';
   }
