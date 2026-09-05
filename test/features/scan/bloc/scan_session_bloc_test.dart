@@ -12,6 +12,7 @@ import 'package:scanly/features/scan/model/document_processing_status.dart';
 import 'package:scanly/features/scan/model/normalized_document_image.dart';
 import 'package:scanly/features/scan/model/normalized_point.dart';
 import 'package:scanly/features/scan/model/processed_document_image.dart';
+import 'package:scanly/features/scan/model/scan_filter.dart';
 import 'package:scanly/features/scan/service/camera_access_service.dart';
 import 'package:scanly/features/scan/service/document_edge_detector.dart';
 import 'package:scanly/features/scan/service/document_image_normalizer.dart';
@@ -146,6 +147,40 @@ void main() {
     expect(rotatedLeftState.session!.pages.last.displayPixelWidth, 1200);
     expect(rotatedLeftState.session!.pages.last.displayPixelHeight, 900);
     expect(perspectiveCorrector.receivedRotations.last, 270);
+
+    final filteredState = await _dispatchAndWait(
+      bloc,
+      ScanSessionPageFilterChanged(
+        pageId: pageId,
+        filter: ScanFilter.grayscale,
+      ),
+      matches: (state) =>
+          state.session?.pages.last.filter == ScanFilter.grayscale &&
+          state.session?.pages.last.processingStatus ==
+              DocumentProcessingStatus.completed,
+    );
+    expect(filteredState.session!.pages.last.rotation, 270);
+    expect(filteredState.session!.pages.last.corners, manualCorners);
+    expect(perspectiveCorrector.receivedFilters.last, ScanFilter.grayscale);
+
+    final imageAdjustedState = await _dispatchAndWait(
+      bloc,
+      ScanSessionPageAdjustmentsChanged(
+        pageId: pageId,
+        brightness: 25,
+        contrast: -15,
+      ),
+      matches: (state) =>
+          state.session?.pages.last.brightness == 25 &&
+          state.session?.pages.last.contrast == -15 &&
+          state.session?.pages.last.processingStatus ==
+              DocumentProcessingStatus.completed,
+    );
+    expect(imageAdjustedState.session!.pages.last.rotation, 270);
+    expect(imageAdjustedState.session!.pages.last.filter, ScanFilter.grayscale);
+    expect(imageAdjustedState.session!.pages.last.corners, manualCorners);
+    expect(perspectiveCorrector.receivedBrightness.last, 25);
+    expect(perspectiveCorrector.receivedContrast.last, -15);
 
     final reorderedState = await _dispatchAndWait(
       bloc,
@@ -415,6 +450,81 @@ void main() {
     expect(await File(rotatedOutputPath).exists(), isTrue);
     expect(await File(sourcePath).readAsBytes(), sourceBytes);
   });
+
+  test('applies color, grayscale and black-white scan filters', () async {
+    final directory = await Directory.systemTemp.createTemp('scanly-filter-');
+    addTearDown(() => directory.delete(recursive: true));
+    final sourcePath = '${directory.path}/filter-source.png';
+    final sourceImage = img.Image(width: 120, height: 80);
+    img.fill(sourceImage, color: img.ColorRgb8(245, 245, 245));
+    img.fillRect(
+      sourceImage,
+      x1: 8,
+      y1: 8,
+      x2: 55,
+      y2: 71,
+      color: img.ColorRgb8(20, 80, 180),
+    );
+    img.fillRect(
+      sourceImage,
+      x1: 64,
+      y1: 24,
+      x2: 110,
+      y2: 55,
+      color: img.ColorRgb8(15, 15, 15),
+    );
+    await File(sourcePath).writeAsBytes(img.encodePng(sourceImage));
+
+    var outputIndex = 0;
+    Future<img.Image> process(
+      ScanFilter filter, {
+      int brightness = 0,
+      int contrast = 0,
+    }) async {
+      final outputPath =
+          '${directory.path}/${filter.name}-${outputIndex++}.jpg';
+      await LocalDocumentPerspectiveCorrector(
+        outputPathBuilder: (_) => outputPath,
+      ).correct(
+        normalizedImagePath: sourcePath,
+        corners: DocumentCorners.fullImage,
+        filter: filter,
+        brightness: brightness,
+        contrast: contrast,
+      );
+      return img.decodeJpg(await File(outputPath).readAsBytes())!;
+    }
+
+    final originalImage = await process(ScanFilter.original);
+    final colorImage = await process(ScanFilter.color);
+    final grayscaleImage = await process(ScanFilter.grayscale);
+    final blackWhiteImage = await process(ScanFilter.blackAndWhite);
+    final brighterImage = await process(ScanFilter.original, brightness: 50);
+    final higherContrastImage = await process(
+      ScanFilter.original,
+      contrast: 50,
+    );
+    final colorPixel = colorImage.getPixel(30, 40);
+    final grayPixel = grayscaleImage.getPixel(30, 40);
+    final inkPixel = blackWhiteImage.getPixel(80, 40);
+    final paperPixel = blackWhiteImage.getPixel(115, 10);
+
+    expect((colorPixel.b - colorPixel.r).abs(), greaterThan(80));
+    expect((grayPixel.r - grayPixel.g).abs(), lessThanOrEqualTo(3));
+    expect((grayPixel.g - grayPixel.b).abs(), lessThanOrEqualTo(3));
+    expect(inkPixel.r, lessThan(20));
+    expect(paperPixel.r, greaterThan(235));
+    expect(
+      brighterImage.getPixel(30, 40).b,
+      greaterThan(originalImage.getPixel(30, 40).b),
+    );
+    final originalRange =
+        originalImage.getPixel(115, 10).r - originalImage.getPixel(80, 40).r;
+    final adjustedRange =
+        higherContrastImage.getPixel(115, 10).r -
+        higherContrastImage.getPixel(80, 40).r;
+    expect(adjustedRange, greaterThan(originalRange));
+  });
 }
 
 NormalizedDocumentImage _normalizedImage(int pageNumber) {
@@ -514,16 +624,25 @@ class _FakeDocumentPerspectiveCorrector
   int callCount = 0;
   final receivedCorners = <DocumentCorners>[];
   final receivedRotations = <int>[];
+  final receivedFilters = <ScanFilter>[];
+  final receivedBrightness = <int>[];
+  final receivedContrast = <int>[];
 
   @override
   Future<ProcessedDocumentImage> correct({
     required String normalizedImagePath,
     required DocumentCorners corners,
     int rotationDegrees = 0,
+    ScanFilter filter = ScanFilter.original,
+    int brightness = 0,
+    int contrast = 0,
   }) async {
     callCount += 1;
     receivedCorners.add(corners);
     receivedRotations.add(rotationDegrees);
+    receivedFilters.add(filter);
+    receivedBrightness.add(brightness);
+    receivedContrast.add(contrast);
     if (remainingFailures > 0) {
       remainingFailures -= 1;
       throw const PerspectiveCorrectionException(

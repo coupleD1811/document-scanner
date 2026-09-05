@@ -14,6 +14,7 @@ import 'package:scanly/features/scan/bloc/scan_session_bloc.dart';
 import 'package:scanly/features/scan/model/document_corners.dart';
 import 'package:scanly/features/scan/model/normalized_document_image.dart';
 import 'package:scanly/features/scan/model/processed_document_image.dart';
+import 'package:scanly/features/scan/model/scan_filter.dart';
 import 'package:scanly/features/scan/service/camera_access_service.dart';
 import 'package:scanly/features/scan/service/document_perspective_corrector.dart';
 import 'package:scanly/features/scan/view/scan_camera_page.dart';
@@ -383,6 +384,11 @@ void main() {
   });
 
   testWidgets('editor hiển thị và xóa trang trong phiên quét', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     final sessionBloc = ScanSessionBloc(
       perspectiveCorrector: FakeDocumentPerspectiveCorrector(),
     );
@@ -438,6 +444,43 @@ void main() {
     expect(sessionBloc.state.session!.pages.last.rotation, 90);
     expect(sessionBloc.state.session!.pages.last.displayPixelWidth, 1200);
     expect(sessionBloc.state.session!.pages.last.displayPixelHeight, 900);
+    expect(find.text('Bộ lọc'), findsOneWidget);
+    expect(find.byKey(const ValueKey('scan-filter-original')), findsOneWidget);
+    expect(find.byKey(const ValueKey('scan-filter-color')), findsOneWidget);
+    expect(find.byKey(const ValueKey('scan-filter-grayscale')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('scan-filter-black-white')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('scan-filter-grayscale')));
+    await tester.pumpAndSettle();
+
+    expect(sessionBloc.state.session!.pages.last.filter, ScanFilter.grayscale);
+    expect(sessionBloc.state.session!.pages.last.rotation, 90);
+
+    await tester.tap(find.byKey(const ValueKey('scan-editor-adjust-image')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Điều chỉnh ảnh'), findsOneWidget);
+    final brightnessSlider = find.descendant(
+      of: find.byKey(const ValueKey('scan-brightness-slider')),
+      matching: find.byType(Slider),
+    );
+    final contrastSlider = find.descendant(
+      of: find.byKey(const ValueKey('scan-contrast-slider')),
+      matching: find.byType(Slider),
+    );
+    await tester.drag(brightnessSlider, const Offset(60, 0));
+    await tester.drag(contrastSlider, const Offset(-40, 0));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('scan-adjustments-apply')));
+    await tester.pumpAndSettle();
+
+    expect(sessionBloc.state.session!.pages.last.brightness, isNot(0));
+    expect(sessionBloc.state.session!.pages.last.contrast, isNot(0));
+    expect(sessionBloc.state.session!.pages.last.filter, ScanFilter.grayscale);
+    expect(sessionBloc.state.session!.pages.last.rotation, 90);
 
     await tester.tap(find.byKey(const ValueKey('scan-editor-delete-page')));
     await tester.pumpAndSettle();
@@ -771,6 +814,9 @@ class FakeDocumentPerspectiveCorrector implements DocumentPerspectiveCorrector {
     required String normalizedImagePath,
     required DocumentCorners corners,
     int rotationDegrees = 0,
+    ScanFilter filter = ScanFilter.original,
+    int brightness = 0,
+    int contrast = 0,
   }) async {
     callCount += 1;
     return ProcessedDocumentImage(

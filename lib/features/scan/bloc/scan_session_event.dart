@@ -73,6 +73,35 @@ final class ScanSessionPageRotationRequested extends ScanSessionEvent {
   List<Object?> get props => [pageId, quarterTurns];
 }
 
+final class ScanSessionPageFilterChanged extends ScanSessionEvent {
+  const ScanSessionPageFilterChanged({
+    required this.pageId,
+    required this.filter,
+  });
+
+  final String pageId;
+  final ScanFilter filter;
+
+  @override
+  List<Object?> get props => [pageId, filter];
+}
+
+final class ScanSessionPageAdjustmentsChanged extends ScanSessionEvent {
+  const ScanSessionPageAdjustmentsChanged({
+    required this.pageId,
+    required this.brightness,
+    required this.contrast,
+  }) : assert(brightness >= -100 && brightness <= 100),
+       assert(contrast >= -100 && contrast <= 100);
+
+  final String pageId;
+  final int brightness;
+  final int contrast;
+
+  @override
+  List<Object?> get props => [pageId, brightness, contrast];
+}
+
 final class ScanSessionPagesReordered extends ScanSessionEvent {
   const ScanSessionPagesReordered({
     required this.oldIndex,

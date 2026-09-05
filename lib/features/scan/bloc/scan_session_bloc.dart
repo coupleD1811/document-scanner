@@ -5,6 +5,7 @@ import '../model/document_page.dart';
 import '../model/document_corners.dart';
 import '../model/document_processing_status.dart';
 import '../model/normalized_document_image.dart';
+import '../model/scan_filter.dart';
 import '../model/scan_session.dart';
 import '../service/document_perspective_corrector.dart';
 
@@ -28,6 +29,8 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
     on<ScanSessionPagesReordered>(_onPagesReordered);
     on<ScanSessionPageCornersUpdated>(_onPageCornersUpdated);
     on<ScanSessionPageRotationRequested>(_onPageRotationRequested);
+    on<ScanSessionPageFilterChanged>(_onPageFilterChanged);
+    on<ScanSessionPageAdjustmentsChanged>(_onPageAdjustmentsChanged);
     on<ScanSessionPageProcessingRequested>(_onPageProcessingRequested);
   }
 
@@ -141,6 +144,82 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
     add(ScanSessionPageProcessingRequested(event.pageId));
   }
 
+  void _onPageFilterChanged(
+    ScanSessionPageFilterChanged event,
+    Emitter<ScanSessionState> emit,
+  ) {
+    final session = state.session;
+    if (session == null) {
+      return;
+    }
+
+    final pageIndex = session.pages.indexWhere(
+      (page) => page.id == event.pageId,
+    );
+    if (pageIndex == -1) {
+      return;
+    }
+
+    final page = session.pages[pageIndex];
+    if (page.filter == event.filter ||
+        page.processingStatus == DocumentProcessingStatus.processing) {
+      return;
+    }
+
+    final pages = [...session.pages];
+    pages[pageIndex] = page.copyWith(
+      filter: event.filter,
+      clearProcessedImagePath: true,
+      processingStatus: DocumentProcessingStatus.notStarted,
+    );
+    emit(
+      ScanSessionEditing(
+        session: session.copyWith(pages: List.unmodifiable(pages)),
+        selectedPageIndex: pageIndex,
+      ),
+    );
+    add(ScanSessionPageProcessingRequested(event.pageId));
+  }
+
+  void _onPageAdjustmentsChanged(
+    ScanSessionPageAdjustmentsChanged event,
+    Emitter<ScanSessionState> emit,
+  ) {
+    final session = state.session;
+    if (session == null) {
+      return;
+    }
+
+    final pageIndex = session.pages.indexWhere(
+      (page) => page.id == event.pageId,
+    );
+    if (pageIndex == -1) {
+      return;
+    }
+
+    final page = session.pages[pageIndex];
+    if ((page.brightness == event.brightness &&
+            page.contrast == event.contrast) ||
+        page.processingStatus == DocumentProcessingStatus.processing) {
+      return;
+    }
+
+    final pages = [...session.pages];
+    pages[pageIndex] = page.copyWith(
+      brightness: event.brightness,
+      contrast: event.contrast,
+      clearProcessedImagePath: true,
+      processingStatus: DocumentProcessingStatus.notStarted,
+    );
+    emit(
+      ScanSessionEditing(
+        session: session.copyWith(pages: List.unmodifiable(pages)),
+        selectedPageIndex: pageIndex,
+      ),
+    );
+    add(ScanSessionPageProcessingRequested(event.pageId));
+  }
+
   Future<void> _onPageProcessingRequested(
     ScanSessionPageProcessingRequested event,
     Emitter<ScanSessionState> emit,
@@ -164,6 +243,9 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
 
     final requestedCorners = page.corners;
     final requestedRotation = page.rotation;
+    final requestedFilter = page.filter;
+    final requestedBrightness = page.brightness;
+    final requestedContrast = page.contrast;
     final processingPages = [...session.pages];
     processingPages[pageIndex] = page.copyWith(
       clearProcessedImagePath: true,
@@ -181,6 +263,9 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
         normalizedImagePath: page.normalizedImagePath,
         corners: requestedCorners,
         rotationDegrees: requestedRotation,
+        filter: requestedFilter,
+        brightness: requestedBrightness,
+        contrast: requestedContrast,
       );
       final currentSession = state.session;
       if (currentSession == null) {
@@ -191,7 +276,11 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
       );
       if (currentIndex == -1 ||
           currentSession.pages[currentIndex].corners != requestedCorners ||
-          currentSession.pages[currentIndex].rotation != requestedRotation) {
+          currentSession.pages[currentIndex].rotation != requestedRotation ||
+          currentSession.pages[currentIndex].filter != requestedFilter ||
+          currentSession.pages[currentIndex].brightness !=
+              requestedBrightness ||
+          currentSession.pages[currentIndex].contrast != requestedContrast) {
         return;
       }
 
@@ -220,7 +309,11 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
       );
       if (currentIndex == -1 ||
           currentSession.pages[currentIndex].corners != requestedCorners ||
-          currentSession.pages[currentIndex].rotation != requestedRotation) {
+          currentSession.pages[currentIndex].rotation != requestedRotation ||
+          currentSession.pages[currentIndex].filter != requestedFilter ||
+          currentSession.pages[currentIndex].brightness !=
+              requestedBrightness ||
+          currentSession.pages[currentIndex].contrast != requestedContrast) {
         return;
       }
 

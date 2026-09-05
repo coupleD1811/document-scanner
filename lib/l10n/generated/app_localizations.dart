@@ -1114,6 +1114,72 @@ abstract class AppLocalizations {
   /// **'Xoay phải'**
   String get scanRotateRight;
 
+  /// No description provided for @scanAdjustImage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Điều chỉnh'**
+  String get scanAdjustImage;
+
+  /// No description provided for @scanImageAdjustmentsTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Điều chỉnh ảnh'**
+  String get scanImageAdjustmentsTitle;
+
+  /// No description provided for @scanBrightness.
+  ///
+  /// In vi, this message translates to:
+  /// **'Độ sáng'**
+  String get scanBrightness;
+
+  /// No description provided for @scanContrast.
+  ///
+  /// In vi, this message translates to:
+  /// **'Độ tương phản'**
+  String get scanContrast;
+
+  /// No description provided for @scanAdjustmentReset.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đặt lại'**
+  String get scanAdjustmentReset;
+
+  /// No description provided for @scanAdjustmentApply.
+  ///
+  /// In vi, this message translates to:
+  /// **'Áp dụng'**
+  String get scanAdjustmentApply;
+
+  /// No description provided for @scanFilterTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bộ lọc'**
+  String get scanFilterTitle;
+
+  /// No description provided for @scanFilterOriginal.
+  ///
+  /// In vi, this message translates to:
+  /// **'Gốc'**
+  String get scanFilterOriginal;
+
+  /// No description provided for @scanFilterColor.
+  ///
+  /// In vi, this message translates to:
+  /// **'Màu'**
+  String get scanFilterColor;
+
+  /// No description provided for @scanFilterGrayscale.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xám'**
+  String get scanFilterGrayscale;
+
+  /// No description provided for @scanFilterBlackAndWhite.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đen trắng'**
+  String get scanFilterBlackAndWhite;
+
   /// No description provided for @scanAdjustCorners.
   ///
   /// In vi, this message translates to:

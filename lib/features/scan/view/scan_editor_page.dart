@@ -13,6 +13,7 @@ import '../model/document_edge_detection_status.dart';
 import '../model/document_page.dart';
 import '../model/document_processing_status.dart';
 import '../model/normalized_document_image.dart';
+import '../model/scan_filter.dart';
 import 'scan_camera_page.dart';
 import 'scan_corner_editor_page.dart';
 import 'widgets/document_corners_painter.dart';
@@ -76,6 +77,7 @@ class _ScanEditorPageState extends State<ScanEditorPage> {
                         onCancel: _cancelSession,
                         onContinue: _continueToPdf,
                         onAdjustCorners: _adjustCorners,
+                        onAdjustImage: _adjustImage,
                       ),
               ),
             ),
@@ -95,6 +97,30 @@ class _ScanEditorPageState extends State<ScanEditorPage> {
 
     context.read<ScanSessionBloc>().add(
       ScanSessionPageCornersUpdated(pageId: page.id, corners: corners),
+    );
+  }
+
+  Future<void> _adjustImage(DocumentPage page) async {
+    final adjustments = await showModalBottomSheet<_ImageAdjustments>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      builder: (_) => _ImageAdjustmentSheet(
+        initialBrightness: page.brightness,
+        initialContrast: page.contrast,
+      ),
+    );
+    if (!mounted || adjustments == null) {
+      return;
+    }
+
+    context.read<ScanSessionBloc>().add(
+      ScanSessionPageAdjustmentsChanged(
+        pageId: page.id,
+        brightness: adjustments.brightness,
+        contrast: adjustments.contrast,
+      ),
     );
   }
 
@@ -174,6 +200,7 @@ class _EditorContent extends StatelessWidget {
     required this.onCancel,
     required this.onContinue,
     required this.onAdjustCorners,
+    required this.onAdjustImage,
   });
 
   final ScanSessionEditing state;
@@ -181,6 +208,7 @@ class _EditorContent extends StatelessWidget {
   final VoidCallback onCancel;
   final VoidCallback onContinue;
   final ValueChanged<DocumentPage> onAdjustCorners;
+  final ValueChanged<DocumentPage> onAdjustImage;
 
   @override
   Widget build(BuildContext context) {
@@ -208,6 +236,20 @@ class _EditorContent extends StatelessWidget {
             ScanSessionPageRotationRequested(
               pageId: selectedPage.id,
               quarterTurns: 1,
+            ),
+          ),
+          onAdjustImage: () => onAdjustImage(selectedPage),
+        ),
+        const SizedBox(height: 8),
+        _ScanFilterSelector(
+          selectedFilter: selectedPage.filter,
+          isEnabled:
+              selectedPage.processingStatus !=
+              DocumentProcessingStatus.processing,
+          onChanged: (filter) => context.read<ScanSessionBloc>().add(
+            ScanSessionPageFilterChanged(
+              pageId: selectedPage.id,
+              filter: filter,
             ),
           ),
         ),
@@ -321,12 +363,14 @@ class _PageEditToolbar extends StatelessWidget {
     required this.onRotateLeft,
     required this.onAdjustCorners,
     required this.onRotateRight,
+    required this.onAdjustImage,
   });
 
   final bool isEnabled;
   final VoidCallback onRotateLeft;
   final VoidCallback onAdjustCorners;
   final VoidCallback onRotateRight;
+  final VoidCallback onAdjustImage;
 
   @override
   Widget build(BuildContext context) {
@@ -358,6 +402,98 @@ class _PageEditToolbar extends StatelessWidget {
             icon: LucideIcons.rotateCw,
             label: t.scanRotateRight,
             onPressed: isEnabled ? onRotateRight : null,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _PageEditButton(
+            key: const ValueKey('scan-editor-adjust-image'),
+            icon: LucideIcons.slidersHorizontal,
+            label: t.scanAdjustImage,
+            onPressed: isEnabled ? onAdjustImage : null,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ScanFilterSelector extends StatelessWidget {
+  const _ScanFilterSelector({
+    required this.selectedFilter,
+    required this.isEnabled,
+    required this.onChanged,
+  });
+
+  final ScanFilter selectedFilter;
+  final bool isEnabled;
+  final ValueChanged<ScanFilter> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.l10n;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          t.scanFilterTitle,
+          style: Theme.of(
+            context,
+          ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w700),
+        ),
+        const SizedBox(height: 4),
+        SizedBox(
+          height: 40,
+          width: double.infinity,
+          child: SegmentedButton<ScanFilter>(
+            segments: [
+              ButtonSegment(
+                value: ScanFilter.original,
+                label: Text(
+                  t.scanFilterOriginal,
+                  key: const ValueKey('scan-filter-original'),
+                ),
+              ),
+              ButtonSegment(
+                value: ScanFilter.color,
+                label: Text(
+                  t.scanFilterColor,
+                  key: const ValueKey('scan-filter-color'),
+                ),
+              ),
+              ButtonSegment(
+                value: ScanFilter.grayscale,
+                label: Text(
+                  t.scanFilterGrayscale,
+                  key: const ValueKey('scan-filter-grayscale'),
+                ),
+              ),
+              ButtonSegment(
+                value: ScanFilter.blackAndWhite,
+                label: Text(
+                  t.scanFilterBlackAndWhite,
+                  key: const ValueKey('scan-filter-black-white'),
+                ),
+              ),
+            ],
+            selected: {selectedFilter},
+            onSelectionChanged: isEnabled
+                ? (selection) => onChanged(selection.single)
+                : null,
+            showSelectedIcon: false,
+            expandedInsets: EdgeInsets.zero,
+            style: ButtonStyle(
+              padding: const WidgetStatePropertyAll(
+                EdgeInsets.symmetric(horizontal: 4),
+              ),
+              textStyle: WidgetStatePropertyAll(
+                Theme.of(context).textTheme.labelSmall,
+              ),
+              shape: WidgetStatePropertyAll(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+            ),
           ),
         ),
       ],
@@ -400,6 +536,160 @@ class _PageEditButton extends StatelessWidget {
       ),
     );
   }
+}
+
+class _ImageAdjustmentSheet extends StatefulWidget {
+  const _ImageAdjustmentSheet({
+    required this.initialBrightness,
+    required this.initialContrast,
+  });
+
+  final int initialBrightness;
+  final int initialContrast;
+
+  @override
+  State<_ImageAdjustmentSheet> createState() => _ImageAdjustmentSheetState();
+}
+
+class _ImageAdjustmentSheetState extends State<_ImageAdjustmentSheet> {
+  late int _brightness = widget.initialBrightness;
+  late int _contrast = widget.initialContrast;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.l10n;
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        20,
+        0,
+        20,
+        20 + MediaQuery.viewInsetsOf(context).bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            t.scanImageAdjustmentsTitle,
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 20),
+          _AdjustmentSlider(
+            key: const ValueKey('scan-brightness-slider'),
+            icon: LucideIcons.sun,
+            label: t.scanBrightness,
+            value: _brightness,
+            onChanged: (value) => setState(() => _brightness = value),
+          ),
+          const SizedBox(height: 16),
+          _AdjustmentSlider(
+            key: const ValueKey('scan-contrast-slider'),
+            icon: LucideIcons.contrast,
+            label: t.scanContrast,
+            value: _contrast,
+            onChanged: (value) => setState(() => _contrast = value),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  key: const ValueKey('scan-adjustments-reset'),
+                  onPressed: () => setState(() {
+                    _brightness = 0;
+                    _contrast = 0;
+                  }),
+                  child: Text(t.scanAdjustmentReset),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton(
+                  key: const ValueKey('scan-adjustments-apply'),
+                  onPressed: () => Navigator.of(context).pop(
+                    _ImageAdjustments(
+                      brightness: _brightness,
+                      contrast: _contrast,
+                    ),
+                  ),
+                  child: Text(t.scanAdjustmentApply),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AdjustmentSlider extends StatelessWidget {
+  const _AdjustmentSlider({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final IconData icon;
+  final String label;
+  final int value;
+  final ValueChanged<int> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final valueLabel = value > 0 ? '+$value' : '$value';
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 20, color: colorScheme.primary),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                label,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+              ),
+            ),
+            SizedBox(
+              width: 40,
+              child: Text(
+                valueLabel,
+                textAlign: TextAlign.end,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Slider(
+          value: value.toDouble(),
+          min: -100,
+          max: 100,
+          divisions: 40,
+          label: valueLabel,
+          onChanged: (nextValue) => onChanged(nextValue.round()),
+        ),
+      ],
+    );
+  }
+}
+
+class _ImageAdjustments {
+  const _ImageAdjustments({required this.brightness, required this.contrast});
+
+  final int brightness;
+  final int contrast;
 }
 
 class _PagePreview extends StatelessWidget {

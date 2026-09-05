@@ -550,6 +550,39 @@ class AppLocalizationsVi extends AppLocalizations {
   String get scanRotateRight => 'Xoay phải';
 
   @override
+  String get scanAdjustImage => 'Điều chỉnh';
+
+  @override
+  String get scanImageAdjustmentsTitle => 'Điều chỉnh ảnh';
+
+  @override
+  String get scanBrightness => 'Độ sáng';
+
+  @override
+  String get scanContrast => 'Độ tương phản';
+
+  @override
+  String get scanAdjustmentReset => 'Đặt lại';
+
+  @override
+  String get scanAdjustmentApply => 'Áp dụng';
+
+  @override
+  String get scanFilterTitle => 'Bộ lọc';
+
+  @override
+  String get scanFilterOriginal => 'Gốc';
+
+  @override
+  String get scanFilterColor => 'Màu';
+
+  @override
+  String get scanFilterGrayscale => 'Xám';
+
+  @override
+  String get scanFilterBlackAndWhite => 'Đen trắng';
+
+  @override
   String get scanAdjustCorners => 'Chỉnh góc';
 
   @override

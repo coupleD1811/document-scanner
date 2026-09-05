@@ -7,11 +7,13 @@ import 'package:image/image.dart' as img;
 
 import '../model/document_corners.dart';
 import '../model/processed_document_image.dart';
+import '../model/scan_filter.dart';
 
 enum PerspectiveCorrectionFailure {
   sourceNotFound,
   invalidCorners,
   invalidRotation,
+  invalidAdjustments,
   imageDecodeFailed,
   processingFailed,
   outputWriteFailed,
@@ -29,6 +31,9 @@ abstract interface class DocumentPerspectiveCorrector {
     required String normalizedImagePath,
     required DocumentCorners corners,
     int rotationDegrees = 0,
+    ScanFilter filter = ScanFilter.original,
+    int brightness = 0,
+    int contrast = 0,
   });
 }
 
@@ -50,6 +55,9 @@ class LocalDocumentPerspectiveCorrector
     required String normalizedImagePath,
     required DocumentCorners corners,
     int rotationDegrees = 0,
+    ScanFilter filter = ScanFilter.original,
+    int brightness = 0,
+    int contrast = 0,
   }) async {
     if (!corners.isUsable) {
       throw const PerspectiveCorrectionException(
@@ -66,14 +74,28 @@ class LocalDocumentPerspectiveCorrector
         PerspectiveCorrectionFailure.invalidRotation,
       );
     }
+    if (brightness < -100 ||
+        brightness > 100 ||
+        contrast < -100 ||
+        contrast > 100) {
+      throw const PerspectiveCorrectionException(
+        PerspectiveCorrectionFailure.invalidAdjustments,
+      );
+    }
     final normalizedRotation = _normalizeRotation(rotationDegrees);
+    final needsPostProcessing =
+        normalizedRotation != 0 ||
+        brightness != 0 ||
+        contrast != 0 ||
+        filter == ScanFilter.blackAndWhite;
 
     late final document_scan.ScannedDocument? result;
     try {
       result = await _processor.crop(
         document_scan.ScanInput.file(normalizedImagePath),
         _mapCorners(corners),
-        output: normalizedRotation == 0
+        filter: _mapFilter(filter),
+        output: !needsPostProcessing
             ? const document_scan.ScanOutputFormat.jpegAt(95)
             : document_scan.ScanOutputFormat.png,
         background: true,
@@ -91,7 +113,7 @@ class LocalDocumentPerspectiveCorrector
     }
 
     late final _EncodedDocumentImage processedImage;
-    if (normalizedRotation == 0) {
+    if (!needsPostProcessing) {
       processedImage = _EncodedDocumentImage(
         bytes: result.bytes,
         width: result.width,
@@ -100,7 +122,13 @@ class LocalDocumentPerspectiveCorrector
     } else {
       try {
         final rotatedImage = await Isolate.run(
-          () => _rotateAndEncode(result!.bytes, normalizedRotation),
+          () => _transformAndEncode(
+            result!.bytes,
+            normalizedRotation,
+            brightness,
+            contrast,
+            filter == ScanFilter.blackAndWhite,
+          ),
         );
         if (rotatedImage == null) {
           throw const PerspectiveCorrectionException(
@@ -136,24 +164,97 @@ class LocalDocumentPerspectiveCorrector
   }
 }
 
+document_scan.ScanFilter _mapFilter(ScanFilter filter) {
+  return switch (filter) {
+    ScanFilter.original => document_scan.ScanFilter.none,
+    ScanFilter.color => document_scan.ScanFilter.sharpen,
+    ScanFilter.grayscale => document_scan.ScanFilter.grayscale,
+    ScanFilter.blackAndWhite => document_scan.ScanFilter.grayscale,
+  };
+}
+
 int _normalizeRotation(int rotationDegrees) {
   return ((rotationDegrees % 360) + 360) % 360;
 }
 
-_EncodedDocumentImage? _rotateAndEncode(
+_EncodedDocumentImage? _transformAndEncode(
   Uint8List sourceBytes,
   int rotationDegrees,
+  int brightness,
+  int contrast,
+  bool applyBlackAndWhite,
 ) {
-  final sourceImage = img.decodeImage(sourceBytes);
-  if (sourceImage == null) {
+  var transformedImage = img.decodeImage(sourceBytes);
+  if (transformedImage == null) {
     return null;
   }
 
-  final rotatedImage = img.copyRotate(sourceImage, angle: rotationDegrees);
+  if (brightness != 0 || contrast != 0) {
+    transformedImage = img.adjustColor(
+      transformedImage,
+      brightness: 1 + brightness / 100,
+      contrast: 1 + contrast / 100,
+    );
+  }
+  if (applyBlackAndWhite) {
+    transformedImage = _applyOtsuThreshold(transformedImage);
+  }
+  if (rotationDegrees != 0) {
+    transformedImage = img.copyRotate(transformedImage, angle: rotationDegrees);
+  }
+
   return _EncodedDocumentImage(
-    bytes: Uint8List.fromList(img.encodeJpg(rotatedImage, quality: 95)),
-    width: rotatedImage.width,
-    height: rotatedImage.height,
+    bytes: Uint8List.fromList(img.encodeJpg(transformedImage, quality: 95)),
+    width: transformedImage.width,
+    height: transformedImage.height,
+  );
+}
+
+img.Image _applyOtsuThreshold(img.Image sourceImage) {
+  final histogram = List<int>.filled(256, 0);
+  for (final pixel in sourceImage) {
+    final luminance = (0.3 * pixel.r + 0.59 * pixel.g + 0.11 * pixel.b)
+        .round()
+        .clamp(0, 255);
+    histogram[luminance] += 1;
+  }
+
+  final total = sourceImage.width * sourceImage.height;
+  var weightedTotal = 0.0;
+  for (var value = 0; value < histogram.length; value += 1) {
+    weightedTotal += value * histogram[value];
+  }
+
+  var weightedBackground = 0.0;
+  var backgroundCount = 0;
+  var bestVariance = -1.0;
+  var threshold = 127;
+  for (var value = 0; value < histogram.length; value += 1) {
+    backgroundCount += histogram[value];
+    if (backgroundCount == 0) {
+      continue;
+    }
+    final foregroundCount = total - backgroundCount;
+    if (foregroundCount == 0) {
+      break;
+    }
+
+    weightedBackground += value * histogram[value];
+    final backgroundMean = weightedBackground / backgroundCount;
+    final foregroundMean =
+        (weightedTotal - weightedBackground) / foregroundCount;
+    final difference = backgroundMean - foregroundMean;
+    final variance =
+        backgroundCount * foregroundCount * difference * difference;
+    if (variance > bestVariance) {
+      bestVariance = variance;
+      threshold = value;
+    }
+  }
+
+  return img.luminanceThreshold(
+    sourceImage,
+    threshold: (threshold + 0.5) / 255,
   );
 }
 

@@ -23,13 +23,17 @@ class DocumentPage extends Equatable {
     this.processingStatus = DocumentProcessingStatus.notStarted,
     this.rotation = 0,
     this.filter = ScanFilter.original,
+    this.brightness = 0,
+    this.contrast = 0,
   }) : assert(
          processedImagePath == null ||
              (processedPixelWidth != null && processedPixelHeight != null),
        ),
        assert(
          rotation == 0 || rotation == 90 || rotation == 180 || rotation == 270,
-       );
+       ),
+       assert(brightness >= -100 && brightness <= 100),
+       assert(contrast >= -100 && contrast <= 100);
 
   final String id;
   final String originalImagePath;
@@ -46,6 +50,8 @@ class DocumentPage extends Equatable {
   final DocumentProcessingStatus processingStatus;
   final int rotation;
   final ScanFilter filter;
+  final int brightness;
+  final int contrast;
   final DateTime createdAt;
 
   String get displayImagePath => processedImagePath ?? normalizedImagePath;
@@ -70,6 +76,8 @@ class DocumentPage extends Equatable {
     DocumentProcessingStatus? processingStatus,
     int? rotation,
     ScanFilter? filter,
+    int? brightness,
+    int? contrast,
     DateTime? createdAt,
   }) {
     return DocumentPage(
@@ -96,6 +104,8 @@ class DocumentPage extends Equatable {
       processingStatus: processingStatus ?? this.processingStatus,
       rotation: rotation ?? this.rotation,
       filter: filter ?? this.filter,
+      brightness: brightness ?? this.brightness,
+      contrast: contrast ?? this.contrast,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -117,6 +127,8 @@ class DocumentPage extends Equatable {
     processingStatus,
     rotation,
     filter,
+    brightness,
+    contrast,
     createdAt,
   ];
 }

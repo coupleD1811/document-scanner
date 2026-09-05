@@ -526,6 +526,39 @@ class AppLocalizationsJa extends AppLocalizations {
   String get scanRotateRight => '右に回転';
 
   @override
+  String get scanAdjustImage => '調整';
+
+  @override
+  String get scanImageAdjustmentsTitle => '画像調整';
+
+  @override
+  String get scanBrightness => '明るさ';
+
+  @override
+  String get scanContrast => 'コントラスト';
+
+  @override
+  String get scanAdjustmentReset => 'リセット';
+
+  @override
+  String get scanAdjustmentApply => '適用';
+
+  @override
+  String get scanFilterTitle => 'フィルター';
+
+  @override
+  String get scanFilterOriginal => 'オリジナル';
+
+  @override
+  String get scanFilterColor => 'カラー';
+
+  @override
+  String get scanFilterGrayscale => 'グレー';
+
+  @override
+  String get scanFilterBlackAndWhite => '白黒';
+
+  @override
   String get scanAdjustCorners => '調整';
 
   @override

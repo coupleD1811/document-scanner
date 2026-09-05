@@ -553,6 +553,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanRotateRight => 'Rotate right';
 
   @override
+  String get scanAdjustImage => 'Adjust';
+
+  @override
+  String get scanImageAdjustmentsTitle => 'Image adjustments';
+
+  @override
+  String get scanBrightness => 'Brightness';
+
+  @override
+  String get scanContrast => 'Contrast';
+
+  @override
+  String get scanAdjustmentReset => 'Reset';
+
+  @override
+  String get scanAdjustmentApply => 'Apply';
+
+  @override
+  String get scanFilterTitle => 'Filter';
+
+  @override
+  String get scanFilterOriginal => 'Original';
+
+  @override
+  String get scanFilterColor => 'Color';
+
+  @override
+  String get scanFilterGrayscale => 'Grayscale';
+
+  @override
+  String get scanFilterBlackAndWhite => 'B&W';
+
+  @override
   String get scanAdjustCorners => 'Adjust';
 
   @override
