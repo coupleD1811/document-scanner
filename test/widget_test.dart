@@ -13,7 +13,9 @@ import 'package:scanly/features/documents/view/page.dart';
 import 'package:scanly/features/scan/bloc/scan_session_bloc.dart';
 import 'package:scanly/features/scan/model/document_corners.dart';
 import 'package:scanly/features/scan/model/normalized_document_image.dart';
+import 'package:scanly/features/scan/model/processed_document_image.dart';
 import 'package:scanly/features/scan/service/camera_access_service.dart';
+import 'package:scanly/features/scan/service/document_perspective_corrector.dart';
 import 'package:scanly/features/scan/view/scan_camera_page.dart';
 import 'package:scanly/features/scan/view/scan_editor_page.dart';
 import 'package:scanly/l10n/generated/app_localizations.dart';
@@ -381,15 +383,21 @@ void main() {
   });
 
   testWidgets('editor hiển thị và xóa trang trong phiên quét', (tester) async {
-    final sessionBloc = ScanSessionBloc();
+    final sessionBloc = ScanSessionBloc(
+      perspectiveCorrector: FakeDocumentPerspectiveCorrector(),
+    );
     addTearDown(sessionBloc.close);
     final firstPageState = sessionBloc.stream.firstWhere(
-      (state) => state.session?.pages.length == 1,
+      (state) =>
+          state.session?.pages.length == 1 &&
+          state.session?.pages.single.processedImagePath != null,
     );
     sessionBloc.add(ScanSessionPageAdded(_normalizedImage(1)));
     await firstPageState;
     final secondPageState = sessionBloc.stream.firstWhere(
-      (state) => state.session?.pages.length == 2,
+      (state) =>
+          state.session?.pages.length == 2 &&
+          state.session?.pages.last.processedImagePath != null,
     );
     sessionBloc.add(ScanSessionPageAdded(_normalizedImage(2)));
     await secondPageState;
@@ -436,7 +444,7 @@ void main() {
       sessionBloc.state.session!.pages.single.corners.source,
       DocumentCornersSource.manual,
     );
-    expect(find.text('Đã chỉnh các góc tài liệu'), findsOneWidget);
+    expect(find.text('Đã cắt và chỉnh phối cảnh'), findsOneWidget);
   });
 
   testWidgets('đổi ngôn ngữ trong tab cá nhân', (tester) async {
@@ -733,5 +741,22 @@ class FakeCameraAccessService implements CameraAccessService {
   Future<CameraPermissionOutcome> requestPermission() async {
     permissionRequestCount += 1;
     return permissionOutcome;
+  }
+}
+
+class FakeDocumentPerspectiveCorrector implements DocumentPerspectiveCorrector {
+  int callCount = 0;
+
+  @override
+  Future<ProcessedDocumentImage> correct({
+    required String normalizedImagePath,
+    required DocumentCorners corners,
+  }) async {
+    callCount += 1;
+    return ProcessedDocumentImage(
+      imagePath: '/tmp/scanly-widget-processed-$callCount.jpg',
+      pixelWidth: 900,
+      pixelHeight: 1200,
+    );
   }
 }

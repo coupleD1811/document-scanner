@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../model/document_page.dart';
 import '../model/document_corners.dart';
+import '../model/document_processing_status.dart';
 import '../model/normalized_document_image.dart';
 import '../model/scan_session.dart';
+import '../service/document_perspective_corrector.dart';
 
 part 'scan_session_event.dart';
 part 'scan_session_state.dart';
@@ -12,18 +14,24 @@ part 'scan_session_state.dart';
 typedef ScanSessionClock = DateTime Function();
 
 class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
-  ScanSessionBloc({ScanSessionClock? clock})
-    : _clock = clock ?? DateTime.now,
-      super(const ScanSessionInitial()) {
+  ScanSessionBloc({
+    ScanSessionClock? clock,
+    DocumentPerspectiveCorrector? perspectiveCorrector,
+  }) : _clock = clock ?? DateTime.now,
+       _perspectiveCorrector =
+           perspectiveCorrector ?? LocalDocumentPerspectiveCorrector(),
+       super(const ScanSessionInitial()) {
     on<ScanSessionCleared>(_onCleared);
     on<ScanSessionPageAdded>(_onPageAdded);
     on<ScanSessionPageSelected>(_onPageSelected);
     on<ScanSessionPageRemoved>(_onPageRemoved);
     on<ScanSessionPagesReordered>(_onPagesReordered);
     on<ScanSessionPageCornersUpdated>(_onPageCornersUpdated);
+    on<ScanSessionPageProcessingRequested>(_onPageProcessingRequested);
   }
 
   final ScanSessionClock _clock;
+  final DocumentPerspectiveCorrector _perspectiveCorrector;
   int _nextId = 0;
 
   void _onCleared(ScanSessionCleared event, Emitter<ScanSessionState> emit) {
@@ -61,6 +69,7 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
         selectedPageIndex: pages.length - 1,
       ),
     );
+    add(ScanSessionPageProcessingRequested(page.id));
   }
 
   void _onPageCornersUpdated(
@@ -80,13 +89,113 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
     }
 
     final pages = [...session.pages];
-    pages[pageIndex] = pages[pageIndex].copyWith(corners: event.corners);
+    pages[pageIndex] = pages[pageIndex].copyWith(
+      corners: event.corners,
+      clearProcessedImagePath: true,
+      processingStatus: DocumentProcessingStatus.notStarted,
+    );
     emit(
       ScanSessionEditing(
         session: session.copyWith(pages: List.unmodifiable(pages)),
         selectedPageIndex: pageIndex,
       ),
     );
+    add(ScanSessionPageProcessingRequested(event.pageId));
+  }
+
+  Future<void> _onPageProcessingRequested(
+    ScanSessionPageProcessingRequested event,
+    Emitter<ScanSessionState> emit,
+  ) async {
+    final session = state.session;
+    if (session == null) {
+      return;
+    }
+
+    final pageIndex = session.pages.indexWhere(
+      (page) => page.id == event.pageId,
+    );
+    if (pageIndex == -1) {
+      return;
+    }
+    final page = session.pages[pageIndex];
+    if (!page.corners.isUsable ||
+        page.processingStatus == DocumentProcessingStatus.processing) {
+      return;
+    }
+
+    final requestedCorners = page.corners;
+    final processingPages = [...session.pages];
+    processingPages[pageIndex] = page.copyWith(
+      clearProcessedImagePath: true,
+      processingStatus: DocumentProcessingStatus.processing,
+    );
+    emit(
+      ScanSessionEditing(
+        session: session.copyWith(pages: List.unmodifiable(processingPages)),
+        selectedPageIndex: state.selectedPageIndex,
+      ),
+    );
+
+    try {
+      final result = await _perspectiveCorrector.correct(
+        normalizedImagePath: page.normalizedImagePath,
+        corners: requestedCorners,
+      );
+      final currentSession = state.session;
+      if (currentSession == null) {
+        return;
+      }
+      final currentIndex = currentSession.pages.indexWhere(
+        (currentPage) => currentPage.id == event.pageId,
+      );
+      if (currentIndex == -1 ||
+          currentSession.pages[currentIndex].corners != requestedCorners) {
+        return;
+      }
+
+      final completedPages = [...currentSession.pages];
+      completedPages[currentIndex] = completedPages[currentIndex].copyWith(
+        processedImagePath: result.imagePath,
+        processedPixelWidth: result.pixelWidth,
+        processedPixelHeight: result.pixelHeight,
+        processingStatus: DocumentProcessingStatus.completed,
+      );
+      emit(
+        ScanSessionEditing(
+          session: currentSession.copyWith(
+            pages: List.unmodifiable(completedPages),
+          ),
+          selectedPageIndex: state.selectedPageIndex,
+        ),
+      );
+    } on Object {
+      final currentSession = state.session;
+      if (currentSession == null) {
+        return;
+      }
+      final currentIndex = currentSession.pages.indexWhere(
+        (currentPage) => currentPage.id == event.pageId,
+      );
+      if (currentIndex == -1 ||
+          currentSession.pages[currentIndex].corners != requestedCorners) {
+        return;
+      }
+
+      final failedPages = [...currentSession.pages];
+      failedPages[currentIndex] = failedPages[currentIndex].copyWith(
+        clearProcessedImagePath: true,
+        processingStatus: DocumentProcessingStatus.failed,
+      );
+      emit(
+        ScanSessionEditing(
+          session: currentSession.copyWith(
+            pages: List.unmodifiable(failedPages),
+          ),
+          selectedPageIndex: state.selectedPageIndex,
+        ),
+      );
+    }
   }
 
   void _onPageSelected(

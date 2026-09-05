@@ -8,11 +8,14 @@ import 'package:scanly/features/scan/bloc/scan_camera_bloc.dart';
 import 'package:scanly/features/scan/bloc/scan_session_bloc.dart';
 import 'package:scanly/features/scan/model/document_corners.dart';
 import 'package:scanly/features/scan/model/document_edge_detection_status.dart';
+import 'package:scanly/features/scan/model/document_processing_status.dart';
 import 'package:scanly/features/scan/model/normalized_document_image.dart';
 import 'package:scanly/features/scan/model/normalized_point.dart';
+import 'package:scanly/features/scan/model/processed_document_image.dart';
 import 'package:scanly/features/scan/service/camera_access_service.dart';
 import 'package:scanly/features/scan/service/document_edge_detector.dart';
 import 'package:scanly/features/scan/service/document_image_normalizer.dart';
+import 'package:scanly/features/scan/service/document_perspective_corrector.dart';
 
 void main() {
   test('chap nhan tu giac tai lieu loi va tu choi cac goc bi cat cheo', () {
@@ -41,23 +44,37 @@ void main() {
   test('them, sap xep, xoa va huy cac trang trong phien quet', () async {
     final start = DateTime.utc(2026, 9, 4);
     var clockTick = 0;
+    final perspectiveCorrector = _FakeDocumentPerspectiveCorrector();
     final bloc = ScanSessionBloc(
       clock: () => start.add(Duration(microseconds: clockTick++)),
+      perspectiveCorrector: perspectiveCorrector,
     );
     addTearDown(bloc.close);
 
     final firstPageState = await _dispatchAndWait(
       bloc,
       ScanSessionPageAdded(_normalizedImage(1)),
+      matches: (state) =>
+          state.session?.pages.length == 1 &&
+          state.session?.pages.single.processingStatus ==
+              DocumentProcessingStatus.completed,
     );
     expect(firstPageState, isA<ScanSessionEditing>());
     expect(firstPageState.session!.pages, hasLength(1));
     expect(firstPageState.session!.pages.single.pageIndex, 0);
     expect(firstPageState.selectedPageIndex, 0);
+    expect(
+      firstPageState.session!.pages.single.processedImagePath,
+      '/tmp/page-1-normalized-processed-1.jpg',
+    );
 
     final secondPageState = await _dispatchAndWait(
       bloc,
       ScanSessionPageAdded(_normalizedImage(2)),
+      matches: (state) =>
+          state.session?.pages.length == 2 &&
+          state.session?.pages.last.processingStatus ==
+              DocumentProcessingStatus.completed,
     );
     expect(secondPageState.session!.pages, hasLength(2));
     expect(secondPageState.selectedPageIndex, 1);
@@ -85,8 +102,17 @@ void main() {
         pageId: secondPageState.session!.pages.last.id,
         corners: manualCorners,
       ),
+      matches: (state) =>
+          state.session?.pages.last.corners == manualCorners &&
+          state.session?.pages.last.processingStatus ==
+              DocumentProcessingStatus.completed,
     );
     expect(adjustedState.session!.pages.last.corners, manualCorners);
+    expect(
+      adjustedState.session!.pages.last.processedImagePath,
+      '/tmp/page-2-normalized-processed-3.jpg',
+    );
+    expect(perspectiveCorrector.receivedCorners.last, manualCorners);
 
     final reorderedState = await _dispatchAndWait(
       bloc,
@@ -116,6 +142,35 @@ void main() {
       const ScanSessionCleared(),
     );
     expect(clearedState, const ScanSessionInitial());
+  });
+
+  test('cho phep thu lai khi crop va chinh phoi canh that bai', () async {
+    final perspectiveCorrector = _FakeDocumentPerspectiveCorrector(
+      remainingFailures: 1,
+    );
+    final bloc = ScanSessionBloc(perspectiveCorrector: perspectiveCorrector);
+    addTearDown(bloc.close);
+
+    final failedState = await _dispatchAndWait(
+      bloc,
+      ScanSessionPageAdded(_normalizedImage(1)),
+      matches: (state) =>
+          state.session?.pages.single.processingStatus ==
+          DocumentProcessingStatus.failed,
+    );
+    final page = failedState.session!.pages.single;
+    expect(page.processedImagePath, isNull);
+
+    final completedState = await _dispatchAndWait(
+      bloc,
+      ScanSessionPageProcessingRequested(page.id),
+      matches: (state) =>
+          state.session?.pages.single.processingStatus ==
+          DocumentProcessingStatus.completed,
+    );
+
+    expect(perspectiveCorrector.callCount, 2);
+    expect(completedState.session!.pages.single.processedImagePath, isNotNull);
   });
 
   test('normalizes and detects edges before completing capture', () async {
@@ -264,6 +319,54 @@ void main() {
       ),
     );
   });
+
+  test('crop perspective creates a separate upright image', () async {
+    final directory = await Directory.systemTemp.createTemp(
+      'scanly-perspective-',
+    );
+    addTearDown(() => directory.delete(recursive: true));
+    final sourcePath = '${directory.path}/normalized.jpg';
+    final outputPath = '${directory.path}/processed.jpg';
+    final sourceImage = img.Image(width: 200, height: 160);
+    img.fill(sourceImage, color: img.ColorRgb8(245, 245, 245));
+    img.fillRect(
+      sourceImage,
+      x1: 20,
+      y1: 16,
+      x2: 180,
+      y2: 144,
+      color: img.ColorRgb8(20, 110, 105),
+    );
+    await File(
+      sourcePath,
+    ).writeAsBytes(img.encodeJpg(sourceImage, quality: 95));
+    final sourceBytes = await File(sourcePath).readAsBytes();
+    final corrector = LocalDocumentPerspectiveCorrector(
+      outputPathBuilder: (_) => outputPath,
+    );
+    const corners = DocumentCorners(
+      topLeft: NormalizedPoint(x: 0.1, y: 0.1),
+      topRight: NormalizedPoint(x: 0.9, y: 0.1),
+      bottomRight: NormalizedPoint(x: 0.9, y: 0.9),
+      bottomLeft: NormalizedPoint(x: 0.1, y: 0.9),
+      source: DocumentCornersSource.manual,
+    );
+
+    final result = await corrector.correct(
+      normalizedImagePath: sourcePath,
+      corners: corners,
+    );
+
+    expect(result.imagePath, outputPath);
+    expect(result.pixelWidth, closeTo(160, 1));
+    expect(result.pixelHeight, closeTo(128, 1));
+    expect(await File(outputPath).exists(), isTrue);
+    expect(await File(sourcePath).readAsBytes(), sourceBytes);
+    final processedImage = img.decodeJpg(await File(outputPath).readAsBytes());
+    expect(processedImage, isNotNull);
+    expect(processedImage!.width, result.pixelWidth);
+    expect(processedImage.height, result.pixelHeight);
+  });
 }
 
 NormalizedDocumentImage _normalizedImage(int pageNumber) {
@@ -277,9 +380,10 @@ NormalizedDocumentImage _normalizedImage(int pageNumber) {
 
 Future<ScanSessionState> _dispatchAndWait(
   ScanSessionBloc bloc,
-  ScanSessionEvent event,
-) {
-  final nextState = bloc.stream.first;
+  ScanSessionEvent event, {
+  bool Function(ScanSessionState state)? matches,
+}) {
+  final nextState = bloc.stream.firstWhere(matches ?? (_) => true);
   bloc.add(event);
   return nextState;
 }
@@ -351,5 +455,39 @@ class _FakeDocumentEdgeDetector implements DocumentEdgeDetector {
       );
     }
     return result;
+  }
+}
+
+class _FakeDocumentPerspectiveCorrector
+    implements DocumentPerspectiveCorrector {
+  _FakeDocumentPerspectiveCorrector({this.remainingFailures = 0});
+
+  int remainingFailures;
+  int callCount = 0;
+  final receivedCorners = <DocumentCorners>[];
+
+  @override
+  Future<ProcessedDocumentImage> correct({
+    required String normalizedImagePath,
+    required DocumentCorners corners,
+  }) async {
+    callCount += 1;
+    receivedCorners.add(corners);
+    if (remainingFailures > 0) {
+      remainingFailures -= 1;
+      throw const PerspectiveCorrectionException(
+        PerspectiveCorrectionFailure.processingFailed,
+      );
+    }
+
+    final extensionIndex = normalizedImagePath.lastIndexOf('.');
+    final basePath = extensionIndex == -1
+        ? normalizedImagePath
+        : normalizedImagePath.substring(0, extensionIndex);
+    return ProcessedDocumentImage(
+      imagePath: '$basePath-processed-$callCount.jpg',
+      pixelWidth: 900,
+      pixelHeight: 1200,
+    );
   }
 }

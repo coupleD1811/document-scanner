@@ -531,6 +531,19 @@ class AppLocalizationsVi extends AppLocalizations {
   String get documentCornersAdjusted => 'Đã chỉnh các góc tài liệu';
 
   @override
+  String get documentPerspectiveCorrecting => 'Đang cắt và chỉnh phối cảnh...';
+
+  @override
+  String get documentPerspectiveCorrected => 'Đã cắt và chỉnh phối cảnh';
+
+  @override
+  String get documentPerspectiveCorrectionFailed =>
+      'Không thể xử lý trang này.';
+
+  @override
+  String get documentPerspectiveRetry => 'Thử xử lý lại';
+
+  @override
   String get scanAdjustCorners => 'Chỉnh góc';
 
   @override

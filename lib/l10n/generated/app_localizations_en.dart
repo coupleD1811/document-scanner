@@ -533,6 +533,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get documentCornersAdjusted => 'Document corners adjusted';
 
   @override
+  String get documentPerspectiveCorrecting =>
+      'Cropping and correcting perspective...';
+
+  @override
+  String get documentPerspectiveCorrected => 'Perspective corrected';
+
+  @override
+  String get documentPerspectiveCorrectionFailed =>
+      'Could not process this page.';
+
+  @override
+  String get documentPerspectiveRetry => 'Retry processing';
+
+  @override
   String get scanAdjustCorners => 'Adjust';
 
   @override

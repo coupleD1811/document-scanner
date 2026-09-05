@@ -51,6 +51,15 @@ final class ScanSessionPageCornersUpdated extends ScanSessionEvent {
   List<Object?> get props => [pageId, corners];
 }
 
+final class ScanSessionPageProcessingRequested extends ScanSessionEvent {
+  const ScanSessionPageProcessingRequested(this.pageId);
+
+  final String pageId;
+
+  @override
+  List<Object?> get props => [pageId];
+}
+
 final class ScanSessionPagesReordered extends ScanSessionEvent {
   const ScanSessionPagesReordered({
     required this.oldIndex,

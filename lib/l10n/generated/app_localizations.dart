@@ -1078,6 +1078,30 @@ abstract class AppLocalizations {
   /// **'Đã chỉnh các góc tài liệu'**
   String get documentCornersAdjusted;
 
+  /// No description provided for @documentPerspectiveCorrecting.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang cắt và chỉnh phối cảnh...'**
+  String get documentPerspectiveCorrecting;
+
+  /// No description provided for @documentPerspectiveCorrected.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã cắt và chỉnh phối cảnh'**
+  String get documentPerspectiveCorrected;
+
+  /// No description provided for @documentPerspectiveCorrectionFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể xử lý trang này.'**
+  String get documentPerspectiveCorrectionFailed;
+
+  /// No description provided for @documentPerspectiveRetry.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thử xử lý lại'**
+  String get documentPerspectiveRetry;
+
   /// No description provided for @scanAdjustCorners.
   ///
   /// In vi, this message translates to:

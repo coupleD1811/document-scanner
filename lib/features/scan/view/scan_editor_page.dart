@@ -11,6 +11,7 @@ import '../bloc/scan_session_bloc.dart';
 import '../model/document_corners.dart';
 import '../model/document_edge_detection_status.dart';
 import '../model/document_page.dart';
+import '../model/document_processing_status.dart';
 import '../model/normalized_document_image.dart';
 import 'scan_camera_page.dart';
 import 'scan_corner_editor_page.dart';
@@ -194,7 +195,10 @@ class _EditorContent extends StatelessWidget {
         const SizedBox(height: 8),
         _EdgeDetectionControl(
           page: selectedPage,
-          onPressed: () => onAdjustCorners(selectedPage),
+          onAdjustPressed: () => onAdjustCorners(selectedPage),
+          onRetryPressed: () => context.read<ScanSessionBloc>().add(
+            ScanSessionPageProcessingRequested(selectedPage.id),
+          ),
         ),
         const SizedBox(height: 8),
         Row(
@@ -315,7 +319,7 @@ class _PagePreview extends StatelessWidget {
           maxScale: 4,
           child: Center(
             child: AspectRatio(
-              aspectRatio: page.pixelWidth / page.pixelHeight,
+              aspectRatio: page.displayPixelWidth / page.displayPixelHeight,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -325,14 +329,25 @@ class _PagePreview extends StatelessWidget {
                     fit: BoxFit.fill,
                     errorBuilder: (_, _, _) => const _ImageUnavailable(),
                   ),
-                  IgnorePointer(
-                    child: CustomPaint(
-                      painter: DocumentCornersPainter(
-                        corners: page.corners,
-                        lineColor: colorScheme.secondary,
+                  if (page.processedImagePath == null)
+                    IgnorePointer(
+                      child: CustomPaint(
+                        painter: DocumentCornersPainter(
+                          corners: page.corners,
+                          lineColor: colorScheme.secondary,
+                        ),
                       ),
                     ),
-                  ),
+                  if (page.processingStatus ==
+                      DocumentProcessingStatus.processing)
+                    ColoredBox(
+                      color: colorScheme.scrim.withValues(alpha: 0.32),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: colorScheme.onPrimary,
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -344,38 +359,66 @@ class _PagePreview extends StatelessWidget {
 }
 
 class _EdgeDetectionControl extends StatelessWidget {
-  const _EdgeDetectionControl({required this.page, required this.onPressed});
+  const _EdgeDetectionControl({
+    required this.page,
+    required this.onAdjustPressed,
+    required this.onRetryPressed,
+  });
 
   final DocumentPage page;
-  final VoidCallback onPressed;
+  final VoidCallback onAdjustPressed;
+  final VoidCallback onRetryPressed;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final t = context.l10n;
-    final isConfirmed =
-        page.corners.source == DocumentCornersSource.detected ||
-        page.corners.source == DocumentCornersSource.manual;
-    final label = switch (page.corners.source) {
-      DocumentCornersSource.manual => t.documentCornersAdjusted,
-      DocumentCornersSource.detected => t.documentEdgesDetected,
-      DocumentCornersSource.fullImage => switch (page.edgeDetectionStatus) {
-        DocumentEdgeDetectionStatus.failed => t.documentEdgeDetectionFailed,
-        DocumentEdgeDetectionStatus.notFound ||
-        DocumentEdgeDetectionStatus.notStarted => t.documentEdgesNotFound,
-        DocumentEdgeDetectionStatus.detected => t.documentEdgesDetected,
+    final isProcessing =
+        page.processingStatus == DocumentProcessingStatus.processing;
+    final isCompleted =
+        page.processingStatus == DocumentProcessingStatus.completed;
+    final isFailed = page.processingStatus == DocumentProcessingStatus.failed;
+    final label = switch (page.processingStatus) {
+      DocumentProcessingStatus.processing => t.documentPerspectiveCorrecting,
+      DocumentProcessingStatus.completed => t.documentPerspectiveCorrected,
+      DocumentProcessingStatus.failed => t.documentPerspectiveCorrectionFailed,
+      DocumentProcessingStatus.notStarted => switch (page.corners.source) {
+        DocumentCornersSource.manual => t.documentCornersAdjusted,
+        DocumentCornersSource.detected => t.documentEdgesDetected,
+        DocumentCornersSource.fullImage => switch (page.edgeDetectionStatus) {
+          DocumentEdgeDetectionStatus.failed => t.documentEdgeDetectionFailed,
+          DocumentEdgeDetectionStatus.notFound ||
+          DocumentEdgeDetectionStatus.notStarted => t.documentEdgesNotFound,
+          DocumentEdgeDetectionStatus.detected => t.documentEdgesDetected,
+        },
       },
     };
+    final statusColor = isFailed
+        ? colorScheme.error
+        : isCompleted
+        ? colorScheme.primary
+        : colorScheme.onSurfaceVariant;
 
     return Row(
       children: [
-        Icon(
-          isConfirmed ? LucideIcons.scanLine : LucideIcons.info,
-          size: 18,
-          color: isConfirmed
-              ? colorScheme.primary
-              : colorScheme.onSurfaceVariant,
-        ),
+        if (isProcessing)
+          SizedBox.square(
+            dimension: 18,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: colorScheme.primary,
+            ),
+          )
+        else
+          Icon(
+            isFailed
+                ? LucideIcons.triangleAlert
+                : isCompleted
+                ? LucideIcons.check
+                : LucideIcons.scanLine,
+            size: 18,
+            color: statusColor,
+          ),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
@@ -383,16 +426,21 @@ class _EdgeDetectionControl extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: isConfirmed
-                  ? colorScheme.primary
-                  : colorScheme.onSurfaceVariant,
+              color: statusColor,
               fontWeight: FontWeight.w600,
             ),
           ),
         ),
+        if (isFailed)
+          IconButton(
+            key: const ValueKey('scan-editor-retry-processing'),
+            tooltip: t.documentPerspectiveRetry,
+            onPressed: onRetryPressed,
+            icon: const Icon(LucideIcons.refreshCw, size: 18),
+          ),
         TextButton.icon(
           key: const ValueKey('scan-editor-adjust-corners'),
-          onPressed: onPressed,
+          onPressed: isProcessing ? null : onAdjustPressed,
           icon: const Icon(LucideIcons.crop, size: 18),
           label: Text(t.scanAdjustCorners),
         ),

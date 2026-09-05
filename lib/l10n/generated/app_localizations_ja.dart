@@ -508,6 +508,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get documentCornersAdjusted => '書類の四隅を調整しました';
 
   @override
+  String get documentPerspectiveCorrecting => '切り抜きと遠近補正を処理中...';
+
+  @override
+  String get documentPerspectiveCorrected => '遠近補正が完了しました';
+
+  @override
+  String get documentPerspectiveCorrectionFailed => 'このページを処理できませんでした。';
+
+  @override
+  String get documentPerspectiveRetry => '処理を再試行';
+
+  @override
   String get scanAdjustCorners => '調整';
 
   @override
