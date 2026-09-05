@@ -547,6 +547,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get documentPerspectiveRetry => 'Retry processing';
 
   @override
+  String get scanRotateLeft => 'Rotate left';
+
+  @override
+  String get scanRotateRight => 'Rotate right';
+
+  @override
   String get scanAdjustCorners => 'Adjust';
 
   @override

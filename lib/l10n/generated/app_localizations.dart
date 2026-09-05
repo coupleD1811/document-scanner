@@ -1102,6 +1102,18 @@ abstract class AppLocalizations {
   /// **'Thử xử lý lại'**
   String get documentPerspectiveRetry;
 
+  /// No description provided for @scanRotateLeft.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xoay trái'**
+  String get scanRotateLeft;
+
+  /// No description provided for @scanRotateRight.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xoay phải'**
+  String get scanRotateRight;
+
   /// No description provided for @scanAdjustCorners.
   ///
   /// In vi, this message translates to:

@@ -184,6 +184,8 @@
   "documentPerspectiveCorrected": "Đã cắt và chỉnh phối cảnh",
   "documentPerspectiveCorrectionFailed": "Không thể xử lý trang này.",
   "documentPerspectiveRetry": "Thử xử lý lại",
+  "scanRotateLeft": "Xoay trái",
+  "scanRotateRight": "Xoay phải",
   "scanAdjustCorners": "Chỉnh góc",
   "scanCornerEditorTitle": "Chỉnh các góc",
   "scanCornerEditorHint": "Kéo từng góc khớp với mép tài liệu.",

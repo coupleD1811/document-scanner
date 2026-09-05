@@ -544,6 +544,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get documentPerspectiveRetry => 'Thử xử lý lại';
 
   @override
+  String get scanRotateLeft => 'Xoay trái';
+
+  @override
+  String get scanRotateRight => 'Xoay phải';
+
+  @override
   String get scanAdjustCorners => 'Chỉnh góc';
 
   @override

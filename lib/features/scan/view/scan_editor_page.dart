@@ -193,9 +193,27 @@ class _EditorContent extends StatelessWidget {
       children: [
         Expanded(child: _PagePreview(page: selectedPage)),
         const SizedBox(height: 8),
+        _PageEditToolbar(
+          isEnabled:
+              selectedPage.processingStatus !=
+              DocumentProcessingStatus.processing,
+          onRotateLeft: () => context.read<ScanSessionBloc>().add(
+            ScanSessionPageRotationRequested(
+              pageId: selectedPage.id,
+              quarterTurns: -1,
+            ),
+          ),
+          onAdjustCorners: () => onAdjustCorners(selectedPage),
+          onRotateRight: () => context.read<ScanSessionBloc>().add(
+            ScanSessionPageRotationRequested(
+              pageId: selectedPage.id,
+              quarterTurns: 1,
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
         _EdgeDetectionControl(
           page: selectedPage,
-          onAdjustPressed: () => onAdjustCorners(selectedPage),
           onRetryPressed: () => context.read<ScanSessionBloc>().add(
             ScanSessionPageProcessingRequested(selectedPage.id),
           ),
@@ -297,6 +315,93 @@ class _EditorContent extends StatelessWidget {
   }
 }
 
+class _PageEditToolbar extends StatelessWidget {
+  const _PageEditToolbar({
+    required this.isEnabled,
+    required this.onRotateLeft,
+    required this.onAdjustCorners,
+    required this.onRotateRight,
+  });
+
+  final bool isEnabled;
+  final VoidCallback onRotateLeft;
+  final VoidCallback onAdjustCorners;
+  final VoidCallback onRotateRight;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.l10n;
+
+    return Row(
+      children: [
+        Expanded(
+          child: _PageEditButton(
+            key: const ValueKey('scan-editor-rotate-left'),
+            icon: LucideIcons.rotateCcw,
+            label: t.scanRotateLeft,
+            onPressed: isEnabled ? onRotateLeft : null,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _PageEditButton(
+            key: const ValueKey('scan-editor-adjust-corners'),
+            icon: LucideIcons.crop,
+            label: t.scanAdjustCorners,
+            onPressed: isEnabled ? onAdjustCorners : null,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _PageEditButton(
+            key: const ValueKey('scan-editor-rotate-right'),
+            icon: LucideIcons.rotateCw,
+            label: t.scanRotateRight,
+            onPressed: isEnabled ? onRotateRight : null,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PageEditButton extends StatelessWidget {
+  const _PageEditButton({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size.fromHeight(56),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 18),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _PagePreview extends StatelessWidget {
   const _PagePreview({required this.page});
 
@@ -361,12 +466,10 @@ class _PagePreview extends StatelessWidget {
 class _EdgeDetectionControl extends StatelessWidget {
   const _EdgeDetectionControl({
     required this.page,
-    required this.onAdjustPressed,
     required this.onRetryPressed,
   });
 
   final DocumentPage page;
-  final VoidCallback onAdjustPressed;
   final VoidCallback onRetryPressed;
 
   @override
@@ -438,12 +541,6 @@ class _EdgeDetectionControl extends StatelessWidget {
             onPressed: onRetryPressed,
             icon: const Icon(LucideIcons.refreshCw, size: 18),
           ),
-        TextButton.icon(
-          key: const ValueKey('scan-editor-adjust-corners'),
-          onPressed: isProcessing ? null : onAdjustPressed,
-          icon: const Icon(LucideIcons.crop, size: 18),
-          label: Text(t.scanAdjustCorners),
-        ),
       ],
     );
   }

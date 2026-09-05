@@ -60,6 +60,19 @@ final class ScanSessionPageProcessingRequested extends ScanSessionEvent {
   List<Object?> get props => [pageId];
 }
 
+final class ScanSessionPageRotationRequested extends ScanSessionEvent {
+  const ScanSessionPageRotationRequested({
+    required this.pageId,
+    required this.quarterTurns,
+  }) : assert(quarterTurns == -1 || quarterTurns == 1);
+
+  final String pageId;
+  final int quarterTurns;
+
+  @override
+  List<Object?> get props => [pageId, quarterTurns];
+}
+
 final class ScanSessionPagesReordered extends ScanSessionEvent {
   const ScanSessionPagesReordered({
     required this.oldIndex,

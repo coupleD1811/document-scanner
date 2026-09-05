@@ -184,6 +184,8 @@
   "documentPerspectiveCorrected": "遠近補正が完了しました",
   "documentPerspectiveCorrectionFailed": "このページを処理できませんでした。",
   "documentPerspectiveRetry": "処理を再試行",
+  "scanRotateLeft": "左に回転",
+  "scanRotateRight": "右に回転",
   "scanAdjustCorners": "調整",
   "scanCornerEditorTitle": "四隅を調整",
   "scanCornerEditorHint": "各ポイントを書類の端に合わせてドラッグしてください。",

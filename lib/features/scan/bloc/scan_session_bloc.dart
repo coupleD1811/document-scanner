@@ -27,6 +27,7 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
     on<ScanSessionPageRemoved>(_onPageRemoved);
     on<ScanSessionPagesReordered>(_onPagesReordered);
     on<ScanSessionPageCornersUpdated>(_onPageCornersUpdated);
+    on<ScanSessionPageRotationRequested>(_onPageRotationRequested);
     on<ScanSessionPageProcessingRequested>(_onPageProcessingRequested);
   }
 
@@ -103,6 +104,43 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
     add(ScanSessionPageProcessingRequested(event.pageId));
   }
 
+  void _onPageRotationRequested(
+    ScanSessionPageRotationRequested event,
+    Emitter<ScanSessionState> emit,
+  ) {
+    final session = state.session;
+    if (session == null) {
+      return;
+    }
+
+    final pageIndex = session.pages.indexWhere(
+      (page) => page.id == event.pageId,
+    );
+    if (pageIndex == -1) {
+      return;
+    }
+
+    final page = session.pages[pageIndex];
+    if (page.processingStatus == DocumentProcessingStatus.processing) {
+      return;
+    }
+
+    final rotation = (page.rotation + event.quarterTurns * 90) % 360;
+    final pages = [...session.pages];
+    pages[pageIndex] = page.copyWith(
+      rotation: rotation,
+      clearProcessedImagePath: true,
+      processingStatus: DocumentProcessingStatus.notStarted,
+    );
+    emit(
+      ScanSessionEditing(
+        session: session.copyWith(pages: List.unmodifiable(pages)),
+        selectedPageIndex: pageIndex,
+      ),
+    );
+    add(ScanSessionPageProcessingRequested(event.pageId));
+  }
+
   Future<void> _onPageProcessingRequested(
     ScanSessionPageProcessingRequested event,
     Emitter<ScanSessionState> emit,
@@ -125,6 +163,7 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
     }
 
     final requestedCorners = page.corners;
+    final requestedRotation = page.rotation;
     final processingPages = [...session.pages];
     processingPages[pageIndex] = page.copyWith(
       clearProcessedImagePath: true,
@@ -141,6 +180,7 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
       final result = await _perspectiveCorrector.correct(
         normalizedImagePath: page.normalizedImagePath,
         corners: requestedCorners,
+        rotationDegrees: requestedRotation,
       );
       final currentSession = state.session;
       if (currentSession == null) {
@@ -150,7 +190,8 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
         (currentPage) => currentPage.id == event.pageId,
       );
       if (currentIndex == -1 ||
-          currentSession.pages[currentIndex].corners != requestedCorners) {
+          currentSession.pages[currentIndex].corners != requestedCorners ||
+          currentSession.pages[currentIndex].rotation != requestedRotation) {
         return;
       }
 
@@ -178,7 +219,8 @@ class ScanSessionBloc extends Bloc<ScanSessionEvent, ScanSessionState> {
         (currentPage) => currentPage.id == event.pageId,
       );
       if (currentIndex == -1 ||
-          currentSession.pages[currentIndex].corners != requestedCorners) {
+          currentSession.pages[currentIndex].corners != requestedCorners ||
+          currentSession.pages[currentIndex].rotation != requestedRotation) {
         return;
       }
 

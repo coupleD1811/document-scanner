@@ -419,6 +419,25 @@ void main() {
     expect(find.text('Trang 2 / 2'), findsOneWidget);
     expect(find.byKey(const ValueKey('scan-editor-add-page')), findsOneWidget);
     expect(find.byKey(const ValueKey('scan-editor-continue')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('scan-editor-rotate-left')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('scan-editor-adjust-corners')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('scan-editor-rotate-right')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('scan-editor-rotate-right')));
+    await tester.pumpAndSettle();
+
+    expect(sessionBloc.state.session!.pages.last.rotation, 90);
+    expect(sessionBloc.state.session!.pages.last.displayPixelWidth, 1200);
+    expect(sessionBloc.state.session!.pages.last.displayPixelHeight, 900);
 
     await tester.tap(find.byKey(const ValueKey('scan-editor-delete-page')));
     await tester.pumpAndSettle();
@@ -751,12 +770,13 @@ class FakeDocumentPerspectiveCorrector implements DocumentPerspectiveCorrector {
   Future<ProcessedDocumentImage> correct({
     required String normalizedImagePath,
     required DocumentCorners corners,
+    int rotationDegrees = 0,
   }) async {
     callCount += 1;
     return ProcessedDocumentImage(
       imagePath: '/tmp/scanly-widget-processed-$callCount.jpg',
-      pixelWidth: 900,
-      pixelHeight: 1200,
+      pixelWidth: rotationDegrees % 180 == 0 ? 900 : 1200,
+      pixelHeight: rotationDegrees % 180 == 0 ? 1200 : 900,
     );
   }
 }

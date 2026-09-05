@@ -26,6 +26,9 @@ class DocumentPage extends Equatable {
   }) : assert(
          processedImagePath == null ||
              (processedPixelWidth != null && processedPixelHeight != null),
+       ),
+       assert(
+         rotation == 0 || rotation == 90 || rotation == 180 || rotation == 270,
        );
 
   final String id;

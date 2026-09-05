@@ -114,6 +114,39 @@ void main() {
     );
     expect(perspectiveCorrector.receivedCorners.last, manualCorners);
 
+    final pageId = adjustedState.session!.pages.last.id;
+    final rotatedRightState = await _dispatchAndWait(
+      bloc,
+      ScanSessionPageRotationRequested(pageId: pageId, quarterTurns: 1),
+      matches: (state) =>
+          state.session?.pages.last.rotation == 90 &&
+          state.session?.pages.last.processingStatus ==
+              DocumentProcessingStatus.completed,
+    );
+    expect(rotatedRightState.session!.pages.last.displayPixelWidth, 1200);
+    expect(rotatedRightState.session!.pages.last.displayPixelHeight, 900);
+    expect(perspectiveCorrector.receivedRotations.last, 90);
+
+    await _dispatchAndWait(
+      bloc,
+      ScanSessionPageRotationRequested(pageId: pageId, quarterTurns: -1),
+      matches: (state) =>
+          state.session?.pages.last.rotation == 0 &&
+          state.session?.pages.last.processingStatus ==
+              DocumentProcessingStatus.completed,
+    );
+    final rotatedLeftState = await _dispatchAndWait(
+      bloc,
+      ScanSessionPageRotationRequested(pageId: pageId, quarterTurns: -1),
+      matches: (state) =>
+          state.session?.pages.last.rotation == 270 &&
+          state.session?.pages.last.processingStatus ==
+              DocumentProcessingStatus.completed,
+    );
+    expect(rotatedLeftState.session!.pages.last.displayPixelWidth, 1200);
+    expect(rotatedLeftState.session!.pages.last.displayPixelHeight, 900);
+    expect(perspectiveCorrector.receivedRotations.last, 270);
+
     final reorderedState = await _dispatchAndWait(
       bloc,
       const ScanSessionPagesReordered(oldIndex: 0, newIndex: 1),
@@ -366,6 +399,21 @@ void main() {
     expect(processedImage, isNotNull);
     expect(processedImage!.width, result.pixelWidth);
     expect(processedImage.height, result.pixelHeight);
+
+    final rotatedOutputPath = '${directory.path}/processed-rotated.jpg';
+    final rotatedResult =
+        await LocalDocumentPerspectiveCorrector(
+          outputPathBuilder: (_) => rotatedOutputPath,
+        ).correct(
+          normalizedImagePath: sourcePath,
+          corners: corners,
+          rotationDegrees: 90,
+        );
+
+    expect(rotatedResult.pixelWidth, closeTo(128, 1));
+    expect(rotatedResult.pixelHeight, closeTo(160, 1));
+    expect(await File(rotatedOutputPath).exists(), isTrue);
+    expect(await File(sourcePath).readAsBytes(), sourceBytes);
   });
 }
 
@@ -465,14 +513,17 @@ class _FakeDocumentPerspectiveCorrector
   int remainingFailures;
   int callCount = 0;
   final receivedCorners = <DocumentCorners>[];
+  final receivedRotations = <int>[];
 
   @override
   Future<ProcessedDocumentImage> correct({
     required String normalizedImagePath,
     required DocumentCorners corners,
+    int rotationDegrees = 0,
   }) async {
     callCount += 1;
     receivedCorners.add(corners);
+    receivedRotations.add(rotationDegrees);
     if (remainingFailures > 0) {
       remainingFailures -= 1;
       throw const PerspectiveCorrectionException(
@@ -486,8 +537,8 @@ class _FakeDocumentPerspectiveCorrector
         : normalizedImagePath.substring(0, extensionIndex);
     return ProcessedDocumentImage(
       imagePath: '$basePath-processed-$callCount.jpg',
-      pixelWidth: 900,
-      pixelHeight: 1200,
+      pixelWidth: rotationDegrees % 180 == 0 ? 900 : 1200,
+      pixelHeight: rotationDegrees % 180 == 0 ? 1200 : 900,
     );
   }
 }

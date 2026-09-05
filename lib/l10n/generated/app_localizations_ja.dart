@@ -520,6 +520,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get documentPerspectiveRetry => '処理を再試行';
 
   @override
+  String get scanRotateLeft => '左に回転';
+
+  @override
+  String get scanRotateRight => '右に回転';
+
+  @override
   String get scanAdjustCorners => '調整';
 
   @override

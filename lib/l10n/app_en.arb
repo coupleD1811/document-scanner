@@ -184,6 +184,8 @@
   "documentPerspectiveCorrected": "Perspective corrected",
   "documentPerspectiveCorrectionFailed": "Could not process this page.",
   "documentPerspectiveRetry": "Retry processing",
+  "scanRotateLeft": "Rotate left",
+  "scanRotateRight": "Rotate right",
   "scanAdjustCorners": "Adjust",
   "scanCornerEditorTitle": "Adjust corners",
   "scanCornerEditorHint": "Drag each corner to match the document edges.",
