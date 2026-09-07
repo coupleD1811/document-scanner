@@ -5,7 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/scanly_icons.dart';
 import '../../../l10n/l10n.dart';
-import '../model/model.dart';
+import '../model/document_item.dart';
 import '../service/document_file_picker.dart';
 
 class DocumentsPage extends StatefulWidget {

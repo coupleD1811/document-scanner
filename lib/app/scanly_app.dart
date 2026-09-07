@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../features/auth/repository/auth_repository.dart';
 import '../features/auth/session/bloc/auth_session_bloc.dart';
 import '../features/auth/presentation/auth_gate.dart';
+import '../features/documents/repository/document_repository.dart';
 import '../features/profile/language/app_language.dart';
 import '../features/profile/language/state.dart';
 import '../l10n/l10n.dart';
@@ -12,51 +13,64 @@ import 'theme/scanly_theme.dart';
 import 'theme/scanly_theme_cubit.dart';
 
 class ScanlyApp extends StatelessWidget {
-  const ScanlyApp({required this.authRepository, this.locale, super.key});
+  const ScanlyApp({
+    required this.authRepository,
+    this.documentRepository,
+    this.locale,
+    super.key,
+  });
 
   final AuthRepository authRepository;
+  final DocumentRepository? documentRepository;
   final Locale? locale;
 
   @override
   Widget build(BuildContext context) {
+    final content = MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) =>
+              ProfileLanguageCubit(initialLocale: locale)
+                ..restoreSavedLanguage(),
+        ),
+        BlocProvider(create: (_) => ScanlyThemeCubit()..restoreSavedTheme()),
+        BlocProvider(
+          create: (_) =>
+              AuthSessionBloc(authRepository: authRepository)
+                ..add(const AuthSessionSubscriptionRequested()),
+        ),
+      ],
+      child: BlocBuilder<ProfileLanguageCubit, AppLanguage>(
+        builder: (context, language) {
+          return BlocBuilder<ScanlyThemeCubit, ThemeMode>(
+            builder: (context, themeMode) {
+              return MaterialApp(
+                onGenerateTitle: (context) => context.l10n.appTitle,
+                debugShowCheckedModeBanner: false,
+                locale: language.locale,
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
+                localeResolutionCallback: _resolveLocale,
+                theme: ScanlyTheme.light(),
+                darkTheme: ScanlyTheme.dark(),
+                themeMode: themeMode,
+                home: const AuthGate(),
+              );
+            },
+          );
+        },
+      ),
+    );
+    final documentRepository = this.documentRepository;
+
     return RepositoryProvider.value(
       value: authRepository,
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (_) =>
-                ProfileLanguageCubit(initialLocale: locale)
-                  ..restoreSavedLanguage(),
-          ),
-          BlocProvider(create: (_) => ScanlyThemeCubit()..restoreSavedTheme()),
-          BlocProvider(
-            create: (_) =>
-                AuthSessionBloc(authRepository: authRepository)
-                  ..add(const AuthSessionSubscriptionRequested()),
-          ),
-        ],
-        child: BlocBuilder<ProfileLanguageCubit, AppLanguage>(
-          builder: (context, language) {
-            return BlocBuilder<ScanlyThemeCubit, ThemeMode>(
-              builder: (context, themeMode) {
-                return MaterialApp(
-                  onGenerateTitle: (context) => context.l10n.appTitle,
-                  debugShowCheckedModeBanner: false,
-                  locale: language.locale,
-                  localizationsDelegates:
-                      AppLocalizations.localizationsDelegates,
-                  supportedLocales: AppLocalizations.supportedLocales,
-                  localeResolutionCallback: _resolveLocale,
-                  theme: ScanlyTheme.light(),
-                  darkTheme: ScanlyTheme.dark(),
-                  themeMode: themeMode,
-                  home: const AuthGate(),
-                );
-              },
-            );
-          },
-        ),
-      ),
+      child: documentRepository == null
+          ? content
+          : RepositoryProvider<DocumentRepository>.value(
+              value: documentRepository,
+              child: content,
+            ),
     );
   }
 }

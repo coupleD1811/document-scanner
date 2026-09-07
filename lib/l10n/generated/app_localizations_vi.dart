@@ -618,6 +618,35 @@ class AppLocalizationsVi extends AppLocalizations {
       'Chức năng tạo PDF sẽ được bổ sung ở bước tiếp theo.';
 
   @override
+  String get scanSaveDialogTitle => 'Lưu tài liệu';
+
+  @override
+  String get scanSaveNameLabel => 'Tên tài liệu';
+
+  @override
+  String get scanSaveNameHint => 'Nhập tên tài liệu';
+
+  @override
+  String get scanSaveAction => 'Lưu PDF';
+
+  @override
+  String get scanSaving => 'Đang tạo PDF...';
+
+  @override
+  String scanSaveSuccess(String name) {
+    return 'Đã lưu $name.';
+  }
+
+  @override
+  String get scanSaveFailed => 'Không thể lưu tài liệu. Hãy thử lại.';
+
+  @override
+  String get scanSavePageNotReady => 'Hãy chờ tất cả trang xử lý xong.';
+
+  @override
+  String get scanSaveInvalidInput => 'Hãy nhập tên tài liệu hợp lệ.';
+
+  @override
   String pdfSelectedMessage(String name) {
     return 'Đã chọn $name.';
   }

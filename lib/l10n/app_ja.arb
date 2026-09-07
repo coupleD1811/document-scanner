@@ -208,6 +208,22 @@
   "scanCornerBottomRight": "右下の角",
   "scanCornerBottomLeft": "左下の角",
   "scanPdfComingSoon": "PDF 作成機能は次のステップで追加されます。",
+  "scanSaveDialogTitle": "書類を保存",
+  "scanSaveNameLabel": "書類名",
+  "scanSaveNameHint": "名前を入力",
+  "scanSaveAction": "PDFを保存",
+  "scanSaving": "PDFを作成中...",
+  "scanSaveSuccess": "{name}を保存しました。",
+  "@scanSaveSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "scanSaveFailed": "書類を保存できませんでした。もう一度お試しください。",
+  "scanSavePageNotReady": "すべてのページの処理が完了するまでお待ちください。",
+  "scanSaveInvalidInput": "有効な書類名を入力してください。",
   "pdfSelectedMessage": "{name} を選択しました。",
   "@pdfSelectedMessage": {
     "placeholders": {

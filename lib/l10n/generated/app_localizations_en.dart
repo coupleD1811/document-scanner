@@ -622,6 +622,37 @@ class AppLocalizationsEn extends AppLocalizations {
       'PDF creation will be added in the next step.';
 
   @override
+  String get scanSaveDialogTitle => 'Save document';
+
+  @override
+  String get scanSaveNameLabel => 'Document name';
+
+  @override
+  String get scanSaveNameHint => 'Enter a name';
+
+  @override
+  String get scanSaveAction => 'Save PDF';
+
+  @override
+  String get scanSaving => 'Creating PDF...';
+
+  @override
+  String scanSaveSuccess(String name) {
+    return 'Saved $name.';
+  }
+
+  @override
+  String get scanSaveFailed =>
+      'Unable to save this document. Please try again.';
+
+  @override
+  String get scanSavePageNotReady =>
+      'Wait until every page has finished processing.';
+
+  @override
+  String get scanSaveInvalidInput => 'Enter a valid document name.';
+
+  @override
   String pdfSelectedMessage(String name) {
     return 'Selected $name.';
   }

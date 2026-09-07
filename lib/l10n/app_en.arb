@@ -208,6 +208,22 @@
   "scanCornerBottomRight": "Bottom-right corner",
   "scanCornerBottomLeft": "Bottom-left corner",
   "scanPdfComingSoon": "PDF creation will be added in the next step.",
+  "scanSaveDialogTitle": "Save document",
+  "scanSaveNameLabel": "Document name",
+  "scanSaveNameHint": "Enter a name",
+  "scanSaveAction": "Save PDF",
+  "scanSaving": "Creating PDF...",
+  "scanSaveSuccess": "Saved {name}.",
+  "@scanSaveSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "scanSaveFailed": "Unable to save this document. Please try again.",
+  "scanSavePageNotReady": "Wait until every page has finished processing.",
+  "scanSaveInvalidInput": "Enter a valid document name.",
   "pdfSelectedMessage": "Selected {name}.",
   "@pdfSelectedMessage": {
     "placeholders": {
