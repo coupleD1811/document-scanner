@@ -7,7 +7,9 @@ import 'package:scanly/app/theme/scanly_icons.dart';
 import 'package:scanly/features/auth/repository/auth_failure.dart';
 import 'package:scanly/features/auth/repository/auth_repository.dart';
 import 'package:scanly/features/auth/repository/auth_user.dart';
-import 'package:scanly/features/documents/model/model.dart';
+import 'package:scanly/features/documents/bloc/document_save_bloc.dart';
+import 'package:scanly/features/documents/model/document_item.dart';
+import 'package:scanly/features/documents/repository/document_repository.dart';
 import 'package:scanly/features/documents/service/document_file_picker.dart';
 import 'package:scanly/features/documents/view/page.dart';
 import 'package:scanly/features/scan/bloc/scan_session_bloc.dart';
@@ -392,7 +394,9 @@ void main() {
     final sessionBloc = ScanSessionBloc(
       perspectiveCorrector: FakeDocumentPerspectiveCorrector(),
     );
+    final saveBloc = DocumentSaveBloc(repository: _UnusedDocumentRepository());
     addTearDown(sessionBloc.close);
+    addTearDown(saveBloc.close);
     final firstPageState = sessionBloc.stream.firstWhere(
       (state) =>
           state.session?.pages.length == 1 &&
@@ -409,8 +413,11 @@ void main() {
     await secondPageState;
 
     await tester.pumpWidget(
-      BlocProvider.value(
-        value: sessionBloc,
+      MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: sessionBloc),
+          BlocProvider.value(value: saveBloc),
+        ],
         child: MaterialApp(
           locale: const Locale('vi'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -746,6 +753,8 @@ class FakeAuthRepository implements AuthRepository {
     return _controller.close();
   }
 }
+
+class _UnusedDocumentRepository extends Fake implements DocumentRepository {}
 
 NormalizedDocumentImage _normalizedImage(int pageNumber) {
   return NormalizedDocumentImage(

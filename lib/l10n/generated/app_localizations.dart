@@ -1246,6 +1246,60 @@ abstract class AppLocalizations {
   /// **'Chức năng tạo PDF sẽ được bổ sung ở bước tiếp theo.'**
   String get scanPdfComingSoon;
 
+  /// No description provided for @scanSaveDialogTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lưu tài liệu'**
+  String get scanSaveDialogTitle;
+
+  /// No description provided for @scanSaveNameLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên tài liệu'**
+  String get scanSaveNameLabel;
+
+  /// No description provided for @scanSaveNameHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập tên tài liệu'**
+  String get scanSaveNameHint;
+
+  /// No description provided for @scanSaveAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lưu PDF'**
+  String get scanSaveAction;
+
+  /// No description provided for @scanSaving.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang tạo PDF...'**
+  String get scanSaving;
+
+  /// No description provided for @scanSaveSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã lưu {name}.'**
+  String scanSaveSuccess(String name);
+
+  /// No description provided for @scanSaveFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể lưu tài liệu. Hãy thử lại.'**
+  String get scanSaveFailed;
+
+  /// No description provided for @scanSavePageNotReady.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hãy chờ tất cả trang xử lý xong.'**
+  String get scanSavePageNotReady;
+
+  /// No description provided for @scanSaveInvalidInput.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hãy nhập tên tài liệu hợp lệ.'**
+  String get scanSaveInvalidInput;
+
   /// No description provided for @pdfSelectedMessage.
   ///
   /// In vi, this message translates to:

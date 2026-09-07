@@ -9,6 +9,8 @@ import '../../l10n/l10n.dart';
 import '../auth/presentation/widgets/auth_failure_message.dart';
 import '../auth/presentation/widgets/auth_snack_bar.dart';
 import '../auth/session/bloc/auth_session_bloc.dart';
+import '../documents/bloc/document_save_bloc.dart';
+import '../documents/repository/document_repository.dart';
 import '../documents/view/page.dart';
 import '../home/home_page.dart';
 import '../profile/profile_page.dart';
@@ -100,6 +102,7 @@ class _MainNavigationViewState extends State<_MainNavigationView> {
 
   Future<void> _openScanner() async {
     final sessionBloc = context.read<ScanSessionBloc>();
+    final documentRepository = context.read<DocumentRepository>();
     sessionBloc.add(const ScanSessionCleared());
     final image = await Navigator.of(context).push<NormalizedDocumentImage>(
       MaterialPageRoute(builder: (_) => const ScanCameraPage()),
@@ -111,8 +114,13 @@ class _MainNavigationViewState extends State<_MainNavigationView> {
     sessionBloc.add(ScanSessionPageAdded(image));
     await Navigator.of(context).push<void>(
       MaterialPageRoute(
-        builder: (_) => BlocProvider.value(
-          value: sessionBloc,
+        builder: (_) => MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: sessionBloc),
+            BlocProvider(
+              create: (_) => DocumentSaveBloc(repository: documentRepository),
+            ),
+          ],
           child: const ScanEditorPage(),
         ),
       ),

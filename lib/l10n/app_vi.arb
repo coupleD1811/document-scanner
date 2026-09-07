@@ -208,6 +208,22 @@
   "scanCornerBottomRight": "Góc dưới bên phải",
   "scanCornerBottomLeft": "Góc dưới bên trái",
   "scanPdfComingSoon": "Chức năng tạo PDF sẽ được bổ sung ở bước tiếp theo.",
+  "scanSaveDialogTitle": "Lưu tài liệu",
+  "scanSaveNameLabel": "Tên tài liệu",
+  "scanSaveNameHint": "Nhập tên tài liệu",
+  "scanSaveAction": "Lưu PDF",
+  "scanSaving": "Đang tạo PDF...",
+  "scanSaveSuccess": "Đã lưu {name}.",
+  "@scanSaveSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "scanSaveFailed": "Không thể lưu tài liệu. Hãy thử lại.",
+  "scanSavePageNotReady": "Hãy chờ tất cả trang xử lý xong.",
+  "scanSaveInvalidInput": "Hãy nhập tên tài liệu hợp lệ.",
   "pdfSelectedMessage": "Đã chọn {name}.",
   "@pdfSelectedMessage": {
     "placeholders": {

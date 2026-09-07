@@ -592,6 +592,35 @@ class AppLocalizationsJa extends AppLocalizations {
   String get scanPdfComingSoon => 'PDF 作成機能は次のステップで追加されます。';
 
   @override
+  String get scanSaveDialogTitle => '書類を保存';
+
+  @override
+  String get scanSaveNameLabel => '書類名';
+
+  @override
+  String get scanSaveNameHint => '名前を入力';
+
+  @override
+  String get scanSaveAction => 'PDFを保存';
+
+  @override
+  String get scanSaving => 'PDFを作成中...';
+
+  @override
+  String scanSaveSuccess(String name) {
+    return '$nameを保存しました。';
+  }
+
+  @override
+  String get scanSaveFailed => '書類を保存できませんでした。もう一度お試しください。';
+
+  @override
+  String get scanSavePageNotReady => 'すべてのページの処理が完了するまでお待ちください。';
+
+  @override
+  String get scanSaveInvalidInput => '有効な書類名を入力してください。';
+
+  @override
   String pdfSelectedMessage(String name) {
     return '$name を選択しました。';
   }

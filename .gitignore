@@ -34,7 +34,6 @@ migrate_working_dir/
 /android/build/
 /coverage/
 /docs/
-/test/
 # Symbolication related
 app.*.symbols
 

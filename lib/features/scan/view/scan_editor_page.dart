@@ -3,10 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/scanly_icons.dart';
 import '../../../l10n/l10n.dart';
+import '../../documents/bloc/document_save_bloc.dart';
 import '../bloc/scan_session_bloc.dart';
 import '../model/document_corners.dart';
 import '../model/document_edge_detection_status.dart';
@@ -33,56 +35,65 @@ class _ScanEditorPageState extends State<ScanEditorPage> {
   Widget build(BuildContext context) {
     final t = context.l10n;
 
-    return PopScope(
-      canPop: _canPop,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) {
-          unawaited(_cancelSession());
-        }
-      },
-      child: BlocBuilder<ScanSessionBloc, ScanSessionState>(
-        builder: (context, state) {
-          final editingState = state is ScanSessionEditing ? state : null;
-
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(t.scanEditorTitle),
-              leading: IconButton(
-                tooltip: t.scanEditorCancel,
-                onPressed: _cancelSession,
-                icon: const Icon(LucideIcons.x),
-              ),
-              actions: [
-                IconButton(
-                  key: const ValueKey('scan-editor-delete-page'),
-                  tooltip: t.scanEditorDeletePage,
-                  onPressed: editingState == null
-                      ? null
-                      : () => context.read<ScanSessionBloc>().add(
-                          ScanSessionPageRemoved(editingState.selectedPage.id),
-                        ),
-                  icon: const Icon(LucideIcons.trash2),
-                ),
-              ],
-            ),
-            body: SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                child: editingState == null
-                    ? _EmptyEditor(onAddPage: _addPage)
-                    : _EditorContent(
-                        state: editingState,
-                        onAddPage: _addPage,
-                        onCancel: _cancelSession,
-                        onContinue: _continueToPdf,
-                        onAdjustCorners: _adjustCorners,
-                        onAdjustImage: _adjustImage,
-                      ),
-              ),
-            ),
-          );
+    return BlocListener<DocumentSaveBloc, DocumentSaveState>(
+      listener: _onSaveStateChanged,
+      child: PopScope(
+        canPop: _canPop,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) {
+            unawaited(_cancelSession());
+          }
         },
+        child: BlocBuilder<ScanSessionBloc, ScanSessionState>(
+          builder: (context, state) {
+            final editingState = state is ScanSessionEditing ? state : null;
+            final isSaving = context.select(
+              (DocumentSaveBloc bloc) => bloc.state is DocumentSaveInProgress,
+            );
+
+            return Scaffold(
+              appBar: AppBar(
+                title: Text(t.scanEditorTitle),
+                leading: IconButton(
+                  tooltip: t.scanEditorCancel,
+                  onPressed: _cancelSession,
+                  icon: const Icon(LucideIcons.x),
+                ),
+                actions: [
+                  IconButton(
+                    key: const ValueKey('scan-editor-delete-page'),
+                    tooltip: t.scanEditorDeletePage,
+                    onPressed: editingState == null || isSaving
+                        ? null
+                        : () => context.read<ScanSessionBloc>().add(
+                            ScanSessionPageRemoved(
+                              editingState.selectedPage.id,
+                            ),
+                          ),
+                    icon: const Icon(LucideIcons.trash2),
+                  ),
+                ],
+              ),
+              body: SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                  child: editingState == null
+                      ? _EmptyEditor(onAddPage: _addPage)
+                      : _EditorContent(
+                          state: editingState,
+                          isSaving: isSaving,
+                          onAddPage: _addPage,
+                          onCancel: _cancelSession,
+                          onContinue: _continueToPdf,
+                          onAdjustCorners: _adjustCorners,
+                          onAdjustImage: _adjustImage,
+                        ),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -136,7 +147,8 @@ class _ScanEditorPageState extends State<ScanEditorPage> {
   }
 
   Future<void> _cancelSession() async {
-    if (_isShowingDiscardDialog) {
+    if (_isShowingDiscardDialog ||
+        context.read<DocumentSaveBloc>().state is DocumentSaveInProgress) {
       return;
     }
 
@@ -186,16 +198,90 @@ class _ScanEditorPageState extends State<ScanEditorPage> {
     });
   }
 
-  void _continueToPdf() {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(context.l10n.scanPdfComingSoon)));
+  Future<void> _continueToPdf() async {
+    final session = context.read<ScanSessionBloc>().state.session;
+    if (session == null) {
+      return;
+    }
+
+    final defaultName =
+        'Scan ${DateFormat('yyyy-MM-dd_HHmm').format(DateTime.now())}';
+    final nameController = TextEditingController(text: defaultName);
+    final name = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(context.l10n.scanSaveDialogTitle),
+        content: TextField(
+          key: const ValueKey('scan-save-name-field'),
+          controller: nameController,
+          autofocus: true,
+          textInputAction: TextInputAction.done,
+          decoration: InputDecoration(
+            labelText: context.l10n.scanSaveNameLabel,
+            hintText: context.l10n.scanSaveNameHint,
+          ),
+          onSubmitted: (value) => Navigator.of(dialogContext).pop(value),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(context.l10n.scanEditorCancel),
+          ),
+          FilledButton(
+            key: const ValueKey('scan-save-confirm'),
+            onPressed: () =>
+                Navigator.of(dialogContext).pop(nameController.text),
+            child: Text(context.l10n.scanSaveAction),
+          ),
+        ],
+      ),
+    );
+    nameController.dispose();
+    if (!mounted || name == null) {
+      return;
+    }
+
+    context.read<DocumentSaveBloc>().add(
+      DocumentSaveRequested(session: session, name: name),
+    );
+  }
+
+  void _onSaveStateChanged(BuildContext context, DocumentSaveState state) {
+    if (state case DocumentSaveSuccess(:final document)) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text(context.l10n.scanSaveSuccess(document.name))),
+        );
+      context.read<ScanSessionBloc>().add(const ScanSessionCleared());
+      _leaveEditor();
+      return;
+    }
+
+    if (state case DocumentSaveFailure(:final reason)) {
+      final message = switch (reason) {
+        DocumentSaveFailureReason.invalidInput =>
+          context.l10n.scanSaveInvalidInput,
+        DocumentSaveFailureReason.pageNotReady =>
+          context.l10n.scanSavePageNotReady,
+        DocumentSaveFailureReason.storage => context.l10n.scanSaveFailed,
+      };
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+    }
   }
 }
 
 class _EditorContent extends StatelessWidget {
   const _EditorContent({
     required this.state,
+    required this.isSaving,
     required this.onAddPage,
     required this.onCancel,
     required this.onContinue,
@@ -204,6 +290,7 @@ class _EditorContent extends StatelessWidget {
   });
 
   final ScanSessionEditing state;
+  final bool isSaving;
   final VoidCallback onAddPage;
   final VoidCallback onCancel;
   final VoidCallback onContinue;
@@ -223,8 +310,9 @@ class _EditorContent extends StatelessWidget {
         const SizedBox(height: 8),
         _PageEditToolbar(
           isEnabled:
+              !isSaving &&
               selectedPage.processingStatus !=
-              DocumentProcessingStatus.processing,
+                  DocumentProcessingStatus.processing,
           onRotateLeft: () => context.read<ScanSessionBloc>().add(
             ScanSessionPageRotationRequested(
               pageId: selectedPage.id,
@@ -244,8 +332,9 @@ class _EditorContent extends StatelessWidget {
         _ScanFilterSelector(
           selectedFilter: selectedPage.filter,
           isEnabled:
+              !isSaving &&
               selectedPage.processingStatus !=
-              DocumentProcessingStatus.processing,
+                  DocumentProcessingStatus.processing,
           onChanged: (filter) => context.read<ScanSessionBloc>().add(
             ScanSessionPageFilterChanged(
               pageId: selectedPage.id,
@@ -326,7 +415,7 @@ class _EditorContent extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              _AddPageButton(onPressed: onAddPage),
+              _AddPageButton(onPressed: isSaving ? null : onAddPage),
             ],
           ),
         ),
@@ -335,7 +424,7 @@ class _EditorContent extends StatelessWidget {
           children: [
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: onCancel,
+                onPressed: isSaving ? null : onCancel,
                 icon: const Icon(LucideIcons.x, size: 19),
                 label: Text(t.scanEditorCancel),
               ),
@@ -344,10 +433,15 @@ class _EditorContent extends StatelessWidget {
             Expanded(
               child: FilledButton.icon(
                 key: const ValueKey('scan-editor-continue'),
-                onPressed: onContinue,
+                onPressed: isSaving ? null : onContinue,
                 iconAlignment: IconAlignment.end,
-                icon: const Icon(LucideIcons.arrowRight, size: 19),
-                label: Text(t.scanEditorContinue),
+                icon: isSaving
+                    ? const SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(LucideIcons.arrowRight, size: 19),
+                label: Text(isSaving ? t.scanSaving : t.scanEditorContinue),
               ),
             ),
           ],
@@ -910,11 +1004,14 @@ class _PageThumbnail extends StatelessWidget {
 class _AddPageButton extends StatelessWidget {
   const _AddPageButton({required this.onPressed});
 
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final color = onPressed == null
+        ? colorScheme.onSurface.withValues(alpha: 0.38)
+        : colorScheme.primary;
 
     return Tooltip(
       message: context.l10n.scanEditorAddPage,
@@ -925,20 +1022,20 @@ class _AddPageButton extends StatelessWidget {
         child: Container(
           width: 64,
           decoration: BoxDecoration(
-            color: colorScheme.primary.withValues(alpha: 0.08),
-            border: Border.all(color: colorScheme.primary),
+            color: color.withValues(alpha: 0.08),
+            border: Border.all(color: color),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(LucideIcons.plus, color: colorScheme.primary, size: 24),
+              Icon(LucideIcons.plus, color: color, size: 24),
               const SizedBox(height: 5),
               Text(
                 context.l10n.scanEditorAdd,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: colorScheme.primary,
+                  color: color,
                   fontWeight: FontWeight.w700,
                 ),
               ),
