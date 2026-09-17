@@ -94,6 +94,7 @@
   "ocrSearchSubtitle": "Trích xuất chữ và tìm kiếm trong nội dung tài liệu.",
   "documentsEmptyTitle": "Chưa có tài liệu",
   "documentsEmptySubtitle": "Các file scan và PDF đã lưu sẽ xuất hiện ở đây.",
+  "documentsLoadFailed": "Không thể tải tài liệu. Hãy thử lại.",
   "searchDocumentsHint": "Tìm kiếm tài liệu",
   "documentsFilterTitle": "Lọc tài liệu",
   "documentFilterAll": "Tất cả",

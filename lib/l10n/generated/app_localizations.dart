@@ -664,6 +664,12 @@ abstract class AppLocalizations {
   /// **'Các file scan và PDF đã lưu sẽ xuất hiện ở đây.'**
   String get documentsEmptySubtitle;
 
+  /// No description provided for @documentsLoadFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể tải tài liệu. Hãy thử lại.'**
+  String get documentsLoadFailed;
+
   /// No description provided for @searchDocumentsHint.
   ///
   /// In vi, this message translates to:

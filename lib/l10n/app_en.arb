@@ -94,6 +94,7 @@
   "ocrSearchSubtitle": "Extract text and search inside document content.",
   "documentsEmptyTitle": "No documents yet",
   "documentsEmptySubtitle": "Saved scans and PDF files will appear here.",
+  "documentsLoadFailed": "Unable to load documents. Please try again.",
   "searchDocumentsHint": "Search documents",
   "documentsFilterTitle": "Filter documents",
   "documentFilterAll": "All",

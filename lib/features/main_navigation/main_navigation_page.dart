@@ -10,6 +10,7 @@ import '../auth/presentation/widgets/auth_failure_message.dart';
 import '../auth/presentation/widgets/auth_snack_bar.dart';
 import '../auth/session/bloc/auth_session_bloc.dart';
 import '../documents/bloc/document_save_bloc.dart';
+import '../documents/bloc/document_list_bloc.dart';
 import '../documents/repository/document_repository.dart';
 import '../documents/view/page.dart';
 import '../home/home_page.dart';
@@ -25,8 +26,14 @@ class MainNavigationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ScanSessionBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => ScanSessionBloc()),
+        BlocProvider(
+          create: (context) =>
+              DocumentListBloc(repository: context.read<DocumentRepository>()),
+        ),
+      ],
       child: const _MainNavigationView(),
     );
   }

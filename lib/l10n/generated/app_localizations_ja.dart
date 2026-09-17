@@ -293,6 +293,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get documentsEmptySubtitle => '保存したスキャンと PDF ファイルがここに表示されます。';
 
   @override
+  String get documentsLoadFailed => '書類を読み込めませんでした。もう一度お試しください。';
+
+  @override
   String get searchDocumentsHint => '書類を検索';
 
   @override

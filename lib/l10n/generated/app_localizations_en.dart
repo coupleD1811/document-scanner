@@ -308,6 +308,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Saved scans and PDF files will appear here.';
 
   @override
+  String get documentsLoadFailed =>
+      'Unable to load documents. Please try again.';
+
+  @override
   String get searchDocumentsHint => 'Search documents';
 
   @override

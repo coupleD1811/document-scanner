@@ -94,6 +94,7 @@
   "ocrSearchSubtitle": "文字を抽出し、ドキュメント内容を検索します。",
   "documentsEmptyTitle": "書類はまだありません",
   "documentsEmptySubtitle": "保存したスキャンと PDF ファイルがここに表示されます。",
+  "documentsLoadFailed": "書類を読み込めませんでした。もう一度お試しください。",
   "searchDocumentsHint": "書類を検索",
   "documentsFilterTitle": "書類を絞り込む",
   "documentFilterAll": "すべて",

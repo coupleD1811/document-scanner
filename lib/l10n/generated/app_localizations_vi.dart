@@ -306,6 +306,9 @@ class AppLocalizationsVi extends AppLocalizations {
       'Các file scan và PDF đã lưu sẽ xuất hiện ở đây.';
 
   @override
+  String get documentsLoadFailed => 'Không thể tải tài liệu. Hãy thử lại.';
+
+  @override
   String get searchDocumentsHint => 'Tìm kiếm tài liệu';
 
   @override
