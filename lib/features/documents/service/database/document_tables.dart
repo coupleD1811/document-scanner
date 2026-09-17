@@ -6,6 +6,7 @@ class StoredDocuments extends Table {
   TextColumn get name => text().withLength(min: 1)();
   TextColumn get pdfPath => text().withLength(min: 1)();
   TextColumn get thumbnailPath => text().withLength(min: 1)();
+  TextColumn get source => text().withDefault(const Constant('scan'))();
   IntColumn get pageCount => integer()();
   IntColumn get sizeInBytes => integer()();
   IntColumn get createdAt => integer()();

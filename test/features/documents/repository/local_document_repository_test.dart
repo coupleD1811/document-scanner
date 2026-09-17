@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scanly/features/documents/model/document_export_result.dart';
@@ -5,6 +7,7 @@ import 'package:scanly/features/documents/model/page_save_draft.dart';
 import 'package:scanly/features/documents/model/save_draft.dart';
 import 'package:scanly/features/documents/model/staged_document_deletion.dart';
 import 'package:scanly/features/documents/model/stored_document_files.dart';
+import 'package:scanly/features/documents/model/stored_imported_pdf_files.dart';
 import 'package:scanly/features/documents/repository/local_document_repository.dart';
 import 'package:scanly/features/documents/service/database/document_database.dart';
 import 'package:scanly/features/documents/service/document_export_service.dart';
@@ -153,6 +156,15 @@ class _FakeStorage implements DocumentStorage {
   @override
   Future<StoredDocumentFiles> storePageImages(DocumentSaveDraft draft) async {
     return result;
+  }
+
+  @override
+  Future<StoredImportedPdfFiles> storeImportedPdf({
+    required String documentId,
+    required String sourcePdfPath,
+    required Uint8List thumbnailBytes,
+  }) {
+    throw UnimplementedError();
   }
 
   @override

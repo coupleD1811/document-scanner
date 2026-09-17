@@ -1,5 +1,11 @@
+import 'dart:io';
+
 import 'package:path/path.dart' as path;
 
+import '../../scan/model/document_corners.dart';
+import '../../scan/model/scan_filter.dart';
+import '../model/imported_pdf_preview.dart';
+import '../model/document_source.dart';
 import '../model/local_document.dart';
 import '../model/local_document_page.dart';
 import '../model/ocr_status.dart';
@@ -8,6 +14,7 @@ import '../model/stored_document_files.dart';
 import '../model/sync_status.dart';
 import '../service/database/document_data_source.dart';
 import '../service/document_export_service.dart';
+import '../service/document_import_service.dart';
 import '../service/document_storage_service.dart';
 import 'document_repository.dart';
 
@@ -18,15 +25,18 @@ class LocalDocumentRepository implements DocumentRepository {
     required DocumentDataSource dataSource,
     required DocumentStorage storage,
     required DocumentExportService exporter,
+    DocumentImportService? importer,
     DocumentRepositoryClock? clock,
   }) : _dataSource = dataSource,
        _storage = storage,
        _exporter = exporter,
+       _importer = importer ?? LocalDocumentImportService(),
        _clock = clock ?? DateTime.now;
 
   final DocumentDataSource _dataSource;
   final DocumentStorage _storage;
   final DocumentExportService _exporter;
+  final DocumentImportService _importer;
   final DocumentRepositoryClock _clock;
 
   @override
@@ -63,6 +73,59 @@ class LocalDocumentRepository implements DocumentRepository {
     } on Object {
       if (storedFiles != null) {
         await _storage.deleteDocumentFiles(storedFiles.directoryPath);
+      }
+      rethrow;
+    }
+  }
+
+  @override
+  Future<LocalDocument> importImages({
+    required List<String> sourcePaths,
+    required String name,
+  }) async {
+    final draft = await _importer.createImageDraft(
+      sourcePaths: sourcePaths,
+      name: name,
+    );
+    return saveDocument(draft);
+  }
+
+  @override
+  Future<LocalDocument> importPdf({
+    required String sourcePath,
+    required String name,
+  }) async {
+    final preview = await _importer.createPdfPreview(sourcePath);
+    String? storedDirectoryPath;
+    try {
+      final files = await _storage.storeImportedPdf(
+        documentId: preview.documentId,
+        sourcePdfPath: sourcePath,
+        thumbnailBytes: preview.thumbnailBytes,
+      );
+      storedDirectoryPath = files.directoryPath;
+      final createdAt = _clock().toUtc();
+      final document = LocalDocument(
+        id: preview.documentId,
+        name: _pdfFileName(name),
+        pdfPath: files.pdfPath,
+        thumbnailPath: files.thumbnailPath,
+        pageCount: preview.pageCount,
+        sizeInBytes: await File(files.pdfPath).length(),
+        createdAt: createdAt,
+        updatedAt: createdAt,
+        source: DocumentSource.pdf,
+        ocrStatus: DocumentOcrStatus.notRequested,
+        syncStatus: DocumentSyncStatus.localOnly,
+      );
+      await _dataSource.saveDocument(
+        document,
+        _createImportedPdfPages(document, preview, createdAt),
+      );
+      return document;
+    } on Object {
+      if (storedDirectoryPath != null) {
+        await _storage.deleteDocumentFiles(storedDirectoryPath);
       }
       rethrow;
     }
@@ -191,6 +254,37 @@ class LocalDocumentRepository implements DocumentRepository {
           updatedAt: updatedAt,
         ),
     ];
+  }
+
+  List<LocalDocumentPage> _createImportedPdfPages(
+    LocalDocument document,
+    ImportedPdfPreview preview,
+    DateTime timestamp,
+  ) {
+    return List.generate(
+      preview.pageCount,
+      (index) => LocalDocumentPage(
+        id: '${document.id}-page-${index + 1}',
+        documentId: document.id,
+        pageIndex: index,
+        // Imported PDFs retain their original PDF. The first-page preview is
+        // intentionally used as lightweight page metadata until PDF editing.
+        originalImagePath: document.thumbnailPath,
+        normalizedImagePath: document.thumbnailPath,
+        processedImagePath: document.thumbnailPath,
+        originalPixelWidth: preview.thumbnailWidth,
+        originalPixelHeight: preview.thumbnailHeight,
+        processedPixelWidth: preview.thumbnailWidth,
+        processedPixelHeight: preview.thumbnailHeight,
+        corners: DocumentCorners.fullImage,
+        rotation: 0,
+        filter: ScanFilter.original,
+        brightness: 0,
+        contrast: 0,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      ),
+    );
   }
 }
 

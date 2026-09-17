@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import 'document_source.dart';
 import 'ocr_status.dart';
 import 'sync_status.dart';
 
@@ -13,6 +14,7 @@ class LocalDocument extends Equatable {
     required this.sizeInBytes,
     required this.createdAt,
     required this.updatedAt,
+    this.source = DocumentSource.scan,
     this.ocrStatus = DocumentOcrStatus.notRequested,
     this.syncStatus = DocumentSyncStatus.localOnly,
   }) : assert(id.isNotEmpty),
@@ -31,6 +33,7 @@ class LocalDocument extends Equatable {
   final int sizeInBytes;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final DocumentSource source;
   final DocumentOcrStatus ocrStatus;
   final DocumentSyncStatus syncStatus;
 
@@ -43,6 +46,7 @@ class LocalDocument extends Equatable {
     int? sizeInBytes,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DocumentSource? source,
     DocumentOcrStatus? ocrStatus,
     DocumentSyncStatus? syncStatus,
   }) {
@@ -55,6 +59,7 @@ class LocalDocument extends Equatable {
       sizeInBytes: sizeInBytes ?? this.sizeInBytes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      source: source ?? this.source,
       ocrStatus: ocrStatus ?? this.ocrStatus,
       syncStatus: syncStatus ?? this.syncStatus,
     );
@@ -70,6 +75,7 @@ class LocalDocument extends Equatable {
     sizeInBytes,
     createdAt,
     updatedAt,
+    source,
     ocrStatus,
     syncStatus,
   ];

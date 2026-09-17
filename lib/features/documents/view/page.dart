@@ -3,16 +3,21 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/scanly_icons.dart';
 import '../../../l10n/l10n.dart';
 import '../bloc/document_action_bloc.dart';
+import '../bloc/document_import_bloc.dart';
+import '../bloc/document_import_event.dart';
+import '../bloc/document_import_state.dart';
 import '../bloc/document_list_bloc.dart';
 import '../model/document_item.dart';
 import '../model/document_list_query.dart';
 import '../service/document_file_picker.dart';
+import '../service/document_import_service.dart';
 
 class DocumentsPage extends StatefulWidget {
   const DocumentsPage({
@@ -34,8 +39,6 @@ class _DocumentsPageState extends State<DocumentsPage> {
   final _searchController = TextEditingController();
   final _searchFocusNode = FocusNode();
 
-  bool _isImporting = false;
-
   @override
   void dispose() {
     _searchController.dispose();
@@ -47,9 +50,17 @@ class _DocumentsPageState extends State<DocumentsPage> {
   Widget build(BuildContext context) {
     final state = context.watch<DocumentListBloc>().state;
 
-    return BlocListener<DocumentActionBloc, DocumentActionState>(
-      listenWhen: (previous, current) => current is! DocumentActionInitial,
-      listener: _handleActionState,
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<DocumentActionBloc, DocumentActionState>(
+          listenWhen: (previous, current) => current is! DocumentActionInitial,
+          listener: _handleActionState,
+        ),
+        BlocListener<DocumentImportBloc, DocumentImportState>(
+          listenWhen: (previous, current) => current is! DocumentImportInitial,
+          listener: _handleImportState,
+        ),
+      ],
       child: CustomScrollView(
         key: const ValueKey('documents-page'),
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -160,6 +171,45 @@ class _DocumentsPageState extends State<DocumentsPage> {
     );
   }
 
+  void _handleImportState(BuildContext context, DocumentImportState state) {
+    final message = switch (state) {
+      DocumentImportSuccess() => context.l10n.documentImportSuccess(
+        state.document.name,
+      ),
+      DocumentImportFailure() => _importFailureMessage(context.l10n, state),
+      _ => null,
+    };
+    if (message == null) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: state is DocumentImportFailure
+              ? Theme.of(context).colorScheme.error
+              : null,
+        ),
+      );
+  }
+
+  String _importFailureMessage(
+    AppLocalizations t,
+    DocumentImportFailure state,
+  ) {
+    return switch (state.reason) {
+      DocumentImportFailureReason.sourceUnavailable =>
+        t.documentImportUnavailable,
+      DocumentImportFailureReason.unsupportedImage => t.imageImportUnsupported,
+      DocumentImportFailureReason.fileTooLarge => t.documentImportTooLarge,
+      DocumentImportFailureReason.passwordProtectedPdf =>
+        t.pdfImportPasswordProtected,
+      DocumentImportFailureReason.invalidPdf => t.pdfImportFailed,
+    };
+  }
+
   void _handleActionState(BuildContext context, DocumentActionState state) {
     final t = context.l10n;
     final message = switch (state) {
@@ -221,22 +271,69 @@ class _DocumentsPageState extends State<DocumentsPage> {
       return;
     }
 
-    if (_isImporting) {
+    final type = await showModalBottomSheet<_DocumentImportSelection>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) {
+        final t = context.l10n;
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  key: const ValueKey('documents-import-images-option'),
+                  leading: const Icon(LucideIcons.images),
+                  title: Text(t.importImagesAction),
+                  subtitle: Text(t.importImagesSubtitle),
+                  onTap: () => Navigator.of(
+                    context,
+                  ).pop(_DocumentImportSelection.images),
+                ),
+                ListTile(
+                  key: const ValueKey('documents-import-pdf-option'),
+                  leading: const Icon(ScanlyIcons.importPdf),
+                  title: Text(t.importPdfAction),
+                  subtitle: Text(t.importPdfSubtitle),
+                  onTap: () =>
+                      Navigator.of(context).pop(_DocumentImportSelection.pdf),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    if (!mounted || type == null) {
       return;
     }
 
-    _isImporting = true;
     try {
-      final file = await widget.filePicker.pickPdf();
-      if (!mounted || file == null) {
-        return;
+      switch (type) {
+        case _DocumentImportSelection.images:
+          final files = await widget.filePicker.pickImages();
+          if (!mounted || files.isEmpty) {
+            return;
+          }
+          context.read<DocumentImportBloc>().add(
+            DocumentImagesImportRequested(
+              sourcePaths: files.map((file) => file.path).toList(),
+              name: _imageImportName(files),
+            ),
+          );
+        case _DocumentImportSelection.pdf:
+          final file = await widget.filePicker.pickPdf();
+          if (!mounted || file == null) {
+            return;
+          }
+          context.read<DocumentImportBloc>().add(
+            DocumentPdfImportRequested(
+              sourcePath: file.path,
+              name: _nameWithoutExtension(file.name),
+            ),
+          );
       }
-
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(content: Text(context.l10n.pdfSelectedMessage(file.name))),
-        );
     } on Object {
       if (!mounted) {
         return;
@@ -250,9 +347,22 @@ class _DocumentsPageState extends State<DocumentsPage> {
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
-    } finally {
-      _isImporting = false;
     }
+  }
+
+  String _imageImportName(List<XFile> files) {
+    if (files.length == 1) {
+      return _nameWithoutExtension(files.single.name);
+    }
+    return context.l10n.importedImagesDocumentName(files.length);
+  }
+
+  String _nameWithoutExtension(String value) {
+    final extensionIndex = value.lastIndexOf('.');
+    if (extensionIndex <= 0) {
+      return value;
+    }
+    return value.substring(0, extensionIndex);
   }
 
   void _clearSearchAndFilters() {
@@ -488,6 +598,8 @@ class _DocumentsPageState extends State<DocumentsPage> {
       );
   }
 }
+
+enum _DocumentImportSelection { images, pdf }
 
 class _DocumentsHeader extends StatelessWidget {
   const _DocumentsHeader({

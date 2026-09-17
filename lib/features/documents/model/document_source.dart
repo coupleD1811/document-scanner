@@ -1,0 +1,1 @@
+enum DocumentSource { scan, pdf }

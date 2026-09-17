@@ -8,6 +8,7 @@ import 'package:scanly/features/auth/repository/auth_failure.dart';
 import 'package:scanly/features/auth/repository/auth_repository.dart';
 import 'package:scanly/features/auth/repository/auth_user.dart';
 import 'package:scanly/features/documents/bloc/document_action_bloc.dart';
+import 'package:scanly/features/documents/bloc/document_import_bloc.dart';
 import 'package:scanly/features/documents/bloc/document_list_bloc.dart';
 import 'package:scanly/features/documents/bloc/document_save_bloc.dart';
 import 'package:scanly/features/documents/model/local_document.dart';
@@ -237,12 +238,10 @@ void main() {
       find.byKey(const ValueKey('documents-search-field')),
       findsOneWidget,
     );
-    await tester.scrollUntilVisible(
-      find.text('Sắp ra mắt'),
-      250,
-      scrollable: find.byType(Scrollable).first,
+    expect(
+      find.byKey(const ValueKey('documents-import-button')),
+      findsOneWidget,
     );
-    expect(find.text('Sắp ra mắt'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('bottom-tab-tools')));
     await tester.pumpAndSettle();
@@ -318,7 +317,7 @@ void main() {
     expect(find.text('Xóa'), findsOneWidget);
   });
 
-  testWidgets('chỉ mở trình chọn PDF khi người dùng nhấn nhập tệp', (
+  testWidgets('mở trình chọn PDF sau khi người dùng chọn loại nhập tệp', (
     tester,
   ) async {
     final filePicker = FakeDocumentFilePicker(
@@ -333,8 +332,11 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('documents-import-button')));
     await tester.pumpAndSettle();
 
+    expect(filePicker.pickCount, 0);
+    await tester.tap(find.byKey(const ValueKey('documents-import-pdf-option')));
+    await tester.pumpAndSettle();
+
     expect(filePicker.pickCount, 1);
-    expect(find.text('Đã chọn contract.pdf.'), findsOneWidget);
   });
 
   testWidgets('xin quyền camera khi màn quét được mở', (tester) async {
@@ -761,6 +763,7 @@ Widget _documentsTestApp({
     providers: [
       BlocProvider(create: (_) => DocumentListBloc(repository: repository)),
       BlocProvider(create: (_) => DocumentActionBloc(repository: repository)),
+      BlocProvider(create: (_) => DocumentImportBloc(repository: repository)),
     ],
     child: MaterialApp(
       locale: const Locale('vi'),
@@ -800,6 +803,9 @@ class FakeDocumentFilePicker implements DocumentFilePicker {
     pickCount += 1;
     return selectedFile;
   }
+
+  @override
+  Future<List<XFile>> pickImages() async => const [];
 }
 
 class FakeCameraAccessService implements CameraAccessService {

@@ -705,6 +705,45 @@ class AppLocalizationsVi extends AppLocalizations {
   String get pdfImportFailed => 'Không thể mở tệp PDF. Hãy thử lại.';
 
   @override
+  String get importImagesAction => 'Nhập ảnh';
+
+  @override
+  String get importImagesSubtitle =>
+      'Chọn một hoặc nhiều ảnh JPG, JPEG hoặc PNG';
+
+  @override
+  String get importPdfAction => 'Nhập PDF';
+
+  @override
+  String get importPdfSubtitle =>
+      'Sao chép PDF vào không gian lưu trữ của Scanly';
+
+  @override
+  String importedImagesDocumentName(int count) {
+    return 'Ảnh đã nhập ($count)';
+  }
+
+  @override
+  String documentImportSuccess(String name) {
+    return 'Đã nhập $name.';
+  }
+
+  @override
+  String get documentImportUnavailable =>
+      'Không thể đọc tệp đã chọn. Hãy chọn lại.';
+
+  @override
+  String get imageImportUnsupported =>
+      'Ảnh không hợp lệ hoặc không được hỗ trợ.';
+
+  @override
+  String get documentImportTooLarge => 'Tệp vượt quá giới hạn 100 MB.';
+
+  @override
+  String get pdfImportPasswordProtected =>
+      'PDF được bảo vệ bằng mật khẩu nên chưa thể nhập.';
+
+  @override
   String get toolsPageTitle => 'Công cụ PDF';
 
   @override

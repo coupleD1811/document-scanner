@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -6,12 +7,19 @@ import 'package:path_provider/path_provider.dart';
 import '../model/page_save_draft.dart';
 import '../model/save_draft.dart';
 import '../model/staged_document_deletion.dart';
+import '../model/stored_imported_pdf_files.dart';
 import '../model/stored_document_files.dart';
 
 typedef DocumentRootDirectoryLoader = Future<Directory> Function();
 
 abstract interface class DocumentStorage {
   Future<StoredDocumentFiles> storePageImages(DocumentSaveDraft draft);
+
+  Future<StoredImportedPdfFiles> storeImportedPdf({
+    required String documentId,
+    required String sourcePdfPath,
+    required Uint8List thumbnailBytes,
+  });
 
   Future<String> renamePdfFile({
     required String currentPath,
@@ -63,6 +71,54 @@ class DocumentStorageService implements DocumentStorage {
         pdfPath: path.join(documentDirectory.path, 'document.pdf'),
         thumbnailPath: path.join(documentDirectory.path, 'thumbnail.jpg'),
         pages: storedPages,
+      );
+    } on Object {
+      if (await documentDirectory.exists()) {
+        await documentDirectory.delete(recursive: true);
+      }
+      rethrow;
+    }
+  }
+
+  @override
+  Future<StoredImportedPdfFiles> storeImportedPdf({
+    required String documentId,
+    required String sourcePdfPath,
+    required Uint8List thumbnailBytes,
+  }) async {
+    _validatePathSegment(documentId);
+    if (thumbnailBytes.isEmpty) {
+      throw ArgumentError.value(
+        thumbnailBytes,
+        'thumbnailBytes',
+        'PDF thumbnail cannot be empty.',
+      );
+    }
+
+    final source = File(sourcePdfPath);
+    if (!await source.exists()) {
+      throw FileSystemException('Source PDF does not exist.', sourcePdfPath);
+    }
+
+    final root = await _rootDirectoryLoader();
+    final documentDirectory = Directory(
+      path.join(root.path, 'scanly', 'documents', documentId),
+    );
+    if (await documentDirectory.exists()) {
+      throw StateError('Document directory already exists.');
+    }
+
+    final pdfPath = path.join(documentDirectory.path, 'document.pdf');
+    final thumbnailPath = path.join(documentDirectory.path, 'thumbnail.jpg');
+    try {
+      await documentDirectory.create(recursive: true);
+      await source.copy(pdfPath);
+      await File(thumbnailPath).writeAsBytes(thumbnailBytes, flush: true);
+      return StoredImportedPdfFiles(
+        documentId: documentId,
+        directoryPath: documentDirectory.path,
+        pdfPath: pdfPath,
+        thumbnailPath: thumbnailPath,
       );
     } on Object {
       if (await documentDirectory.exists()) {

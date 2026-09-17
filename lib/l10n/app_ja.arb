@@ -254,6 +254,30 @@
     }
   },
   "pdfImportFailed": "PDF ファイルを開けませんでした。もう一度お試しください。",
+  "importImagesAction": "画像をインポート",
+  "importImagesSubtitle": "JPG、JPEG、PNG 画像を1つ以上選択します",
+  "importPdfAction": "PDF をインポート",
+  "importPdfSubtitle": "PDF を Scanly のストレージへコピーします",
+  "importedImagesDocumentName": "インポートした画像（{count}）",
+  "@importedImagesDocumentName": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "documentImportSuccess": "{name} をインポートしました。",
+  "@documentImportSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "documentImportUnavailable": "選択したファイルを読み取れませんでした。もう一度選択してください。",
+  "imageImportUnsupported": "画像が無効であるか、対応していません。",
+  "documentImportTooLarge": "ファイルが 100 MB の上限を超えています。",
+  "pdfImportPasswordProtected": "この PDF はパスワードで保護されているため、まだインポートできません。",
   "toolsPageTitle": "PDF ツール",
   "toolsPageSubtitle": "書類の編集、変換、保護を行います",
   "toolsEditOrganizeTitle": "編集と整理",

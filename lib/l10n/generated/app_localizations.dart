@@ -1396,6 +1396,66 @@ abstract class AppLocalizations {
   /// **'Không thể mở tệp PDF. Hãy thử lại.'**
   String get pdfImportFailed;
 
+  /// No description provided for @importImagesAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập ảnh'**
+  String get importImagesAction;
+
+  /// No description provided for @importImagesSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn một hoặc nhiều ảnh JPG, JPEG hoặc PNG'**
+  String get importImagesSubtitle;
+
+  /// No description provided for @importPdfAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập PDF'**
+  String get importPdfAction;
+
+  /// No description provided for @importPdfSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sao chép PDF vào không gian lưu trữ của Scanly'**
+  String get importPdfSubtitle;
+
+  /// No description provided for @importedImagesDocumentName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ảnh đã nhập ({count})'**
+  String importedImagesDocumentName(int count);
+
+  /// No description provided for @documentImportSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã nhập {name}.'**
+  String documentImportSuccess(String name);
+
+  /// No description provided for @documentImportUnavailable.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể đọc tệp đã chọn. Hãy chọn lại.'**
+  String get documentImportUnavailable;
+
+  /// No description provided for @imageImportUnsupported.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ảnh không hợp lệ hoặc không được hỗ trợ.'**
+  String get imageImportUnsupported;
+
+  /// No description provided for @documentImportTooLarge.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tệp vượt quá giới hạn 100 MB.'**
+  String get documentImportTooLarge;
+
+  /// No description provided for @pdfImportPasswordProtected.
+  ///
+  /// In vi, this message translates to:
+  /// **'PDF được bảo vệ bằng mật khẩu nên chưa thể nhập.'**
+  String get pdfImportPasswordProtected;
+
   /// No description provided for @toolsPageTitle.
   ///
   /// In vi, this message translates to:

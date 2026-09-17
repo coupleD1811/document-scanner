@@ -53,6 +53,16 @@ class $StoredDocumentsTable extends StoredDocuments
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('scan'),
+  );
   static const VerificationMeta _pageCountMeta = const VerificationMeta(
     'pageCount',
   );
@@ -125,6 +135,7 @@ class $StoredDocumentsTable extends StoredDocuments
     name,
     pdfPath,
     thumbnailPath,
+    source,
     pageCount,
     sizeInBytes,
     createdAt,
@@ -175,6 +186,12 @@ class $StoredDocumentsTable extends StoredDocuments
       );
     } else if (isInserting) {
       context.missing(_thumbnailPathMeta);
+    }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
     }
     if (data.containsKey('page_count')) {
       context.handle(
@@ -252,6 +269,10 @@ class $StoredDocumentsTable extends StoredDocuments
         DriftSqlType.string,
         data['${effectivePrefix}thumbnail_path'],
       )!,
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      )!,
       pageCount: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}page_count'],
@@ -290,6 +311,7 @@ class StoredDocument extends DataClass implements Insertable<StoredDocument> {
   final String name;
   final String pdfPath;
   final String thumbnailPath;
+  final String source;
   final int pageCount;
   final int sizeInBytes;
   final int createdAt;
@@ -301,6 +323,7 @@ class StoredDocument extends DataClass implements Insertable<StoredDocument> {
     required this.name,
     required this.pdfPath,
     required this.thumbnailPath,
+    required this.source,
     required this.pageCount,
     required this.sizeInBytes,
     required this.createdAt,
@@ -315,6 +338,7 @@ class StoredDocument extends DataClass implements Insertable<StoredDocument> {
     map['name'] = Variable<String>(name);
     map['pdf_path'] = Variable<String>(pdfPath);
     map['thumbnail_path'] = Variable<String>(thumbnailPath);
+    map['source'] = Variable<String>(source);
     map['page_count'] = Variable<int>(pageCount);
     map['size_in_bytes'] = Variable<int>(sizeInBytes);
     map['created_at'] = Variable<int>(createdAt);
@@ -330,6 +354,7 @@ class StoredDocument extends DataClass implements Insertable<StoredDocument> {
       name: Value(name),
       pdfPath: Value(pdfPath),
       thumbnailPath: Value(thumbnailPath),
+      source: Value(source),
       pageCount: Value(pageCount),
       sizeInBytes: Value(sizeInBytes),
       createdAt: Value(createdAt),
@@ -349,6 +374,7 @@ class StoredDocument extends DataClass implements Insertable<StoredDocument> {
       name: serializer.fromJson<String>(json['name']),
       pdfPath: serializer.fromJson<String>(json['pdfPath']),
       thumbnailPath: serializer.fromJson<String>(json['thumbnailPath']),
+      source: serializer.fromJson<String>(json['source']),
       pageCount: serializer.fromJson<int>(json['pageCount']),
       sizeInBytes: serializer.fromJson<int>(json['sizeInBytes']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
@@ -365,6 +391,7 @@ class StoredDocument extends DataClass implements Insertable<StoredDocument> {
       'name': serializer.toJson<String>(name),
       'pdfPath': serializer.toJson<String>(pdfPath),
       'thumbnailPath': serializer.toJson<String>(thumbnailPath),
+      'source': serializer.toJson<String>(source),
       'pageCount': serializer.toJson<int>(pageCount),
       'sizeInBytes': serializer.toJson<int>(sizeInBytes),
       'createdAt': serializer.toJson<int>(createdAt),
@@ -379,6 +406,7 @@ class StoredDocument extends DataClass implements Insertable<StoredDocument> {
     String? name,
     String? pdfPath,
     String? thumbnailPath,
+    String? source,
     int? pageCount,
     int? sizeInBytes,
     int? createdAt,
@@ -390,6 +418,7 @@ class StoredDocument extends DataClass implements Insertable<StoredDocument> {
     name: name ?? this.name,
     pdfPath: pdfPath ?? this.pdfPath,
     thumbnailPath: thumbnailPath ?? this.thumbnailPath,
+    source: source ?? this.source,
     pageCount: pageCount ?? this.pageCount,
     sizeInBytes: sizeInBytes ?? this.sizeInBytes,
     createdAt: createdAt ?? this.createdAt,
@@ -405,6 +434,7 @@ class StoredDocument extends DataClass implements Insertable<StoredDocument> {
       thumbnailPath: data.thumbnailPath.present
           ? data.thumbnailPath.value
           : this.thumbnailPath,
+      source: data.source.present ? data.source.value : this.source,
       pageCount: data.pageCount.present ? data.pageCount.value : this.pageCount,
       sizeInBytes: data.sizeInBytes.present
           ? data.sizeInBytes.value
@@ -425,6 +455,7 @@ class StoredDocument extends DataClass implements Insertable<StoredDocument> {
           ..write('name: $name, ')
           ..write('pdfPath: $pdfPath, ')
           ..write('thumbnailPath: $thumbnailPath, ')
+          ..write('source: $source, ')
           ..write('pageCount: $pageCount, ')
           ..write('sizeInBytes: $sizeInBytes, ')
           ..write('createdAt: $createdAt, ')
@@ -441,6 +472,7 @@ class StoredDocument extends DataClass implements Insertable<StoredDocument> {
     name,
     pdfPath,
     thumbnailPath,
+    source,
     pageCount,
     sizeInBytes,
     createdAt,
@@ -456,6 +488,7 @@ class StoredDocument extends DataClass implements Insertable<StoredDocument> {
           other.name == this.name &&
           other.pdfPath == this.pdfPath &&
           other.thumbnailPath == this.thumbnailPath &&
+          other.source == this.source &&
           other.pageCount == this.pageCount &&
           other.sizeInBytes == this.sizeInBytes &&
           other.createdAt == this.createdAt &&
@@ -469,6 +502,7 @@ class StoredDocumentsCompanion extends UpdateCompanion<StoredDocument> {
   final Value<String> name;
   final Value<String> pdfPath;
   final Value<String> thumbnailPath;
+  final Value<String> source;
   final Value<int> pageCount;
   final Value<int> sizeInBytes;
   final Value<int> createdAt;
@@ -481,6 +515,7 @@ class StoredDocumentsCompanion extends UpdateCompanion<StoredDocument> {
     this.name = const Value.absent(),
     this.pdfPath = const Value.absent(),
     this.thumbnailPath = const Value.absent(),
+    this.source = const Value.absent(),
     this.pageCount = const Value.absent(),
     this.sizeInBytes = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -494,6 +529,7 @@ class StoredDocumentsCompanion extends UpdateCompanion<StoredDocument> {
     required String name,
     required String pdfPath,
     required String thumbnailPath,
+    this.source = const Value.absent(),
     required int pageCount,
     required int sizeInBytes,
     required int createdAt,
@@ -516,6 +552,7 @@ class StoredDocumentsCompanion extends UpdateCompanion<StoredDocument> {
     Expression<String>? name,
     Expression<String>? pdfPath,
     Expression<String>? thumbnailPath,
+    Expression<String>? source,
     Expression<int>? pageCount,
     Expression<int>? sizeInBytes,
     Expression<int>? createdAt,
@@ -529,6 +566,7 @@ class StoredDocumentsCompanion extends UpdateCompanion<StoredDocument> {
       if (name != null) 'name': name,
       if (pdfPath != null) 'pdf_path': pdfPath,
       if (thumbnailPath != null) 'thumbnail_path': thumbnailPath,
+      if (source != null) 'source': source,
       if (pageCount != null) 'page_count': pageCount,
       if (sizeInBytes != null) 'size_in_bytes': sizeInBytes,
       if (createdAt != null) 'created_at': createdAt,
@@ -544,6 +582,7 @@ class StoredDocumentsCompanion extends UpdateCompanion<StoredDocument> {
     Value<String>? name,
     Value<String>? pdfPath,
     Value<String>? thumbnailPath,
+    Value<String>? source,
     Value<int>? pageCount,
     Value<int>? sizeInBytes,
     Value<int>? createdAt,
@@ -557,6 +596,7 @@ class StoredDocumentsCompanion extends UpdateCompanion<StoredDocument> {
       name: name ?? this.name,
       pdfPath: pdfPath ?? this.pdfPath,
       thumbnailPath: thumbnailPath ?? this.thumbnailPath,
+      source: source ?? this.source,
       pageCount: pageCount ?? this.pageCount,
       sizeInBytes: sizeInBytes ?? this.sizeInBytes,
       createdAt: createdAt ?? this.createdAt,
@@ -581,6 +621,9 @@ class StoredDocumentsCompanion extends UpdateCompanion<StoredDocument> {
     }
     if (thumbnailPath.present) {
       map['thumbnail_path'] = Variable<String>(thumbnailPath.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
     }
     if (pageCount.present) {
       map['page_count'] = Variable<int>(pageCount.value);
@@ -613,6 +656,7 @@ class StoredDocumentsCompanion extends UpdateCompanion<StoredDocument> {
           ..write('name: $name, ')
           ..write('pdfPath: $pdfPath, ')
           ..write('thumbnailPath: $thumbnailPath, ')
+          ..write('source: $source, ')
           ..write('pageCount: $pageCount, ')
           ..write('sizeInBytes: $sizeInBytes, ')
           ..write('createdAt: $createdAt, ')
@@ -2145,6 +2189,7 @@ typedef $$StoredDocumentsTableCreateCompanionBuilder =
       required String name,
       required String pdfPath,
       required String thumbnailPath,
+      Value<String> source,
       required int pageCount,
       required int sizeInBytes,
       required int createdAt,
@@ -2159,6 +2204,7 @@ typedef $$StoredDocumentsTableUpdateCompanionBuilder =
       Value<String> name,
       Value<String> pdfPath,
       Value<String> thumbnailPath,
+      Value<String> source,
       Value<int> pageCount,
       Value<int> sizeInBytes,
       Value<int> createdAt,
@@ -2232,6 +2278,11 @@ class $$StoredDocumentsTableFilterComposer
 
   ColumnFilters<String> get thumbnailPath => $composableBuilder(
     column: $table.thumbnailPath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get source => $composableBuilder(
+    column: $table.source,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2320,6 +2371,11 @@ class $$StoredDocumentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get pageCount => $composableBuilder(
     column: $table.pageCount,
     builder: (column) => ColumnOrderings(column),
@@ -2373,6 +2429,9 @@ class $$StoredDocumentsTableAnnotationComposer
     column: $table.thumbnailPath,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
 
   GeneratedColumn<int> get pageCount =>
       $composableBuilder(column: $table.pageCount, builder: (column) => column);
@@ -2457,6 +2516,7 @@ class $$StoredDocumentsTableTableManager
                 Value<String> name = const Value.absent(),
                 Value<String> pdfPath = const Value.absent(),
                 Value<String> thumbnailPath = const Value.absent(),
+                Value<String> source = const Value.absent(),
                 Value<int> pageCount = const Value.absent(),
                 Value<int> sizeInBytes = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
@@ -2469,6 +2529,7 @@ class $$StoredDocumentsTableTableManager
                 name: name,
                 pdfPath: pdfPath,
                 thumbnailPath: thumbnailPath,
+                source: source,
                 pageCount: pageCount,
                 sizeInBytes: sizeInBytes,
                 createdAt: createdAt,
@@ -2483,6 +2544,7 @@ class $$StoredDocumentsTableTableManager
                 required String name,
                 required String pdfPath,
                 required String thumbnailPath,
+                Value<String> source = const Value.absent(),
                 required int pageCount,
                 required int sizeInBytes,
                 required int createdAt,
@@ -2495,6 +2557,7 @@ class $$StoredDocumentsTableTableManager
                 name: name,
                 pdfPath: pdfPath,
                 thumbnailPath: thumbnailPath,
+                source: source,
                 pageCount: pageCount,
                 sizeInBytes: sizeInBytes,
                 createdAt: createdAt,

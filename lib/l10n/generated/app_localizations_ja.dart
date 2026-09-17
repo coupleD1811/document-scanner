@@ -674,6 +674,41 @@ class AppLocalizationsJa extends AppLocalizations {
   String get pdfImportFailed => 'PDF ファイルを開けませんでした。もう一度お試しください。';
 
   @override
+  String get importImagesAction => '画像をインポート';
+
+  @override
+  String get importImagesSubtitle => 'JPG、JPEG、PNG 画像を1つ以上選択します';
+
+  @override
+  String get importPdfAction => 'PDF をインポート';
+
+  @override
+  String get importPdfSubtitle => 'PDF を Scanly のストレージへコピーします';
+
+  @override
+  String importedImagesDocumentName(int count) {
+    return 'インポートした画像（$count）';
+  }
+
+  @override
+  String documentImportSuccess(String name) {
+    return '$name をインポートしました。';
+  }
+
+  @override
+  String get documentImportUnavailable => '選択したファイルを読み取れませんでした。もう一度選択してください。';
+
+  @override
+  String get imageImportUnsupported => '画像が無効であるか、対応していません。';
+
+  @override
+  String get documentImportTooLarge => 'ファイルが 100 MB の上限を超えています。';
+
+  @override
+  String get pdfImportPasswordProtected =>
+      'この PDF はパスワードで保護されているため、まだインポートできません。';
+
+  @override
   String get toolsPageTitle => 'PDF ツール';
 
   @override

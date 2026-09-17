@@ -254,6 +254,30 @@
     }
   },
   "pdfImportFailed": "Unable to open the PDF file. Please try again.",
+  "importImagesAction": "Import images",
+  "importImagesSubtitle": "Choose one or more JPG, JPEG, or PNG images",
+  "importPdfAction": "Import PDF",
+  "importPdfSubtitle": "Copy a PDF into Scanly storage",
+  "importedImagesDocumentName": "Imported images ({count})",
+  "@importedImagesDocumentName": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "documentImportSuccess": "Imported {name}.",
+  "@documentImportSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "documentImportUnavailable": "The selected file could not be read. Choose it again.",
+  "imageImportUnsupported": "The image is invalid or unsupported.",
+  "documentImportTooLarge": "The file exceeds the 100 MB limit.",
+  "pdfImportPasswordProtected": "This PDF is password protected and cannot be imported yet.",
   "toolsPageTitle": "PDF Tools",
   "toolsPageSubtitle": "Edit, convert and protect your documents",
   "toolsEditOrganizeTitle": "Edit & organize",

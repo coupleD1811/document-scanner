@@ -713,6 +713,43 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unable to open the PDF file. Please try again.';
 
   @override
+  String get importImagesAction => 'Import images';
+
+  @override
+  String get importImagesSubtitle =>
+      'Choose one or more JPG, JPEG, or PNG images';
+
+  @override
+  String get importPdfAction => 'Import PDF';
+
+  @override
+  String get importPdfSubtitle => 'Copy a PDF into Scanly storage';
+
+  @override
+  String importedImagesDocumentName(int count) {
+    return 'Imported images ($count)';
+  }
+
+  @override
+  String documentImportSuccess(String name) {
+    return 'Imported $name.';
+  }
+
+  @override
+  String get documentImportUnavailable =>
+      'The selected file could not be read. Choose it again.';
+
+  @override
+  String get imageImportUnsupported => 'The image is invalid or unsupported.';
+
+  @override
+  String get documentImportTooLarge => 'The file exceeds the 100 MB limit.';
+
+  @override
+  String get pdfImportPasswordProtected =>
+      'This PDF is password protected and cannot be imported yet.';
+
+  @override
   String get toolsPageTitle => 'PDF Tools';
 
   @override

@@ -109,6 +109,22 @@ class _UnavailableDocumentRepository implements DocumentRepository {
   }
 
   @override
+  Future<LocalDocument> importImages({
+    required List<String> sourcePaths,
+    required String name,
+  }) {
+    return Future.error(UnsupportedError('Document storage is unavailable.'));
+  }
+
+  @override
+  Future<LocalDocument> importPdf({
+    required String sourcePath,
+    required String name,
+  }) {
+    return Future.error(UnsupportedError('Document storage is unavailable.'));
+  }
+
+  @override
   Stream<List<LocalDocument>> watchDocuments() => Stream.value(const []);
 }
 

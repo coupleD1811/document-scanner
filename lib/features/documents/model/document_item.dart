@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import 'local_document.dart';
+import 'document_source.dart';
 import 'ocr_status.dart';
 
 enum DocumentType { scan, pdf }
@@ -21,7 +22,9 @@ class DocumentItem extends Equatable {
     return DocumentItem(
       id: document.id,
       name: document.name,
-      type: DocumentType.scan,
+      type: document.source == DocumentSource.pdf
+          ? DocumentType.pdf
+          : DocumentType.scan,
       updatedAt: document.updatedAt,
       pageCount: document.pageCount,
       sizeInBytes: document.sizeInBytes,
