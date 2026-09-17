@@ -1,9 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scanly/features/documents/model/document_export_result.dart';
 import 'package:scanly/features/documents/model/page_save_draft.dart';
 import 'package:scanly/features/documents/model/save_draft.dart';
+import 'package:scanly/features/documents/model/staged_document_deletion.dart';
 import 'package:scanly/features/documents/model/stored_document_files.dart';
+import 'package:scanly/features/documents/model/stored_imported_pdf_files.dart';
 import 'package:scanly/features/documents/repository/local_document_repository.dart';
 import 'package:scanly/features/documents/service/database/document_database.dart';
 import 'package:scanly/features/documents/service/document_export_service.dart';
@@ -58,6 +62,41 @@ void main() {
     expect(storage.deletedDirectories, ['/stored']);
     expect(await repository.getDocuments(), isEmpty);
   });
+
+  test('renames the PDF file and its persisted metadata together', () async {
+    final document = await repository.saveDocument(_draft());
+
+    await repository.renameDocument(document.id, 'Receipt September');
+
+    final renamed = (await repository.getDocuments()).single;
+    expect(renamed.name, 'Receipt September.pdf');
+    expect(renamed.pdfPath, '/stored/Receipt September.pdf');
+  });
+
+  test(
+    'stages files before deleting their metadata and finalizes afterwards',
+    () async {
+      final document = await repository.saveDocument(_draft());
+
+      await repository.deleteDocument(document.id);
+
+      expect(await repository.getDocuments(), isEmpty);
+      expect(storage.deletedDirectories, ['/stored.deleting']);
+    },
+  );
+
+  test('restores files and metadata when finalizing deletion fails', () async {
+    final document = await repository.saveDocument(_draft());
+    storage.finalizeError = StateError('Disk temporarily unavailable');
+
+    await expectLater(
+      repository.deleteDocument(document.id),
+      throwsA(isA<StateError>()),
+    );
+
+    expect((await repository.getDocuments()).single, document);
+    expect(storage.restoredStagedDeletion, isTrue);
+  });
 }
 
 DocumentSaveDraft _draft() {
@@ -111,6 +150,8 @@ class _FakeStorage implements DocumentStorage {
 
   final StoredDocumentFiles result;
   final List<String> deletedDirectories = [];
+  Object? finalizeError;
+  bool restoredStagedDeletion = false;
 
   @override
   Future<StoredDocumentFiles> storePageImages(DocumentSaveDraft draft) async {
@@ -118,8 +159,53 @@ class _FakeStorage implements DocumentStorage {
   }
 
   @override
+  Future<StoredImportedPdfFiles> storeImportedPdf({
+    required String documentId,
+    required String sourcePdfPath,
+    required Uint8List thumbnailBytes,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<void> deleteDocumentFiles(String directoryPath) async {
     deletedDirectories.add(directoryPath);
+  }
+
+  @override
+  Future<void> finalizeStagedDocumentDeletion(
+    StagedDocumentDeletion staged,
+  ) async {
+    final error = finalizeError;
+    if (error != null) {
+      throw error;
+    }
+    deletedDirectories.add(staged.stagedDirectoryPath);
+  }
+
+  @override
+  Future<String> renamePdfFile({
+    required String currentPath,
+    required String newFileName,
+  }) async {
+    return '/stored/$newFileName';
+  }
+
+  @override
+  Future<void> restoreStagedDocumentDeletion(
+    StagedDocumentDeletion staged,
+  ) async {
+    restoredStagedDeletion = true;
+  }
+
+  @override
+  Future<StagedDocumentDeletion?> stageDocumentDeletion(
+    String directoryPath,
+  ) async {
+    return StagedDocumentDeletion(
+      originalDirectoryPath: directoryPath,
+      stagedDirectoryPath: '$directoryPath.deleting',
+    );
   }
 }
 

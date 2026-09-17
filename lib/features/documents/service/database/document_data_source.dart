@@ -18,6 +18,7 @@ abstract interface class DocumentDataSource {
   Future<void> renameDocument({
     required String documentId,
     required String name,
+    required String pdfPath,
     required DateTime updatedAt,
   });
 

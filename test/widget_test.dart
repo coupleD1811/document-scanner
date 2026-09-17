@@ -7,8 +7,12 @@ import 'package:scanly/app/theme/scanly_icons.dart';
 import 'package:scanly/features/auth/repository/auth_failure.dart';
 import 'package:scanly/features/auth/repository/auth_repository.dart';
 import 'package:scanly/features/auth/repository/auth_user.dart';
+import 'package:scanly/features/documents/bloc/document_action_bloc.dart';
+import 'package:scanly/features/documents/bloc/document_import_bloc.dart';
+import 'package:scanly/features/documents/bloc/document_list_bloc.dart';
 import 'package:scanly/features/documents/bloc/document_save_bloc.dart';
-import 'package:scanly/features/documents/model/document_item.dart';
+import 'package:scanly/features/documents/model/local_document.dart';
+import 'package:scanly/features/documents/model/ocr_status.dart';
 import 'package:scanly/features/documents/repository/document_repository.dart';
 import 'package:scanly/features/documents/service/document_file_picker.dart';
 import 'package:scanly/features/documents/view/page.dart';
@@ -234,12 +238,10 @@ void main() {
       find.byKey(const ValueKey('documents-search-field')),
       findsOneWidget,
     );
-    await tester.scrollUntilVisible(
-      find.text('Sắp ra mắt'),
-      250,
-      scrollable: find.byType(Scrollable).first,
+    expect(
+      find.byKey(const ValueKey('documents-import-button')),
+      findsOneWidget,
     );
-    expect(find.text('Sắp ra mắt'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('bottom-tab-tools')));
     await tester.pumpAndSettle();
@@ -265,45 +267,45 @@ void main() {
 
   testWidgets('hiển thị và lọc danh sách tài liệu', (tester) async {
     final documents = [
-      DocumentItem(
+      LocalDocument(
         id: 'pdf-1',
         name: 'Employment Contract.pdf',
-        type: DocumentType.pdf,
         updatedAt: DateTime(2026, 8, 20),
+        createdAt: DateTime(2026, 8, 20),
         pageCount: 4,
         sizeInBytes: 1258291,
-        hasOcrText: true,
+        pdfPath: '/tmp/Employment Contract.pdf',
+        thumbnailPath: '/tmp/Employment Contract.jpg',
+        ocrStatus: DocumentOcrStatus.completed,
       ),
-      DocumentItem(
+      LocalDocument(
         id: 'scan-1',
         name: 'Receipt 15-08-2026.pdf',
-        type: DocumentType.scan,
         updatedAt: DateTime(2026, 8, 15),
+        createdAt: DateTime(2026, 8, 15),
         pageCount: 1,
         sizeInBytes: 215040,
+        pdfPath: '/tmp/Receipt 15-08-2026.pdf',
+        thumbnailPath: '/tmp/Receipt 15-08-2026.jpg',
       ),
     ];
 
-    await tester.pumpWidget(
-      MaterialApp(
-        locale: const Locale('vi'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Scaffold(body: DocumentsPage(documents: documents)),
-      ),
-    );
+    await tester.pumpWidget(_documentsTestApp(documents: documents));
     await tester.pumpAndSettle();
 
     expect(find.text('2 tài liệu'), findsOneWidget);
     expect(find.text('Employment Contract.pdf'), findsOneWidget);
     expect(find.byIcon(ScanlyIcons.importPdf), findsOneWidget);
 
-    await tester.tap(find.byKey(const ValueKey('documents-filter-scans')));
+    await tester.tap(find.byKey(const ValueKey('documents-filter-pdfs')));
     await tester.pumpAndSettle();
 
-    expect(find.text('1 tài liệu'), findsOneWidget);
+    expect(find.text('Không tìm thấy tài liệu'), findsOneWidget);
     expect(find.text('Employment Contract.pdf'), findsNothing);
-    expect(find.text('Receipt 15-08-2026.pdf'), findsOneWidget);
+    expect(find.text('Receipt 15-08-2026.pdf'), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('documents-filter-scans')));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(const ValueKey('document-more-scan-1')));
     await tester.pumpAndSettle();
@@ -315,21 +317,14 @@ void main() {
     expect(find.text('Xóa'), findsOneWidget);
   });
 
-  testWidgets('chỉ mở trình chọn PDF khi người dùng nhấn nhập tệp', (
+  testWidgets('mở trình chọn PDF sau khi người dùng chọn loại nhập tệp', (
     tester,
   ) async {
     final filePicker = FakeDocumentFilePicker(
       selectedFile: XFile('/tmp/contract.pdf'),
     );
 
-    await tester.pumpWidget(
-      MaterialApp(
-        locale: const Locale('vi'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Scaffold(body: DocumentsPage(filePicker: filePicker)),
-      ),
-    );
+    await tester.pumpWidget(_documentsTestApp(filePicker: filePicker));
     await tester.pumpAndSettle();
 
     expect(filePicker.pickCount, 0);
@@ -337,8 +332,11 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('documents-import-button')));
     await tester.pumpAndSettle();
 
+    expect(filePicker.pickCount, 0);
+    await tester.tap(find.byKey(const ValueKey('documents-import-pdf-option')));
+    await tester.pumpAndSettle();
+
     expect(filePicker.pickCount, 1);
-    expect(find.text('Đã chọn contract.pdf.'), findsOneWidget);
   });
 
   testWidgets('xin quyền camera khi màn quét được mở', (tester) async {
@@ -756,6 +754,35 @@ class FakeAuthRepository implements AuthRepository {
 
 class _UnusedDocumentRepository extends Fake implements DocumentRepository {}
 
+Widget _documentsTestApp({
+  List<LocalDocument> documents = const [],
+  DocumentFilePicker filePicker = const SystemDocumentFilePicker(),
+}) {
+  final repository = _WatchingDocumentRepository(documents);
+  return MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (_) => DocumentListBloc(repository: repository)),
+      BlocProvider(create: (_) => DocumentActionBloc(repository: repository)),
+      BlocProvider(create: (_) => DocumentImportBloc(repository: repository)),
+    ],
+    child: MaterialApp(
+      locale: const Locale('vi'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(body: DocumentsPage(filePicker: filePicker)),
+    ),
+  );
+}
+
+class _WatchingDocumentRepository extends Fake implements DocumentRepository {
+  _WatchingDocumentRepository(this.documents);
+
+  final List<LocalDocument> documents;
+
+  @override
+  Stream<List<LocalDocument>> watchDocuments() => Stream.value(documents);
+}
+
 NormalizedDocumentImage _normalizedImage(int pageNumber) {
   return NormalizedDocumentImage(
     originalImagePath: '/tmp/page-$pageNumber.jpg',
@@ -776,6 +803,9 @@ class FakeDocumentFilePicker implements DocumentFilePicker {
     pickCount += 1;
     return selectedFile;
   }
+
+  @override
+  Future<List<XFile>> pickImages() async => const [];
 }
 
 class FakeCameraAccessService implements CameraAccessService {

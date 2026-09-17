@@ -4,6 +4,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scanly/features/documents/model/local_document.dart';
 import 'package:scanly/features/documents/model/local_document_page.dart';
+import 'package:scanly/features/documents/model/document_source.dart';
 import 'package:scanly/features/documents/model/ocr_status.dart';
 import 'package:scanly/features/documents/model/sync_status.dart';
 import 'package:scanly/features/documents/service/database/document_database.dart';
@@ -50,16 +51,31 @@ void main() {
     await database.renameDocument(
       documentId: document.id,
       name: 'Renamed scan.pdf',
+      pdfPath: '/documents/document-1/Renamed scan.pdf',
       updatedAt: renamedAt,
     );
 
     final renamed = (await database.getDocuments()).single;
     expect(renamed.name, 'Renamed scan.pdf');
+    expect(renamed.pdfPath, '/documents/document-1/Renamed scan.pdf');
     expect(renamed.updatedAt, renamedAt);
 
     await database.deleteDocument(document.id);
     expect(await database.getDocuments(), isEmpty);
     expect(await database.getDocumentPages(document.id), isEmpty);
+  });
+
+  test('persists a PDF import source for document filtering', () async {
+    final createdAt = DateTime.utc(2026, 9, 17, 10);
+    final document = _document(
+      createdAt,
+    ).copyWith(pageCount: 1, source: DocumentSource.pdf);
+
+    await database.saveDocument(document, [
+      _page(index: 0, createdAt: createdAt, filter: ScanFilter.original),
+    ]);
+
+    expect((await database.getDocuments()).single.source, DocumentSource.pdf);
   });
 
   test('restores documents after reopening a file database', () async {

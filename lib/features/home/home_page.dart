@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../app/theme/scanly_icons.dart';
+import '../documents/bloc/document_list_bloc.dart';
+import '../documents/model/document_item.dart';
 import '../../l10n/l10n.dart';
 
 class HomePage extends StatelessWidget {
@@ -80,10 +83,9 @@ class HomePage extends StatelessWidget {
           onActionPressed: onDocumentsPressed,
         ),
         const SizedBox(height: 12),
-        _RecentDocumentsEmptyState(
-          title: t.homeNoRecentDocumentsTitle,
-          subtitle: t.homeNoRecentDocumentsSubtitle,
-          onPressed: onScanPressed,
+        _HomeRecentDocuments(
+          onScanPressed: onScanPressed,
+          onDocumentsPressed: onDocumentsPressed,
         ),
         const SizedBox(height: 28),
         _SectionHeader(
@@ -493,6 +495,177 @@ class _RecentDocumentsEmptyState extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HomeRecentDocuments extends StatelessWidget {
+  const _HomeRecentDocuments({
+    required this.onScanPressed,
+    required this.onDocumentsPressed,
+  });
+
+  final VoidCallback onScanPressed;
+  final VoidCallback onDocumentsPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<DocumentListBloc, DocumentListState>(
+      builder: (context, state) {
+        if (state is DocumentListLoading) {
+          return const SizedBox(
+            height: 96,
+            child: Center(
+              child: SizedBox(
+                width: 28,
+                height: 28,
+                child: CircularProgressIndicator(strokeWidth: 2.5),
+              ),
+            ),
+          );
+        }
+
+        if (state is DocumentListFailure) {
+          return _HomeRecentFailure(
+            onRetryPressed: () => context.read<DocumentListBloc>().add(
+              const DocumentListSubscriptionRequested(),
+            ),
+          );
+        }
+
+        final documents = (state as DocumentListReady).recentDocuments;
+        if (documents.isEmpty) {
+          final t = context.l10n;
+          return _RecentDocumentsEmptyState(
+            title: t.homeNoRecentDocumentsTitle,
+            subtitle: t.homeNoRecentDocumentsSubtitle,
+            onPressed: onScanPressed,
+          );
+        }
+
+        return Column(
+          children: [
+            for (final document in documents) ...[
+              _HomeRecentDocumentCard(
+                document: document,
+                onPressed: onDocumentsPressed,
+              ),
+              if (document != documents.last) const SizedBox(height: 10),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _HomeRecentFailure extends StatelessWidget {
+  const _HomeRecentFailure({required this.onRetryPressed});
+
+  final VoidCallback onRetryPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final t = context.l10n;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: colorScheme.outlineVariant),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Icon(LucideIcons.triangleAlert, color: colorScheme.error),
+            const SizedBox(width: 12),
+            Expanded(child: Text(t.documentsLoadFailed)),
+            TextButton(onPressed: onRetryPressed, child: Text(t.retryAction)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HomeRecentDocumentCard extends StatelessWidget {
+  const _HomeRecentDocumentCard({
+    required this.document,
+    required this.onPressed,
+  });
+
+  final DocumentItem document;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final t = context.l10n;
+
+    return Material(
+      color: colorScheme.surface,
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        key: ValueKey('home-recent-document-${document.id}'),
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(8),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border.all(color: colorScheme.outlineVariant),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Row(
+              children: [
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(11),
+                    child: Icon(
+                      ScanlyIcons.scanDocument,
+                      color: colorScheme.primary,
+                      size: 26,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        document.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${document.pageCount} ${t.pagesLabel}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  LucideIcons.chevronRight,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ],
             ),

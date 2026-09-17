@@ -7,6 +7,7 @@ import '../../../scan/model/normalized_point.dart';
 import '../../../scan/model/scan_filter.dart';
 import '../../model/local_document.dart';
 import '../../model/local_document_page.dart';
+import '../../model/document_source.dart';
 import '../../model/ocr_status.dart';
 import '../../model/sync_status.dart';
 import 'document_data_source.dart';
@@ -21,11 +22,16 @@ class DocumentDatabase extends _$DocumentDatabase
     : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (migrator) => migrator.createAll(),
+    onUpgrade: (migrator, from, to) async {
+      if (from < 2) {
+        await migrator.addColumn(storedDocuments, storedDocuments.source);
+      }
+    },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
     },
@@ -92,6 +98,7 @@ class DocumentDatabase extends _$DocumentDatabase
   Future<void> renameDocument({
     required String documentId,
     required String name,
+    required String pdfPath,
     required DateTime updatedAt,
   }) async {
     final normalizedName = name.trim();
@@ -104,6 +111,7 @@ class DocumentDatabase extends _$DocumentDatabase
     )..where((table) => table.id.equals(documentId))).write(
       StoredDocumentsCompanion(
         name: Value(normalizedName),
+        pdfPath: Value(pdfPath),
         updatedAt: Value(updatedAt.millisecondsSinceEpoch),
       ),
     );
@@ -132,6 +140,7 @@ StoredDocumentsCompanion _documentCompanion(LocalDocument document) {
     name: document.name,
     pdfPath: document.pdfPath,
     thumbnailPath: document.thumbnailPath,
+    source: Value(document.source.name),
     pageCount: document.pageCount,
     sizeInBytes: document.sizeInBytes,
     createdAt: document.createdAt.millisecondsSinceEpoch,
@@ -182,6 +191,7 @@ LocalDocument _documentFromRow(StoredDocument row) {
     sizeInBytes: row.sizeInBytes,
     createdAt: _dateTimeFromEpoch(row.createdAt),
     updatedAt: _dateTimeFromEpoch(row.updatedAt),
+    source: _enumByName(DocumentSource.values, row.source, DocumentSource.scan),
     ocrStatus: _enumByName(
       DocumentOcrStatus.values,
       row.ocrStatus,

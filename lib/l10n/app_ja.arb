@@ -94,6 +94,27 @@
   "ocrSearchSubtitle": "文字を抽出し、ドキュメント内容を検索します。",
   "documentsEmptyTitle": "書類はまだありません",
   "documentsEmptySubtitle": "保存したスキャンと PDF ファイルがここに表示されます。",
+  "documentsLoadFailed": "書類を読み込めませんでした。もう一度お試しください。",
+  "documentRenameTitle": "書類名を変更",
+  "documentNameLabel": "書類名",
+  "documentRenameSuccess": "{name}に名前を変更しました。",
+  "@documentRenameSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "documentDeleteTitle": "書類を削除しますか？",
+  "documentDeleteMessage": "書類と関連するすべてのスキャン画像がこのデバイスから削除されます。",
+  "documentDeleteSuccess": "書類を削除しました。",
+  "documentActionOpenFailed": "書類を開けませんでした。ファイルがこのデバイスに残っているか確認してください。",
+  "documentActionRenameFailed": "書類名を変更できませんでした。もう一度お試しください。",
+  "documentActionShareFailed": "書類を共有できませんでした。もう一度お試しください。",
+  "documentActionDeleteFailed": "書類を削除できませんでした。もう一度お試しください。",
+  "documentNameInvalid": "有効な書類名を入力してください。",
+  "documentUnavailable": "この書類またはファイルは存在しません。",
+  "cancelAction": "キャンセル",
   "searchDocumentsHint": "書類を検索",
   "documentsFilterTitle": "書類を絞り込む",
   "documentFilterAll": "すべて",
@@ -233,6 +254,30 @@
     }
   },
   "pdfImportFailed": "PDF ファイルを開けませんでした。もう一度お試しください。",
+  "importImagesAction": "画像をインポート",
+  "importImagesSubtitle": "JPG、JPEG、PNG 画像を1つ以上選択します",
+  "importPdfAction": "PDF をインポート",
+  "importPdfSubtitle": "PDF を Scanly のストレージへコピーします",
+  "importedImagesDocumentName": "インポートした画像（{count}）",
+  "@importedImagesDocumentName": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "documentImportSuccess": "{name} をインポートしました。",
+  "@documentImportSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "documentImportUnavailable": "選択したファイルを読み取れませんでした。もう一度選択してください。",
+  "imageImportUnsupported": "画像が無効であるか、対応していません。",
+  "documentImportTooLarge": "ファイルが 100 MB の上限を超えています。",
+  "pdfImportPasswordProtected": "この PDF はパスワードで保護されているため、まだインポートできません。",
   "toolsPageTitle": "PDF ツール",
   "toolsPageSubtitle": "書類の編集、変換、保護を行います",
   "toolsEditOrganizeTitle": "編集と整理",

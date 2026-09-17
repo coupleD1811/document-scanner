@@ -1,5 +1,11 @@
+import 'dart:io';
+
 import 'package:path/path.dart' as path;
 
+import '../../scan/model/document_corners.dart';
+import '../../scan/model/scan_filter.dart';
+import '../model/imported_pdf_preview.dart';
+import '../model/document_source.dart';
 import '../model/local_document.dart';
 import '../model/local_document_page.dart';
 import '../model/ocr_status.dart';
@@ -8,6 +14,7 @@ import '../model/stored_document_files.dart';
 import '../model/sync_status.dart';
 import '../service/database/document_data_source.dart';
 import '../service/document_export_service.dart';
+import '../service/document_import_service.dart';
 import '../service/document_storage_service.dart';
 import 'document_repository.dart';
 
@@ -18,15 +25,18 @@ class LocalDocumentRepository implements DocumentRepository {
     required DocumentDataSource dataSource,
     required DocumentStorage storage,
     required DocumentExportService exporter,
+    DocumentImportService? importer,
     DocumentRepositoryClock? clock,
   }) : _dataSource = dataSource,
        _storage = storage,
        _exporter = exporter,
+       _importer = importer ?? LocalDocumentImportService(),
        _clock = clock ?? DateTime.now;
 
   final DocumentDataSource _dataSource;
   final DocumentStorage _storage;
   final DocumentExportService _exporter;
+  final DocumentImportService _importer;
   final DocumentRepositoryClock _clock;
 
   @override
@@ -69,6 +79,59 @@ class LocalDocumentRepository implements DocumentRepository {
   }
 
   @override
+  Future<LocalDocument> importImages({
+    required List<String> sourcePaths,
+    required String name,
+  }) async {
+    final draft = await _importer.createImageDraft(
+      sourcePaths: sourcePaths,
+      name: name,
+    );
+    return saveDocument(draft);
+  }
+
+  @override
+  Future<LocalDocument> importPdf({
+    required String sourcePath,
+    required String name,
+  }) async {
+    final preview = await _importer.createPdfPreview(sourcePath);
+    String? storedDirectoryPath;
+    try {
+      final files = await _storage.storeImportedPdf(
+        documentId: preview.documentId,
+        sourcePdfPath: sourcePath,
+        thumbnailBytes: preview.thumbnailBytes,
+      );
+      storedDirectoryPath = files.directoryPath;
+      final createdAt = _clock().toUtc();
+      final document = LocalDocument(
+        id: preview.documentId,
+        name: _pdfFileName(name),
+        pdfPath: files.pdfPath,
+        thumbnailPath: files.thumbnailPath,
+        pageCount: preview.pageCount,
+        sizeInBytes: await File(files.pdfPath).length(),
+        createdAt: createdAt,
+        updatedAt: createdAt,
+        source: DocumentSource.pdf,
+        ocrStatus: DocumentOcrStatus.notRequested,
+        syncStatus: DocumentSyncStatus.localOnly,
+      );
+      await _dataSource.saveDocument(
+        document,
+        _createImportedPdfPages(document, preview, createdAt),
+      );
+      return document;
+    } on Object {
+      if (storedDirectoryPath != null) {
+        await _storage.deleteDocumentFiles(storedDirectoryPath);
+      }
+      rethrow;
+    }
+  }
+
+  @override
   Stream<List<LocalDocument>> watchDocuments() {
     return _dataSource.watchDocuments();
   }
@@ -79,17 +142,42 @@ class LocalDocumentRepository implements DocumentRepository {
   }
 
   @override
+  Future<LocalDocument?> getDocument(String documentId) {
+    return _dataSource.getDocument(documentId);
+  }
+
+  @override
   Future<List<LocalDocumentPage>> getDocumentPages(String documentId) {
     return _dataSource.getDocumentPages(documentId);
   }
 
   @override
-  Future<void> renameDocument(String documentId, String name) {
-    return _dataSource.renameDocument(
-      documentId: documentId,
-      name: _pdfFileName(name),
-      updatedAt: _clock().toUtc(),
+  Future<void> renameDocument(String documentId, String name) async {
+    final document = await _dataSource.getDocument(documentId);
+    if (document == null) {
+      return;
+    }
+
+    final newName = _pdfFileName(name);
+    final renamedPdfPath = await _storage.renamePdfFile(
+      currentPath: document.pdfPath,
+      newFileName: newName,
     );
+
+    try {
+      await _dataSource.renameDocument(
+        documentId: documentId,
+        name: newName,
+        pdfPath: renamedPdfPath,
+        updatedAt: _clock().toUtc(),
+      );
+    } on Object {
+      await _storage.renamePdfFile(
+        currentPath: renamedPdfPath,
+        newFileName: path.basename(document.pdfPath),
+      );
+      rethrow;
+    }
   }
 
   @override
@@ -99,8 +187,31 @@ class LocalDocumentRepository implements DocumentRepository {
       return;
     }
 
-    await _dataSource.deleteDocument(documentId);
-    await _storage.deleteDocumentFiles(path.dirname(document.pdfPath));
+    final pages = await _dataSource.getDocumentPages(documentId);
+    final stagedDeletion = await _storage.stageDocumentDeletion(
+      path.dirname(document.pdfPath),
+    );
+
+    try {
+      await _dataSource.deleteDocument(documentId);
+    } on Object {
+      if (stagedDeletion != null) {
+        await _storage.restoreStagedDocumentDeletion(stagedDeletion);
+      }
+      rethrow;
+    }
+
+    if (stagedDeletion == null) {
+      return;
+    }
+
+    try {
+      await _storage.finalizeStagedDocumentDeletion(stagedDeletion);
+    } on Object {
+      await _storage.restoreStagedDocumentDeletion(stagedDeletion);
+      await _dataSource.saveDocument(document, pages);
+      rethrow;
+    }
   }
 
   @override
@@ -143,6 +254,37 @@ class LocalDocumentRepository implements DocumentRepository {
           updatedAt: updatedAt,
         ),
     ];
+  }
+
+  List<LocalDocumentPage> _createImportedPdfPages(
+    LocalDocument document,
+    ImportedPdfPreview preview,
+    DateTime timestamp,
+  ) {
+    return List.generate(
+      preview.pageCount,
+      (index) => LocalDocumentPage(
+        id: '${document.id}-page-${index + 1}',
+        documentId: document.id,
+        pageIndex: index,
+        // Imported PDFs retain their original PDF. The first-page preview is
+        // intentionally used as lightweight page metadata until PDF editing.
+        originalImagePath: document.thumbnailPath,
+        normalizedImagePath: document.thumbnailPath,
+        processedImagePath: document.thumbnailPath,
+        originalPixelWidth: preview.thumbnailWidth,
+        originalPixelHeight: preview.thumbnailHeight,
+        processedPixelWidth: preview.thumbnailWidth,
+        processedPixelHeight: preview.thumbnailHeight,
+        corners: DocumentCorners.fullImage,
+        rotation: 0,
+        filter: ScanFilter.original,
+        brightness: 0,
+        contrast: 0,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      ),
+    );
   }
 }
 

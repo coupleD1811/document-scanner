@@ -664,6 +664,90 @@ abstract class AppLocalizations {
   /// **'Các file scan và PDF đã lưu sẽ xuất hiện ở đây.'**
   String get documentsEmptySubtitle;
 
+  /// No description provided for @documentsLoadFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể tải tài liệu. Hãy thử lại.'**
+  String get documentsLoadFailed;
+
+  /// No description provided for @documentRenameTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đổi tên tài liệu'**
+  String get documentRenameTitle;
+
+  /// No description provided for @documentNameLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên tài liệu'**
+  String get documentNameLabel;
+
+  /// No description provided for @documentRenameSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã đổi tên thành {name}.'**
+  String documentRenameSuccess(String name);
+
+  /// No description provided for @documentDeleteTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa tài liệu?'**
+  String get documentDeleteTitle;
+
+  /// No description provided for @documentDeleteMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài liệu và toàn bộ ảnh scan liên quan sẽ bị xóa khỏi thiết bị.'**
+  String get documentDeleteMessage;
+
+  /// No description provided for @documentDeleteSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã xóa tài liệu.'**
+  String get documentDeleteSuccess;
+
+  /// No description provided for @documentActionOpenFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể mở tài liệu. Hãy kiểm tra file vẫn còn trên thiết bị.'**
+  String get documentActionOpenFailed;
+
+  /// No description provided for @documentActionRenameFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể đổi tên tài liệu. Hãy thử lại.'**
+  String get documentActionRenameFailed;
+
+  /// No description provided for @documentActionShareFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể chia sẻ tài liệu. Hãy thử lại.'**
+  String get documentActionShareFailed;
+
+  /// No description provided for @documentActionDeleteFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể xóa tài liệu. Hãy thử lại.'**
+  String get documentActionDeleteFailed;
+
+  /// No description provided for @documentNameInvalid.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hãy nhập tên tài liệu hợp lệ.'**
+  String get documentNameInvalid;
+
+  /// No description provided for @documentUnavailable.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài liệu hoặc file của tài liệu không còn tồn tại.'**
+  String get documentUnavailable;
+
+  /// No description provided for @cancelAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hủy'**
+  String get cancelAction;
+
   /// No description provided for @searchDocumentsHint.
   ///
   /// In vi, this message translates to:
@@ -1311,6 +1395,66 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Không thể mở tệp PDF. Hãy thử lại.'**
   String get pdfImportFailed;
+
+  /// No description provided for @importImagesAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập ảnh'**
+  String get importImagesAction;
+
+  /// No description provided for @importImagesSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn một hoặc nhiều ảnh JPG, JPEG hoặc PNG'**
+  String get importImagesSubtitle;
+
+  /// No description provided for @importPdfAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập PDF'**
+  String get importPdfAction;
+
+  /// No description provided for @importPdfSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sao chép PDF vào không gian lưu trữ của Scanly'**
+  String get importPdfSubtitle;
+
+  /// No description provided for @importedImagesDocumentName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ảnh đã nhập ({count})'**
+  String importedImagesDocumentName(int count);
+
+  /// No description provided for @documentImportSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã nhập {name}.'**
+  String documentImportSuccess(String name);
+
+  /// No description provided for @documentImportUnavailable.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể đọc tệp đã chọn. Hãy chọn lại.'**
+  String get documentImportUnavailable;
+
+  /// No description provided for @imageImportUnsupported.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ảnh không hợp lệ hoặc không được hỗ trợ.'**
+  String get imageImportUnsupported;
+
+  /// No description provided for @documentImportTooLarge.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tệp vượt quá giới hạn 100 MB.'**
+  String get documentImportTooLarge;
+
+  /// No description provided for @pdfImportPasswordProtected.
+  ///
+  /// In vi, this message translates to:
+  /// **'PDF được bảo vệ bằng mật khẩu nên chưa thể nhập.'**
+  String get pdfImportPasswordProtected;
 
   /// No description provided for @toolsPageTitle.
   ///

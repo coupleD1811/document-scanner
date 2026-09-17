@@ -6,6 +6,9 @@ import '../features/auth/repository/auth_repository.dart';
 import '../features/auth/session/bloc/auth_session_bloc.dart';
 import '../features/auth/presentation/auth_gate.dart';
 import '../features/documents/repository/document_repository.dart';
+import '../features/documents/model/local_document.dart';
+import '../features/documents/model/local_document_page.dart';
+import '../features/documents/model/save_draft.dart';
 import '../features/profile/language/app_language.dart';
 import '../features/profile/language/state.dart';
 import '../l10n/l10n.dart';
@@ -61,18 +64,68 @@ class ScanlyApp extends StatelessWidget {
         },
       ),
     );
-    final documentRepository = this.documentRepository;
+    final documentRepository =
+        this.documentRepository ?? const _UnavailableDocumentRepository();
 
     return RepositoryProvider.value(
       value: authRepository,
-      child: documentRepository == null
-          ? content
-          : RepositoryProvider<DocumentRepository>.value(
-              value: documentRepository,
-              child: content,
-            ),
+      child: RepositoryProvider<DocumentRepository>.value(
+        value: documentRepository,
+        child: content,
+      ),
     );
   }
+}
+
+class _UnavailableDocumentRepository implements DocumentRepository {
+  const _UnavailableDocumentRepository();
+
+  @override
+  Future<void> close() async {}
+
+  @override
+  Future<void> deleteDocument(String documentId) {
+    return Future.error(UnsupportedError('Document storage is unavailable.'));
+  }
+
+  @override
+  Future<List<LocalDocument>> getDocuments() async => const [];
+
+  @override
+  Future<LocalDocument?> getDocument(String documentId) async => null;
+
+  @override
+  Future<List<LocalDocumentPage>> getDocumentPages(String documentId) async =>
+      const [];
+
+  @override
+  Future<void> renameDocument(String documentId, String name) {
+    return Future.error(UnsupportedError('Document storage is unavailable.'));
+  }
+
+  @override
+  Future<LocalDocument> saveDocument(DocumentSaveDraft draft) {
+    return Future.error(UnsupportedError('Document storage is unavailable.'));
+  }
+
+  @override
+  Future<LocalDocument> importImages({
+    required List<String> sourcePaths,
+    required String name,
+  }) {
+    return Future.error(UnsupportedError('Document storage is unavailable.'));
+  }
+
+  @override
+  Future<LocalDocument> importPdf({
+    required String sourcePath,
+    required String name,
+  }) {
+    return Future.error(UnsupportedError('Document storage is unavailable.'));
+  }
+
+  @override
+  Stream<List<LocalDocument>> watchDocuments() => Stream.value(const []);
 }
 
 class FirebaseSetupApp extends StatelessWidget {

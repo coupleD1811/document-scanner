@@ -306,6 +306,56 @@ class AppLocalizationsVi extends AppLocalizations {
       'Các file scan và PDF đã lưu sẽ xuất hiện ở đây.';
 
   @override
+  String get documentsLoadFailed => 'Không thể tải tài liệu. Hãy thử lại.';
+
+  @override
+  String get documentRenameTitle => 'Đổi tên tài liệu';
+
+  @override
+  String get documentNameLabel => 'Tên tài liệu';
+
+  @override
+  String documentRenameSuccess(String name) {
+    return 'Đã đổi tên thành $name.';
+  }
+
+  @override
+  String get documentDeleteTitle => 'Xóa tài liệu?';
+
+  @override
+  String get documentDeleteMessage =>
+      'Tài liệu và toàn bộ ảnh scan liên quan sẽ bị xóa khỏi thiết bị.';
+
+  @override
+  String get documentDeleteSuccess => 'Đã xóa tài liệu.';
+
+  @override
+  String get documentActionOpenFailed =>
+      'Không thể mở tài liệu. Hãy kiểm tra file vẫn còn trên thiết bị.';
+
+  @override
+  String get documentActionRenameFailed =>
+      'Không thể đổi tên tài liệu. Hãy thử lại.';
+
+  @override
+  String get documentActionShareFailed =>
+      'Không thể chia sẻ tài liệu. Hãy thử lại.';
+
+  @override
+  String get documentActionDeleteFailed =>
+      'Không thể xóa tài liệu. Hãy thử lại.';
+
+  @override
+  String get documentNameInvalid => 'Hãy nhập tên tài liệu hợp lệ.';
+
+  @override
+  String get documentUnavailable =>
+      'Tài liệu hoặc file của tài liệu không còn tồn tại.';
+
+  @override
+  String get cancelAction => 'Hủy';
+
+  @override
   String get searchDocumentsHint => 'Tìm kiếm tài liệu';
 
   @override
@@ -653,6 +703,45 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get pdfImportFailed => 'Không thể mở tệp PDF. Hãy thử lại.';
+
+  @override
+  String get importImagesAction => 'Nhập ảnh';
+
+  @override
+  String get importImagesSubtitle =>
+      'Chọn một hoặc nhiều ảnh JPG, JPEG hoặc PNG';
+
+  @override
+  String get importPdfAction => 'Nhập PDF';
+
+  @override
+  String get importPdfSubtitle =>
+      'Sao chép PDF vào không gian lưu trữ của Scanly';
+
+  @override
+  String importedImagesDocumentName(int count) {
+    return 'Ảnh đã nhập ($count)';
+  }
+
+  @override
+  String documentImportSuccess(String name) {
+    return 'Đã nhập $name.';
+  }
+
+  @override
+  String get documentImportUnavailable =>
+      'Không thể đọc tệp đã chọn. Hãy chọn lại.';
+
+  @override
+  String get imageImportUnsupported =>
+      'Ảnh không hợp lệ hoặc không được hỗ trợ.';
+
+  @override
+  String get documentImportTooLarge => 'Tệp vượt quá giới hạn 100 MB.';
+
+  @override
+  String get pdfImportPasswordProtected =>
+      'PDF được bảo vệ bằng mật khẩu nên chưa thể nhập.';
 
   @override
   String get toolsPageTitle => 'Công cụ PDF';
