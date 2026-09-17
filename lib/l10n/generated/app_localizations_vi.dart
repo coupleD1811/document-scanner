@@ -309,6 +309,53 @@ class AppLocalizationsVi extends AppLocalizations {
   String get documentsLoadFailed => 'Không thể tải tài liệu. Hãy thử lại.';
 
   @override
+  String get documentRenameTitle => 'Đổi tên tài liệu';
+
+  @override
+  String get documentNameLabel => 'Tên tài liệu';
+
+  @override
+  String documentRenameSuccess(String name) {
+    return 'Đã đổi tên thành $name.';
+  }
+
+  @override
+  String get documentDeleteTitle => 'Xóa tài liệu?';
+
+  @override
+  String get documentDeleteMessage =>
+      'Tài liệu và toàn bộ ảnh scan liên quan sẽ bị xóa khỏi thiết bị.';
+
+  @override
+  String get documentDeleteSuccess => 'Đã xóa tài liệu.';
+
+  @override
+  String get documentActionOpenFailed =>
+      'Không thể mở tài liệu. Hãy kiểm tra file vẫn còn trên thiết bị.';
+
+  @override
+  String get documentActionRenameFailed =>
+      'Không thể đổi tên tài liệu. Hãy thử lại.';
+
+  @override
+  String get documentActionShareFailed =>
+      'Không thể chia sẻ tài liệu. Hãy thử lại.';
+
+  @override
+  String get documentActionDeleteFailed =>
+      'Không thể xóa tài liệu. Hãy thử lại.';
+
+  @override
+  String get documentNameInvalid => 'Hãy nhập tên tài liệu hợp lệ.';
+
+  @override
+  String get documentUnavailable =>
+      'Tài liệu hoặc file của tài liệu không còn tồn tại.';
+
+  @override
+  String get cancelAction => 'Hủy';
+
+  @override
   String get searchDocumentsHint => 'Tìm kiếm tài liệu';
 
   @override

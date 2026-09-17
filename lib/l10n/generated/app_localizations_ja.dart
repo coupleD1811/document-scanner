@@ -296,6 +296,48 @@ class AppLocalizationsJa extends AppLocalizations {
   String get documentsLoadFailed => '書類を読み込めませんでした。もう一度お試しください。';
 
   @override
+  String get documentRenameTitle => '書類名を変更';
+
+  @override
+  String get documentNameLabel => '書類名';
+
+  @override
+  String documentRenameSuccess(String name) {
+    return '$nameに名前を変更しました。';
+  }
+
+  @override
+  String get documentDeleteTitle => '書類を削除しますか？';
+
+  @override
+  String get documentDeleteMessage => '書類と関連するすべてのスキャン画像がこのデバイスから削除されます。';
+
+  @override
+  String get documentDeleteSuccess => '書類を削除しました。';
+
+  @override
+  String get documentActionOpenFailed =>
+      '書類を開けませんでした。ファイルがこのデバイスに残っているか確認してください。';
+
+  @override
+  String get documentActionRenameFailed => '書類名を変更できませんでした。もう一度お試しください。';
+
+  @override
+  String get documentActionShareFailed => '書類を共有できませんでした。もう一度お試しください。';
+
+  @override
+  String get documentActionDeleteFailed => '書類を削除できませんでした。もう一度お試しください。';
+
+  @override
+  String get documentNameInvalid => '有効な書類名を入力してください。';
+
+  @override
+  String get documentUnavailable => 'この書類またはファイルは存在しません。';
+
+  @override
+  String get cancelAction => 'キャンセル';
+
+  @override
   String get searchDocumentsHint => '書類を検索';
 
   @override

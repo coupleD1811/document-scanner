@@ -92,6 +92,7 @@ class DocumentDatabase extends _$DocumentDatabase
   Future<void> renameDocument({
     required String documentId,
     required String name,
+    required String pdfPath,
     required DateTime updatedAt,
   }) async {
     final normalizedName = name.trim();
@@ -104,6 +105,7 @@ class DocumentDatabase extends _$DocumentDatabase
     )..where((table) => table.id.equals(documentId))).write(
       StoredDocumentsCompanion(
         name: Value(normalizedName),
+        pdfPath: Value(pdfPath),
         updatedAt: Value(updatedAt.millisecondsSinceEpoch),
       ),
     );

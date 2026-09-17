@@ -66,6 +66,44 @@ void main() {
     );
     expect(await documentDirectory.exists(), isFalse);
   });
+
+  test('renames a document PDF inside its own storage directory', () async {
+    final files = await storage.storePageImages(
+      await _createDraft(sourceDirectory),
+    );
+    await File(files.pdfPath).writeAsBytes([1, 2, 3]);
+
+    final renamedPath = await storage.renamePdfFile(
+      currentPath: files.pdfPath,
+      newFileName: 'Receipt.pdf',
+    );
+
+    expect(renamedPath, endsWith('/Receipt.pdf'));
+    expect(await File(files.pdfPath).exists(), isFalse);
+    expect(await File(renamedPath).exists(), isTrue);
+  });
+
+  test('stages, restores and finalizes document directory deletion', () async {
+    final files = await storage.storePageImages(
+      await _createDraft(sourceDirectory),
+    );
+    final directoryPath = Directory(files.pdfPath).parent.path;
+
+    final staged = await storage.stageDocumentDeletion(directoryPath);
+
+    expect(staged, isNotNull);
+    expect(await Directory(staged!.originalDirectoryPath).exists(), isFalse);
+    expect(await Directory(staged.stagedDirectoryPath).exists(), isTrue);
+
+    await storage.restoreStagedDocumentDeletion(staged);
+    expect(await Directory(staged.originalDirectoryPath).exists(), isTrue);
+
+    final stagedAgain = await storage.stageDocumentDeletion(
+      staged.originalDirectoryPath,
+    );
+    await storage.finalizeStagedDocumentDeletion(stagedAgain!);
+    expect(await Directory(stagedAgain.stagedDirectoryPath).exists(), isFalse);
+  });
 }
 
 Future<DocumentSaveDraft> _createDraft(

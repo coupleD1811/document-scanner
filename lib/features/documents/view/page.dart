@@ -8,6 +8,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/scanly_icons.dart';
 import '../../../l10n/l10n.dart';
+import '../bloc/document_action_bloc.dart';
 import '../bloc/document_list_bloc.dart';
 import '../model/document_item.dart';
 import '../model/document_list_query.dart';
@@ -46,109 +47,161 @@ class _DocumentsPageState extends State<DocumentsPage> {
   Widget build(BuildContext context) {
     final state = context.watch<DocumentListBloc>().state;
 
-    return CustomScrollView(
-      key: const ValueKey('documents-page'),
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
-          sliver: SliverToBoxAdapter(
-            child: _DocumentsHeader(
-              searchController: _searchController,
-              searchFocusNode: _searchFocusNode,
-              selectedFilter: state.query.filter,
-              onSearchChanged: (value) {
-                context.read<DocumentListBloc>().add(
-                  DocumentListSearchChanged(value),
-                );
-              },
-              onSearchPressed: _searchFocusNode.requestFocus,
-              onFilterPressed: _showFilterPicker,
-              onFilterChanged: (filter) {
-                context.read<DocumentListBloc>().add(
-                  DocumentListFilterChanged(filter),
-                );
-              },
+    return BlocListener<DocumentActionBloc, DocumentActionState>(
+      listenWhen: (previous, current) => current is! DocumentActionInitial,
+      listener: _handleActionState,
+      child: CustomScrollView(
+        key: const ValueKey('documents-page'),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
+            sliver: SliverToBoxAdapter(
+              child: _DocumentsHeader(
+                searchController: _searchController,
+                searchFocusNode: _searchFocusNode,
+                selectedFilter: state.query.filter,
+                onSearchChanged: (value) {
+                  context.read<DocumentListBloc>().add(
+                    DocumentListSearchChanged(value),
+                  );
+                },
+                onSearchPressed: _searchFocusNode.requestFocus,
+                onFilterPressed: _showFilterPicker,
+                onFilterChanged: (filter) {
+                  context.read<DocumentListBloc>().add(
+                    DocumentListFilterChanged(filter),
+                  );
+                },
+              ),
             ),
           ),
-        ),
-        if (state is DocumentListLoading)
-          const SliverPadding(
-            padding: EdgeInsets.fromLTRB(20, 48, 20, 0),
-            sliver: SliverToBoxAdapter(child: _DocumentsLoadingState()),
-          )
-        else if (state is DocumentListFailure)
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 32, 20, 0),
-            sliver: SliverToBoxAdapter(
-              child: _DocumentsFailureState(
-                onRetryPressed: () => context.read<DocumentListBloc>().add(
-                  const DocumentListSubscriptionRequested(),
+          if (state is DocumentListLoading)
+            const SliverPadding(
+              padding: EdgeInsets.fromLTRB(20, 48, 20, 0),
+              sliver: SliverToBoxAdapter(child: _DocumentsLoadingState()),
+            )
+          else if (state is DocumentListFailure)
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 32, 20, 0),
+              sliver: SliverToBoxAdapter(
+                child: _DocumentsFailureState(
+                  onRetryPressed: () => context.read<DocumentListBloc>().add(
+                    const DocumentListSubscriptionRequested(),
+                  ),
+                ),
+              ),
+            )
+          else if (state is DocumentListReady && !state.hasDocuments) ...[
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 32, 20, 0),
+              sliver: SliverToBoxAdapter(
+                child: _DocumentsEmptyState(
+                  onScanPressed: _handleScanPressed,
+                  onImportPressed: _handleImportPressed,
                 ),
               ),
             ),
-          )
-        else if (state is DocumentListReady && !state.hasDocuments) ...[
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 32, 20, 0),
-            sliver: SliverToBoxAdapter(
-              child: _DocumentsEmptyState(
-                onScanPressed: _handleScanPressed,
-                onImportPressed: _handleImportPressed,
-              ),
-            ),
-          ),
-        ] else if (state is DocumentListReady) ...[
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 26, 20, 16),
-            sliver: SliverToBoxAdapter(
-              child: _DocumentListControls(
-                documentCount: state.documents.length,
-                newestFirst: state.query.sort == DocumentListSort.recent,
-                onSortPressed: () {
-                  final sort = state.query.sort == DocumentListSort.recent
-                      ? DocumentListSort.oldest
-                      : DocumentListSort.recent;
-                  context.read<DocumentListBloc>().add(
-                    DocumentListSortChanged(sort),
-                  );
-                },
-                onImportPressed: _handleImportPressed,
-              ),
-            ),
-          ),
-          if (state.documents.isEmpty)
+          ] else if (state is DocumentListReady) ...[
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+              padding: const EdgeInsets.fromLTRB(20, 26, 20, 16),
               sliver: SliverToBoxAdapter(
-                child: _NoSearchResults(onClearPressed: _clearSearchAndFilters),
-              ),
-            )
-          else
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              sliver: SliverList.builder(
-                itemCount: state.documents.length,
-                itemBuilder: (context, index) {
-                  final document = state.documents[index];
-
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      bottom: index == state.documents.length - 1 ? 0 : 12,
-                    ),
-                    child: _DocumentCard(
-                      document: document,
-                      onPressed: () => _showFeatureUnavailable(),
-                      onMorePressed: () => _showDocumentActions(document),
-                    ),
-                  );
-                },
+                child: _DocumentListControls(
+                  documentCount: state.documents.length,
+                  newestFirst: state.query.sort == DocumentListSort.recent,
+                  onSortPressed: () {
+                    final sort = state.query.sort == DocumentListSort.recent
+                        ? DocumentListSort.oldest
+                        : DocumentListSort.recent;
+                    context.read<DocumentListBloc>().add(
+                      DocumentListSortChanged(sort),
+                    );
+                  },
+                  onImportPressed: _handleImportPressed,
+                ),
               ),
             ),
+            if (state.documents.isEmpty)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                sliver: SliverToBoxAdapter(
+                  child: _NoSearchResults(
+                    onClearPressed: _clearSearchAndFilters,
+                  ),
+                ),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                sliver: SliverList.builder(
+                  itemCount: state.documents.length,
+                  itemBuilder: (context, index) {
+                    final document = state.documents[index];
+
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: index == state.documents.length - 1 ? 0 : 12,
+                      ),
+                      child: _DocumentCard(
+                        document: document,
+                        onPressed: () => context.read<DocumentActionBloc>().add(
+                          DocumentOpenRequested(document.id),
+                        ),
+                        onMorePressed: () => _showDocumentActions(document),
+                      ),
+                    );
+                  },
+                ),
+              ),
+          ],
+          const SliverPadding(padding: EdgeInsets.only(bottom: 28)),
         ],
-        const SliverPadding(padding: EdgeInsets.only(bottom: 28)),
-      ],
+      ),
     );
+  }
+
+  void _handleActionState(BuildContext context, DocumentActionState state) {
+    final t = context.l10n;
+    final message = switch (state) {
+      DocumentActionSuccess(action: DocumentAction.rename) =>
+        t.documentRenameSuccess(state.documentName),
+      DocumentActionSuccess(action: DocumentAction.delete) =>
+        t.documentDeleteSuccess,
+      DocumentActionFailure() => _actionFailureMessage(t, state),
+      _ => null,
+    };
+
+    if (message == null) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: state is DocumentActionFailure
+              ? Theme.of(context).colorScheme.error
+              : null,
+        ),
+      );
+  }
+
+  String _actionFailureMessage(
+    AppLocalizations t,
+    DocumentActionFailure state,
+  ) {
+    return switch (state.reason) {
+      DocumentActionFailureReason.invalidName => t.documentNameInvalid,
+      DocumentActionFailureReason.notFound ||
+      DocumentActionFailureReason.fileUnavailable => t.documentUnavailable,
+      DocumentActionFailureReason.unexpected => switch (state.action) {
+        DocumentAction.open => t.documentActionOpenFailed,
+        DocumentAction.rename => t.documentActionRenameFailed,
+        DocumentAction.share => t.documentActionShareFailed,
+        DocumentAction.delete => t.documentActionDeleteFailed,
+      },
+    };
   }
 
   void _handleScanPressed() {
@@ -292,28 +345,43 @@ class _DocumentsPageState extends State<DocumentsPage> {
                 _DocumentActionTile(
                   icon: LucideIcons.fileText,
                   label: t.openAction,
-                  onPressed: () => _closeActionSheet(context),
+                  onPressed: () => _dispatchAction(
+                    context,
+                    DocumentOpenRequested(document.id),
+                  ),
                 ),
                 _DocumentActionTile(
                   icon: LucideIcons.pencil,
                   label: t.renameAction,
-                  onPressed: () => _closeActionSheet(context),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _showRenameDialog(document);
+                  },
                 ),
                 _DocumentActionTile(
                   icon: LucideIcons.share2,
                   label: t.shareAction,
-                  onPressed: () => _closeActionSheet(context),
+                  onPressed: () => _dispatchAction(
+                    context,
+                    DocumentShareRequested(document.id),
+                  ),
                 ),
                 _DocumentActionTile(
                   icon: LucideIcons.folder,
                   label: t.moveAction,
-                  onPressed: () => _closeActionSheet(context),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _showFeatureUnavailable();
+                  },
                 ),
                 _DocumentActionTile(
                   icon: LucideIcons.trash2,
                   label: t.deleteAction,
                   isDestructive: true,
-                  onPressed: () => _closeActionSheet(context),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _showDeleteDialog(document);
+                  },
                 ),
               ],
             ),
@@ -323,9 +391,92 @@ class _DocumentsPageState extends State<DocumentsPage> {
     );
   }
 
-  void _closeActionSheet(BuildContext sheetContext) {
+  Future<void> _showRenameDialog(DocumentItem document) async {
+    final controller = TextEditingController(
+      text: _nameWithoutPdfExtension(document.name),
+    );
+    final name = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        final t = context.l10n;
+
+        return AlertDialog(
+          title: Text(t.documentRenameTitle),
+          content: TextField(
+            key: const ValueKey('document-rename-field'),
+            controller: controller,
+            autofocus: true,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (value) => Navigator.of(context).pop(value),
+            decoration: InputDecoration(labelText: t.documentNameLabel),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(t.cancelAction),
+            ),
+            FilledButton(
+              key: const ValueKey('document-rename-save-button'),
+              onPressed: () => Navigator.of(context).pop(controller.text),
+              child: Text(t.renameAction),
+            ),
+          ],
+        );
+      },
+    );
+    controller.dispose();
+
+    if (name != null && mounted) {
+      context.read<DocumentActionBloc>().add(
+        DocumentRenameRequested(documentId: document.id, name: name),
+      );
+    }
+  }
+
+  Future<void> _showDeleteDialog(DocumentItem document) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        final t = context.l10n;
+
+        return AlertDialog(
+          title: Text(t.documentDeleteTitle),
+          content: Text(t.documentDeleteMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(t.cancelAction),
+            ),
+            FilledButton(
+              key: const ValueKey('document-delete-confirm-button'),
+              style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.error,
+                foregroundColor: Theme.of(context).colorScheme.onError,
+              ),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(t.deleteAction),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true && mounted) {
+      context.read<DocumentActionBloc>().add(
+        DocumentDeleteRequested(document.id),
+      );
+    }
+  }
+
+  void _dispatchAction(BuildContext sheetContext, DocumentActionEvent event) {
     Navigator.of(sheetContext).pop();
-    _showFeatureUnavailable();
+    context.read<DocumentActionBloc>().add(event);
+  }
+
+  String _nameWithoutPdfExtension(String value) {
+    return value.toLowerCase().endsWith('.pdf')
+        ? value.substring(0, value.length - 4)
+        : value;
   }
 
   void _showFeatureUnavailable() {

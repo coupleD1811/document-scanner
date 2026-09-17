@@ -7,6 +7,7 @@ import 'package:scanly/app/theme/scanly_icons.dart';
 import 'package:scanly/features/auth/repository/auth_failure.dart';
 import 'package:scanly/features/auth/repository/auth_repository.dart';
 import 'package:scanly/features/auth/repository/auth_user.dart';
+import 'package:scanly/features/documents/bloc/document_action_bloc.dart';
 import 'package:scanly/features/documents/bloc/document_list_bloc.dart';
 import 'package:scanly/features/documents/bloc/document_save_bloc.dart';
 import 'package:scanly/features/documents/model/local_document.dart';
@@ -755,9 +756,12 @@ Widget _documentsTestApp({
   List<LocalDocument> documents = const [],
   DocumentFilePicker filePicker = const SystemDocumentFilePicker(),
 }) {
-  return BlocProvider(
-    create: (_) =>
-        DocumentListBloc(repository: _WatchingDocumentRepository(documents)),
+  final repository = _WatchingDocumentRepository(documents);
+  return MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (_) => DocumentListBloc(repository: repository)),
+      BlocProvider(create: (_) => DocumentActionBloc(repository: repository)),
+    ],
     child: MaterialApp(
       locale: const Locale('vi'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,

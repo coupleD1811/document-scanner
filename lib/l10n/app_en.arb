@@ -95,6 +95,26 @@
   "documentsEmptyTitle": "No documents yet",
   "documentsEmptySubtitle": "Saved scans and PDF files will appear here.",
   "documentsLoadFailed": "Unable to load documents. Please try again.",
+  "documentRenameTitle": "Rename document",
+  "documentNameLabel": "Document name",
+  "documentRenameSuccess": "Renamed to {name}.",
+  "@documentRenameSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "documentDeleteTitle": "Delete document?",
+  "documentDeleteMessage": "The document and all related scan images will be removed from this device.",
+  "documentDeleteSuccess": "Document deleted.",
+  "documentActionOpenFailed": "Unable to open this document. Check that its file is still on this device.",
+  "documentActionRenameFailed": "Unable to rename this document. Please try again.",
+  "documentActionShareFailed": "Unable to share this document. Please try again.",
+  "documentActionDeleteFailed": "Unable to delete this document. Please try again.",
+  "documentNameInvalid": "Enter a valid document name.",
+  "documentUnavailable": "This document or its file no longer exists.",
+  "cancelAction": "Cancel",
   "searchDocumentsHint": "Search documents",
   "documentsFilterTitle": "Filter documents",
   "documentFilterAll": "All",

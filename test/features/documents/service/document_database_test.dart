@@ -50,11 +50,13 @@ void main() {
     await database.renameDocument(
       documentId: document.id,
       name: 'Renamed scan.pdf',
+      pdfPath: '/documents/document-1/Renamed scan.pdf',
       updatedAt: renamedAt,
     );
 
     final renamed = (await database.getDocuments()).single;
     expect(renamed.name, 'Renamed scan.pdf');
+    expect(renamed.pdfPath, '/documents/document-1/Renamed scan.pdf');
     expect(renamed.updatedAt, renamedAt);
 
     await database.deleteDocument(document.id);

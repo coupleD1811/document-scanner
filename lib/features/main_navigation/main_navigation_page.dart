@@ -9,6 +9,7 @@ import '../../l10n/l10n.dart';
 import '../auth/presentation/widgets/auth_failure_message.dart';
 import '../auth/presentation/widgets/auth_snack_bar.dart';
 import '../auth/session/bloc/auth_session_bloc.dart';
+import '../documents/bloc/document_action_bloc.dart';
 import '../documents/bloc/document_save_bloc.dart';
 import '../documents/bloc/document_list_bloc.dart';
 import '../documents/repository/document_repository.dart';
@@ -32,6 +33,11 @@ class MainNavigationPage extends StatelessWidget {
         BlocProvider(
           create: (context) =>
               DocumentListBloc(repository: context.read<DocumentRepository>()),
+        ),
+        BlocProvider(
+          create: (context) => DocumentActionBloc(
+            repository: context.read<DocumentRepository>(),
+          ),
         ),
       ],
       child: const _MainNavigationView(),

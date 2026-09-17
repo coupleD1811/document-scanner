@@ -9,6 +9,8 @@ abstract interface class DocumentRepository {
 
   Future<List<LocalDocument>> getDocuments();
 
+  Future<LocalDocument?> getDocument(String documentId);
+
   Future<List<LocalDocumentPage>> getDocumentPages(String documentId);
 
   Future<void> renameDocument(String documentId, String name);

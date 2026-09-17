@@ -312,6 +312,53 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unable to load documents. Please try again.';
 
   @override
+  String get documentRenameTitle => 'Rename document';
+
+  @override
+  String get documentNameLabel => 'Document name';
+
+  @override
+  String documentRenameSuccess(String name) {
+    return 'Renamed to $name.';
+  }
+
+  @override
+  String get documentDeleteTitle => 'Delete document?';
+
+  @override
+  String get documentDeleteMessage =>
+      'The document and all related scan images will be removed from this device.';
+
+  @override
+  String get documentDeleteSuccess => 'Document deleted.';
+
+  @override
+  String get documentActionOpenFailed =>
+      'Unable to open this document. Check that its file is still on this device.';
+
+  @override
+  String get documentActionRenameFailed =>
+      'Unable to rename this document. Please try again.';
+
+  @override
+  String get documentActionShareFailed =>
+      'Unable to share this document. Please try again.';
+
+  @override
+  String get documentActionDeleteFailed =>
+      'Unable to delete this document. Please try again.';
+
+  @override
+  String get documentNameInvalid => 'Enter a valid document name.';
+
+  @override
+  String get documentUnavailable =>
+      'This document or its file no longer exists.';
+
+  @override
+  String get cancelAction => 'Cancel';
+
+  @override
   String get searchDocumentsHint => 'Search documents';
 
   @override

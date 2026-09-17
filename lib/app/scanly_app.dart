@@ -92,6 +92,9 @@ class _UnavailableDocumentRepository implements DocumentRepository {
   Future<List<LocalDocument>> getDocuments() async => const [];
 
   @override
+  Future<LocalDocument?> getDocument(String documentId) async => null;
+
+  @override
   Future<List<LocalDocumentPage>> getDocumentPages(String documentId) async =>
       const [];
 

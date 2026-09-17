@@ -670,6 +670,84 @@ abstract class AppLocalizations {
   /// **'Không thể tải tài liệu. Hãy thử lại.'**
   String get documentsLoadFailed;
 
+  /// No description provided for @documentRenameTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đổi tên tài liệu'**
+  String get documentRenameTitle;
+
+  /// No description provided for @documentNameLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên tài liệu'**
+  String get documentNameLabel;
+
+  /// No description provided for @documentRenameSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã đổi tên thành {name}.'**
+  String documentRenameSuccess(String name);
+
+  /// No description provided for @documentDeleteTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa tài liệu?'**
+  String get documentDeleteTitle;
+
+  /// No description provided for @documentDeleteMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài liệu và toàn bộ ảnh scan liên quan sẽ bị xóa khỏi thiết bị.'**
+  String get documentDeleteMessage;
+
+  /// No description provided for @documentDeleteSuccess.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã xóa tài liệu.'**
+  String get documentDeleteSuccess;
+
+  /// No description provided for @documentActionOpenFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể mở tài liệu. Hãy kiểm tra file vẫn còn trên thiết bị.'**
+  String get documentActionOpenFailed;
+
+  /// No description provided for @documentActionRenameFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể đổi tên tài liệu. Hãy thử lại.'**
+  String get documentActionRenameFailed;
+
+  /// No description provided for @documentActionShareFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể chia sẻ tài liệu. Hãy thử lại.'**
+  String get documentActionShareFailed;
+
+  /// No description provided for @documentActionDeleteFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể xóa tài liệu. Hãy thử lại.'**
+  String get documentActionDeleteFailed;
+
+  /// No description provided for @documentNameInvalid.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hãy nhập tên tài liệu hợp lệ.'**
+  String get documentNameInvalid;
+
+  /// No description provided for @documentUnavailable.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài liệu hoặc file của tài liệu không còn tồn tại.'**
+  String get documentUnavailable;
+
+  /// No description provided for @cancelAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hủy'**
+  String get cancelAction;
+
   /// No description provided for @searchDocumentsHint.
   ///
   /// In vi, this message translates to:

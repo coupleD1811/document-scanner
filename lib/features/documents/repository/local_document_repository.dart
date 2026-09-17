@@ -79,17 +79,42 @@ class LocalDocumentRepository implements DocumentRepository {
   }
 
   @override
+  Future<LocalDocument?> getDocument(String documentId) {
+    return _dataSource.getDocument(documentId);
+  }
+
+  @override
   Future<List<LocalDocumentPage>> getDocumentPages(String documentId) {
     return _dataSource.getDocumentPages(documentId);
   }
 
   @override
-  Future<void> renameDocument(String documentId, String name) {
-    return _dataSource.renameDocument(
-      documentId: documentId,
-      name: _pdfFileName(name),
-      updatedAt: _clock().toUtc(),
+  Future<void> renameDocument(String documentId, String name) async {
+    final document = await _dataSource.getDocument(documentId);
+    if (document == null) {
+      return;
+    }
+
+    final newName = _pdfFileName(name);
+    final renamedPdfPath = await _storage.renamePdfFile(
+      currentPath: document.pdfPath,
+      newFileName: newName,
     );
+
+    try {
+      await _dataSource.renameDocument(
+        documentId: documentId,
+        name: newName,
+        pdfPath: renamedPdfPath,
+        updatedAt: _clock().toUtc(),
+      );
+    } on Object {
+      await _storage.renamePdfFile(
+        currentPath: renamedPdfPath,
+        newFileName: path.basename(document.pdfPath),
+      );
+      rethrow;
+    }
   }
 
   @override
@@ -99,8 +124,31 @@ class LocalDocumentRepository implements DocumentRepository {
       return;
     }
 
-    await _dataSource.deleteDocument(documentId);
-    await _storage.deleteDocumentFiles(path.dirname(document.pdfPath));
+    final pages = await _dataSource.getDocumentPages(documentId);
+    final stagedDeletion = await _storage.stageDocumentDeletion(
+      path.dirname(document.pdfPath),
+    );
+
+    try {
+      await _dataSource.deleteDocument(documentId);
+    } on Object {
+      if (stagedDeletion != null) {
+        await _storage.restoreStagedDocumentDeletion(stagedDeletion);
+      }
+      rethrow;
+    }
+
+    if (stagedDeletion == null) {
+      return;
+    }
+
+    try {
+      await _storage.finalizeStagedDocumentDeletion(stagedDeletion);
+    } on Object {
+      await _storage.restoreStagedDocumentDeletion(stagedDeletion);
+      await _dataSource.saveDocument(document, pages);
+      rethrow;
+    }
   }
 
   @override
